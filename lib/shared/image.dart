@@ -1,4 +1,4 @@
-const mImgPath = 'assets/images/';
+const mImgPath = 'assets/';
 
 const mBgSplash = '$mImgPath'
     'bg_splash.png';

@@ -8,21 +8,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = PageController(
-      initialPage: 1,
+    initialPage: 1,
   );
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
+    return SafeArea(
+      child: PageView(
         controller: controller,
         scrollDirection: Axis.horizontal,
-        children: [
-          WeatherScreen()
-        ],
-        onPageChanged: (page){
-
-        },
+        children: [WeatherScreen()],
+        onPageChanged: (page) {},
       ),
     );
   }
