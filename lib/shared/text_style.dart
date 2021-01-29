@@ -12,7 +12,7 @@ const double _fontTitleSizeH2 = 18;
 const double _fontTitleSizeH3 = 16;
 const double _fontSubTitleSize = 14;
 const double _fontBadgeSize = 8;
-const double _fontMainTemp = 30;
+const double _fontMainTemp = 72;
 
 const textSecondaryWhite = TextStyle(
     color: mWhite,
@@ -29,6 +29,11 @@ const textTitleWhite = TextStyle(
     fontSize: _fontTitleSize,
     fontWeight: FontWeight.normal);
 
+const textTitleH1White = TextStyle(
+    color: mWhite,
+    fontSize: _fontTitleSizeH1,
+    fontWeight: FontWeight.normal,);
+
 const textTitleH2WhiteBold = TextStyle(
     color: mWhite,
     fontSize: _fontTitleSizeH2,
@@ -37,4 +42,4 @@ const textTitleH2WhiteBold = TextStyle(
 const textMainTemp = TextStyle(
     color: mWhite,
     fontSize: _fontMainTemp,
-    fontWeight: FontWeight.bold);
+    fontWeight: FontWeight.normal);

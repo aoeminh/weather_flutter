@@ -35,3 +35,21 @@ const mBgSnow = '$mImgPath'
 
 const mBgStorm = '$mImgPath'
     'img_bg_storm.png';
+
+const mNotifyColorBgClear = '$mImgPath'
+    'notify_color_bg_clear.png';
+
+const mNotifyColorBgCloudy = '$mImgPath'
+    'notify_color_bg_cloudy.png';
+
+const mNotifyColorBgFog = '$mImgPath'
+    'notify_color_bg_fog.png';
+
+const mHomePrecipitation = '$mImgPath'
+    'ic_home_precipitation.png';
+
+const mIconHigh = '$mImgPath'
+    'icon_high.png';
+
+const mIconLow = '$mImgPath'
+    'icon_low.png';
