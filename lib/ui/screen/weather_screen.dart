@@ -233,11 +233,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 WeatherForecastListResponse weatherForecastListResponse = weatherForecastStateSuccess
                     .weatherResponse;
                 return Container(
+                  height: 100,
+                  padding: EdgeInsets.symmetric(vertical: 30),
                   margin: EdgeInsets.symmetric(horizontal: 50),
                   child: ChartWidget(chartData: WeatherForecastHolder(
                       weatherForecastListResponse.list,
                       weatherForecastListResponse.city, weatherResponse.system)
-                      .setupChartData(ChartDataType.temperature, 1600, 100),),
+                      .setupChartData(ChartDataType.temperature, 1600, 50),),
                 );
               }
             }

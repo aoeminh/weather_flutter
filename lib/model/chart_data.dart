@@ -106,6 +106,7 @@ class ChartData {
   List<Point> _getPoints(
       List<double> values, double averageValue, double width, double height) {
     List<Point> points = List();
+    print('averageValue $averageValue');
     double halfHeight = (height - Dimensions.chartPadding) / 2;
     double widthStep = width / (values.length - 1);
     double currentX = 0;
@@ -161,20 +162,16 @@ class ChartData {
   List<ChartLine> _getAxes(List<Point> points, List<DateTime> dateTimes,
       double height, double width, String mainAxisText) {
     List<ChartLine> list = new List();
-    list.add(ChartLine(
-        mainAxisText,
-        Offset(-25, height / 2 - 15),
-        Offset(-5, (height - Dimensions.chartPadding) / 2),
-        Offset(width + 5, (height - Dimensions.chartPadding) / 2)));
+
 
     for (int index = 0; index < points.length; index++) {
       Point point = points[index];
       DateTime dateTime = dateTimes[index];
       list.add(ChartLine(
           _getPointAxisLabel(dateTime),
-          Offset(point.x - 10, height - 10),
-          Offset(point.x, 0),
-          Offset(point.x, height - 10)));
+          Offset(point.x , height ),
+          Offset(point.x, height ),
+          Offset(point.x, point.y)));
     }
     return list;
   }
