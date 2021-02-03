@@ -2,8 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:weather_app/model/chart_data.dart';
 import 'package:weather_app/model/chart_line.dart';
 import 'package:weather_app/model/point.dart';
-
+import 'package:weather_app/shared/image.dart';
 import 'animated_state.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:async';
+import 'package:image/image.dart' as images;
+
+const humidityIconWidth = 15;
+const humidityIconHeight = 15;
+const marginBottomTemp = 20;
+const marginLeftTemp = 5;
 
 class ChartWidget extends StatefulWidget {
   final ChartData chartData;
@@ -16,11 +26,34 @@ class ChartWidget extends StatefulWidget {
 
 class _ChartWidgetState extends AnimatedState<ChartWidget> {
   double _fraction = 0.0;
+  ui.Image image;
 
   @override
   void initState() {
     super.initState();
+    init();
     animateTween(duration: 500, curve: Curves.linear);
+  }
+
+  bool isImageLoaded = false;
+
+  Future<Null> init() async {
+    final ByteData data = await rootBundle.load(mIcPrecipitationWhite);
+    image = await loadImage(new Uint8List.view(data.buffer));
+    setState(() {
+      isImageLoaded = true;
+    });
+  }
+
+  Future<ui.Image> loadImage(List<int> img) async {
+
+    images.Image baseSizeImage = images.decodeImage(img);
+    images.Image resizeImage = images.copyResize(baseSizeImage,
+        height: humidityIconHeight, width: humidityIconWidth);
+    ui.Codec codec =
+        await ui.instantiateImageCodec(images.encodePng(resizeImage));
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;
   }
 
   @override
@@ -29,6 +62,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
     if (widget.chartData.points.length < 3) {
       chartWidget = _getChartUnavailableWidget(context);
     } else {
+
       chartWidget = _getChartWidget();
     }
 
@@ -49,7 +83,8 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
             widget.chartData.width,
             widget.chartData.height,
             widget.chartData.axes,
-            _fraction));
+            _fraction,
+            isImageLoaded ? image : null));
   }
 
   Widget _getChartUnavailableWidget(BuildContext context) {
@@ -57,7 +92,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
         key: Key("chart_widget_unavailable"),
         child: Text('ssssss',
             textDirection: TextDirection.ltr,
-            style: Theme.of(context).textTheme.body1));
+            style: Theme.of(context).textTheme.headline1));
   }
 
   @override
@@ -70,7 +105,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
 
 class _ChartPainter extends CustomPainter {
   _ChartPainter(this.points, this.pointLabels, this.width, this.height,
-      this.axes, this.fraction);
+      this.axes, this.fraction, this.image);
 
   final List<Point> points;
   final List<String> pointLabels;
@@ -78,6 +113,7 @@ class _ChartPainter extends CustomPainter {
   final double height;
   final List<ChartLine> axes;
   final double fraction;
+  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -90,10 +126,8 @@ class _ChartPainter extends CustomPainter {
     double lastLineFraction =
         fraction - (pointsFraction - 1) * fractionLinePerPoint;
     double lastLineFractionPercentage = lastLineFraction / (1 / points.length);
-    print(
-        'lastLineFraction $lastLineFraction pointsFraction: $pointsFraction lastLineFractionPercentage: $lastLineFractionPercentage points.length: ${points.length} fraction $fraction');
     for (int index = 0; index < pointsFraction - 1; index++) {
-      Offset textOffset = Offset(points[index].x - 5, points[index].y - 15);
+      Offset textOffset = Offset(points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
       if (index == pointsFraction - 2) {
         Point startPoint = points[index];
         Point endPoint = points[index + 1];
@@ -111,8 +145,7 @@ class _ChartPainter extends CustomPainter {
       } else {
         canvas.drawLine(_getOffsetFromPoint(points[index]),
             _getOffsetFromPoint(points[index + 1]), paint);
-        print(
-            'index $index startOffset ${_getOffsetFromPoint(points[index])} endOffset ${_getOffsetFromPoint(points[index + 1])}');
+
         _drawText(canvas, textOffset, pointLabels[index], 1, true);
       }
     }
@@ -133,21 +166,19 @@ class _ChartPainter extends CustomPainter {
     textPainter.paint(canvas, offset);
   }
 
+  void _drawHumidity(Offset offset, Canvas canvas) async {
+    canvas.drawImage(image, Offset(offset.dx - 20, offset.dy), Paint());
+  }
+
   TextStyle _getTextStyle(double alphaFraction, bool textShadow) {
-    Color color = Color.fromARGB((220 * alphaFraction).floor(), 255, 255, 255);
     if (textShadow) {
       return new TextStyle(
-          color: color,
-          fontSize: 10,
-          letterSpacing: 0,
-          shadows: [
-            Shadow(offset: Offset(-1.0, -1.0), color: Colors.black),
-            Shadow(offset: Offset(1.0, -1.0), color: Colors.black),
-            Shadow(offset: Offset(1.0, 1.0), color: Colors.black),
-            Shadow(offset: Offset(-1.0, 1.0), color: Colors.black),
-          ]);
+        color: Colors.white,
+        fontSize: 12,
+        letterSpacing: 0,
+      );
     } else {
-      return new TextStyle(color: color, fontSize: 10, letterSpacing: 0);
+      return new TextStyle(color: Colors.white, fontSize: 12, letterSpacing: 0);
     }
   }
 
@@ -160,7 +191,7 @@ class _ChartPainter extends CustomPainter {
     return Offset(point.x, point.y);
   }
 
-  void _drawAxes(Canvas canvas) {
+  void _drawAxes(Canvas canvas) async {
     Paint axesPaint = _getLinePaint(Colors.white30, 1);
 
     if (axes != null) {
@@ -176,9 +207,25 @@ class _ChartPainter extends CustomPainter {
         }
 
         _drawText(canvas, lineAxis.textOffset, lineAxis.label, 1, false);
+
+        if(image !=null){
+
+          _drawHumidity(lineAxis.textOffset,canvas);
+        }
       }
+      _buildBottomLine(canvas, axesPaint);
+    }
+  }
+
+  _buildBottomLine(Canvas canvas, Paint paint) {
+    var dashWidth = 3;
+    var dashSpace = 3;
+    double startX = 0;
+    final space = (dashSpace + dashWidth);
+    while (startX < width) {
       canvas.drawLine(
-          Offset(0, height ), Offset(width, height), axesPaint);
+          Offset(startX, height), Offset(startX + dashWidth, height), paint);
+      startX += space;
     }
   }
 

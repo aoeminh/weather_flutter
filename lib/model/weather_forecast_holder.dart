@@ -8,6 +8,7 @@ import 'weather_forecast_response.dart';
 
 class WeatherForecastHolder {
   List<double> _temperatures;
+  List<double> _pops;
   double _averageTemperature;
   double _maxTemperature;
   double _minTemperature;
@@ -39,7 +40,7 @@ class WeatherForecastHolder {
       List<WeatherForecastResponse> forecastList, City city, System system) {
     _forecastList = forecastList;
     _temperatures = _getTemperaturesList();
-
+    _pops =_getPopsList();
     _averageTemperature = _calculateAverage(_temperatures);
     _maxTemperature = _calculateMax(_temperatures);
     _minTemperature = _calculateMin(_temperatures);
@@ -72,6 +73,15 @@ class WeatherForecastHolder {
     }
     return temperatures;
   }
+
+  List<double> _getPopsList() {
+    List<double> pops = new List();
+    for (WeatherForecastResponse response in forecastList) {
+      pops.add(response.pop);
+    }
+    return pops;
+  }
+
 
   List<double> _getWindList() {
     List<double> winds = new List();
@@ -138,13 +148,13 @@ class WeatherForecastHolder {
     // _weatherCodeAsset = WeatherHelper.getWeatherIcon(_weatherCode);
   }
 
-  String getLocationName(BuildContext context) {
-    if (city != null && city.name != null && city.name.length > 0) {
-      return city.name;
-    } else {
-      // return ApplicationLocalization.of(context).getText("your_location");
-    }
-  }
+  // String getLocationName(BuildContext context) {
+  //   if (city != null && city.name != null && city.name.length > 0) {
+  //     return city.name;
+  //   } else {
+  //     // return ApplicationLocalization.of(context).getText("your_location");
+  //   }
+  // }
 
   ChartData setupChartData(
       ChartDataType chartDataType, double width, double height) {
@@ -209,6 +219,8 @@ class WeatherForecastHolder {
   List<double> get winds => _winds;
 
   List<double> get temperatures => _temperatures;
+
+  List<double> get pops => _pops;
 
   double get minRain => _minRain;
 

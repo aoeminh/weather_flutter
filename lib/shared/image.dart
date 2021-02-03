@@ -53,3 +53,9 @@ const mIconHigh = '$mImgPath'
 
 const mIconLow = '$mImgPath'
     'icon_low.png';
+
+const mIcPrecipitationWhite = '$mImgPath'
+    'ic_precipitation_white.png';
+
+const mIcPrecipitation = '$mImgPath'
+    'ic_precipitation.png';
