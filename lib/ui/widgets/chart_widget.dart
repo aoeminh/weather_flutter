@@ -46,7 +46,6 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
   }
 
   Future<ui.Image> loadImage(List<int> img) async {
-
     images.Image baseSizeImage = images.decodeImage(img);
     images.Image resizeImage = images.copyResize(baseSizeImage,
         height: humidityIconHeight, width: humidityIconWidth);
@@ -62,7 +61,6 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
     if (widget.chartData.points.length < 3) {
       chartWidget = _getChartUnavailableWidget(context);
     } else {
-
       chartWidget = _getChartWidget();
     }
 
@@ -84,7 +82,8 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
             widget.chartData.height,
             widget.chartData.axes,
             _fraction,
-            isImageLoaded ? image : null));
+            isImageLoaded ? image : null,
+            widget.chartData.dateTimeLabels));
   }
 
   Widget _getChartUnavailableWidget(BuildContext context) {
@@ -105,7 +104,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
 
 class _ChartPainter extends CustomPainter {
   _ChartPainter(this.points, this.pointLabels, this.width, this.height,
-      this.axes, this.fraction, this.image);
+      this.axes, this.fraction, this.image, this.dateTimeLabels);
 
   final List<Point> points;
   final List<String> pointLabels;
@@ -114,12 +113,13 @@ class _ChartPainter extends CustomPainter {
   final List<ChartLine> axes;
   final double fraction;
   final ui.Image image;
+  final List<String> dateTimeLabels;
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = _getLinePaint(Colors.blue, 2);
     _drawAxes(canvas);
-
+    _drawDateTimes(canvas);
     double fractionLinePerPoint = 1 / points.length;
 
     int pointsFraction = (points.length * fraction).ceil();
@@ -127,7 +127,8 @@ class _ChartPainter extends CustomPainter {
         fraction - (pointsFraction - 1) * fractionLinePerPoint;
     double lastLineFractionPercentage = lastLineFraction / (1 / points.length);
     for (int index = 0; index < pointsFraction - 1; index++) {
-      Offset textOffset = Offset(points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
+      Offset textOffset = Offset(
+          points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
       if (index == pointsFraction - 2) {
         Point startPoint = points[index];
         Point endPoint = points[index + 1];
@@ -145,7 +146,6 @@ class _ChartPainter extends CustomPainter {
       } else {
         canvas.drawLine(_getOffsetFromPoint(points[index]),
             _getOffsetFromPoint(points[index + 1]), paint);
-
         _drawText(canvas, textOffset, pointLabels[index], 1, true);
       }
     }
@@ -168,6 +168,19 @@ class _ChartPainter extends CustomPainter {
 
   void _drawHumidity(Offset offset, Canvas canvas) async {
     canvas.drawImage(image, Offset(offset.dx - 20, offset.dy), Paint());
+  }
+
+  void _drawDateTimes(Canvas canvas) async {
+    for (int index = 0; index < dateTimeLabels.length; index++) {
+      Offset offset = Offset(points[index].x-20, -50);
+      TextStyle textStyle = _getTextStyle(1, false);
+      TextSpan textSpan =
+          TextSpan(style: textStyle, text: dateTimeLabels[index]);
+      TextPainter textPainter =
+          TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+      textPainter.layout();
+      textPainter.paint(canvas, offset);
+    }
   }
 
   TextStyle _getTextStyle(double alphaFraction, bool textShadow) {
@@ -208,9 +221,8 @@ class _ChartPainter extends CustomPainter {
 
         _drawText(canvas, lineAxis.textOffset, lineAxis.label, 1, false);
 
-        if(image !=null){
-
-          _drawHumidity(lineAxis.textOffset,canvas);
+        if (image != null) {
+          _drawHumidity(lineAxis.textOffset, canvas);
         }
       }
       _buildBottomLine(canvas, axesPaint);

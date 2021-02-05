@@ -59,3 +59,33 @@ const mIcPrecipitationWhite = '$mImgPath'
 
 const mIcPrecipitation = '$mImgPath'
     'ic_precipitation.png';
+
+const mIconFog = '$mImgPath'
+    'icon_fog.png';
+
+const mIconBrokenClouds = '$mImgPath'
+    'icon_brokenclouds.png';
+
+const mIconClears = '$mImgPath'
+    'icon_clear.png';
+
+const mIconClearsNight = '$mImgPath'
+    'icon_clear_night.png';
+
+const mIconFewCloudsDay = '$mImgPath'
+    'icon_fewclouds_day.png';
+
+const mIconFewCloudsNight = '$mImgPath'
+    'icon_fewclouds_night.png';
+
+const mIconHazy= '$mImgPath'
+    'icon_hazy.png';
+
+const mIconRainy = '$mImgPath'
+    'icon_rainy.png';
+
+const mIconSnow = '$mImgPath'
+    'icon_snow.png';
+
+const mIconThunderstorm = '$mImgPath'
+    'icon_thunderstorm.png';

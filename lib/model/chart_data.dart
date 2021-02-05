@@ -16,7 +16,8 @@ const double marginRightHourLabel = 10;
 class ChartData {
   List<Point> _points;
   List<String> _pointLabels;
-  List<String> _pointPops;
+  List<String> _dateTimeLabels;
+  List<String> _labelsPops;
   double _width;
   double _height;
   List<ChartLine> _axes;
@@ -41,11 +42,12 @@ class ChartData {
     double averageValue = _getChartAverageValue(holder, chartDataType);
     this._points = _getPoints(values, averageValue, width, height);
     this._pointLabels = _getPointLabels(values);
-    this._pointPops =
+    this._labelsPops =
         _getPointPops(holder.pops);
     List<DateTime> dateTimes = _getDateTimes(forecastList);
+    this._dateTimeLabels = _getListDateTimeString(dateTimes);
     String mainAxisText = _getMainAxisText(chartDataType, averageValue);
-    this._axes = _getAxes(_points, pointPops, height, width, mainAxisText);
+    this._axes = _getAxes(_points, labelPops, height, width, mainAxisText);
     this._width = width;
     this._height = height;
   }
@@ -115,7 +117,6 @@ class ChartData {
   List<Point> _getPoints(
       List<double> values, double averageValue, double width, double height) {
     List<Point> points = List();
-    print('averageValue $averageValue');
     double halfHeight = (height - Dimensions.chartPadding) / 2;
     double widthStep = width / (values.length - 1);
     double currentX = 0;
@@ -176,6 +177,14 @@ class ChartData {
     return dateTimes;
   }
 
+  List<String> _getListDateTimeString(List<DateTime> dateTimes){
+    List<String> list = List();
+    for(DateTime dateTime in dateTimes){
+      list.add(_getDateTimeLabel(dateTime));
+    }
+    return list;
+  }
+
   List<ChartLine> _getAxes(List<Point> points, List<String> pops,
       double height, double width, String mainAxisText) {
     List<ChartLine> list = new List();
@@ -191,7 +200,7 @@ class ChartData {
     return list;
   }
 
-  String _getPointAxisLabel(DateTime dateTime) {
+  String _getDateTimeLabel(DateTime dateTime) {
     int hour = dateTime.hour;
     String hourText = "";
     if (hour < 10) {
@@ -233,9 +242,12 @@ class ChartData {
 
   List<String> get pointLabels => _pointLabels;
 
-  List<String> get pointPops => _pointPops;
+  List<String> get labelPops => _labelsPops;
+
+  List<String> get dateTimeLabels => _dateTimeLabels;
 
   List<Point> get points => _points;
+
 }
 
 enum ChartDataType { temperature, wind, rain, pressure }
