@@ -3,6 +3,7 @@ import 'package:weather_app/model/chart_data.dart';
 import 'package:weather_app/model/chart_line.dart';
 import 'package:weather_app/model/point.dart';
 import 'package:weather_app/shared/image.dart';
+import 'package:weather_app/utils/utils.dart';
 import 'animated_state.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -27,6 +28,7 @@ class ChartWidget extends StatefulWidget {
 class _ChartWidgetState extends AnimatedState<ChartWidget> {
   double _fraction = 0.0;
   ui.Image image;
+  List<ui.Image> iconImage;
 
   @override
   void initState() {
@@ -36,19 +38,35 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
   }
 
   bool isImageLoaded = false;
+  bool isIconImageLoaded = false;
 
   Future<Null> init() async {
-    final ByteData data = await rootBundle.load(mIcPrecipitationWhite);
-    image = await loadImage(new Uint8List.view(data.buffer));
+    image = await loadImage(
+        mIcPrecipitationWhite, humidityIconWidth, humidityIconHeight);
     setState(() {
       isImageLoaded = true;
     });
+    iconImage = await getListIcon(widget.chartData.iconCode);
+    setState(() {
+      isIconImageLoaded = true;
+    });
   }
 
-  Future<ui.Image> loadImage(List<int> img) async {
-    images.Image baseSizeImage = images.decodeImage(img);
-    images.Image resizeImage = images.copyResize(baseSizeImage,
-        height: humidityIconHeight, width: humidityIconWidth);
+  Future<List<ui.Image>> getListIcon(List<String> iconCode) async {
+    List<ui.Image> list = List();
+    for (String code in iconCode) {
+      ui.Image image = await loadImage(getIconForecastUrl(code), 20, 20);
+      list.add(image);
+    }
+    return list;
+  }
+
+  Future<ui.Image> loadImage(String imageUrl, int width, int height) async {
+    final ByteData data = await rootBundle.load(imageUrl);
+    images.Image baseSizeImage =
+        images.decodeImage(new Uint8List.view(data.buffer));
+    images.Image resizeImage =
+        images.copyResize(baseSizeImage, height: height, width: width);
     ui.Codec codec =
         await ui.instantiateImageCodec(images.encodePng(resizeImage));
     ui.FrameInfo frameInfo = await codec.getNextFrame();
@@ -76,14 +94,16 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
     return CustomPaint(
         key: Key("chart_widget_custom_paint"),
         painter: _ChartPainter(
-            widget.chartData.points,
-            widget.chartData.pointLabels,
-            widget.chartData.width,
-            widget.chartData.height,
-            widget.chartData.axes,
-            _fraction,
-            isImageLoaded ? image : null,
-            widget.chartData.dateTimeLabels));
+          widget.chartData.points,
+          widget.chartData.pointLabels,
+          widget.chartData.width,
+          widget.chartData.height,
+          widget.chartData.axes,
+          _fraction,
+          isImageLoaded ? image : null,
+          widget.chartData.dateTimeLabels,
+          isIconImageLoaded ? iconImage : null,
+        ));
   }
 
   Widget _getChartUnavailableWidget(BuildContext context) {
@@ -103,8 +123,16 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
 }
 
 class _ChartPainter extends CustomPainter {
-  _ChartPainter(this.points, this.pointLabels, this.width, this.height,
-      this.axes, this.fraction, this.image, this.dateTimeLabels);
+  _ChartPainter(
+      this.points,
+      this.pointLabels,
+      this.width,
+      this.height,
+      this.axes,
+      this.fraction,
+      this.image,
+      this.dateTimeLabels,
+      this.iconImage);
 
   final List<Point> points;
   final List<String> pointLabels;
@@ -113,12 +141,16 @@ class _ChartPainter extends CustomPainter {
   final List<ChartLine> axes;
   final double fraction;
   final ui.Image image;
+  final List<ui.Image> iconImage;
   final List<String> dateTimeLabels;
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = _getLinePaint(Colors.blue, 2);
     _drawAxes(canvas);
+    if (iconImage != null) {
+      _drawIconList(canvas);
+    }
     _drawDateTimes(canvas);
     double fractionLinePerPoint = 1 / points.length;
 
@@ -170,9 +202,14 @@ class _ChartPainter extends CustomPainter {
     canvas.drawImage(image, Offset(offset.dx - 20, offset.dy), Paint());
   }
 
+  void _drawIcon(Offset offset, Canvas canvas, ui.Image image) async {
+    canvas.drawImage(image, Offset(offset.dx - 20, offset.dy), Paint());
+    print('_drawIcon');
+  }
+
   void _drawDateTimes(Canvas canvas) async {
     for (int index = 0; index < dateTimeLabels.length; index++) {
-      Offset offset = Offset(points[index].x-20, -50);
+      Offset offset = Offset(points[index].x - 20, -80);
       TextStyle textStyle = _getTextStyle(1, false);
       TextSpan textSpan =
           TextSpan(style: textStyle, text: dateTimeLabels[index]);
@@ -180,6 +217,14 @@ class _ChartPainter extends CustomPainter {
           TextPainter(text: textSpan, textDirection: TextDirection.ltr);
       textPainter.layout();
       textPainter.paint(canvas, offset);
+    }
+  }
+
+  void _drawIconList(Canvas canvas) {
+    for (int i = 0; i < iconImage.length; i++) {
+      print('_drawIconList ${iconImage.length}');
+      Offset offset = Offset(points[i].x + 10, -50);
+      _drawIcon(offset, canvas, iconImage[i]);
     }
   }
 

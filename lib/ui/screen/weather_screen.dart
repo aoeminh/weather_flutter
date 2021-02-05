@@ -233,7 +233,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 WeatherForecastListResponse weatherForecastListResponse = weatherForecastStateSuccess
                     .weatherResponse;
                 return Container(
-                  height: 200,
+                  height: 220,
                   // padding: EdgeInsets.symmetric(vertical: 30),
                   margin: EdgeInsets.symmetric(horizontal: 30),
                   child: Center(

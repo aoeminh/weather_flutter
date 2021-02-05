@@ -18,6 +18,7 @@ class ChartData {
   List<String> _pointLabels;
   List<String> _dateTimeLabels;
   List<String> _labelsPops;
+  List<String> _iconCodes;
   double _width;
   double _height;
   List<ChartLine> _axes;
@@ -50,6 +51,7 @@ class ChartData {
     this._axes = _getAxes(_points, labelPops, height, width, mainAxisText);
     this._width = width;
     this._height = height;
+    this._iconCodes = _getIconCodes(forecastList);
   }
 
   List<double> _getChartValues(
@@ -233,6 +235,14 @@ class ChartData {
     }
     return text;
   }
+  
+  List<String> _getIconCodes(List<WeatherForecastResponse> forecastList){
+    List<String> list = List();
+    for(WeatherForecastResponse weatherForecastResponse in forecastList){
+      list.add(weatherForecastResponse.overallWeatherData[0].icon);
+    }
+    return list;
+  }
 
   List<ChartLine> get axes => _axes;
 
@@ -245,6 +255,8 @@ class ChartData {
   List<String> get labelPops => _labelsPops;
 
   List<String> get dateTimeLabels => _dateTimeLabels;
+  
+  List<String> get iconCode => _iconCodes;
 
   List<Point> get points => _points;
 
