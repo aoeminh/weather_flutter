@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
 import 'package:weather_app/bloc/weather_forecast_bloc.dart';
@@ -234,18 +235,18 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     .weatherResponse;
                 return Container(
                   height: 220,
-                  // padding: EdgeInsets.symmetric(vertical: 30),
-                  margin: EdgeInsets.symmetric(horizontal: 30),
+                  width: 2000,
+                  margin: EdgeInsets.symmetric(horizontal: 30,vertical: 15),
                   child: Center(
                     child: ChartWidget(chartData: WeatherForecastHolder(
-                        weatherForecastListResponse.list,
-                        weatherForecastListResponse.city, weatherResponse.system)
-                        .setupChartData(ChartDataType.temperature, 2000, 50),),
+                    weatherForecastListResponse.list,
+                    weatherForecastListResponse.city, weatherResponse.system)
+                    .setupChartData(ChartDataType.temperature, 2000, 50),),
                   ),
                 );
               }
             }
-            return Text('Error', style: textTitleH1White,);
+            return Container(height: 220,);
           }
       ),
     );

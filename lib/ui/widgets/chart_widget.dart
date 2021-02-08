@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/model/chart_data.dart';
 import 'package:weather_app/model/chart_line.dart';
 import 'package:weather_app/model/point.dart';
@@ -16,6 +17,17 @@ const humidityIconHeight = 15;
 const marginBottomTemp = 20;
 const marginLeftTemp = 5;
 
+const double _marginLeftHumidity = 20;
+const double _iconHumiditySize = 14;
+
+const double _marginLeftIconWeather = 15;
+const double _marginTopIconWeather = -55;
+const double _iconWeatherSize = 30;
+
+const double _marginLeftDateTimes = 18;
+const double _marginTopDateTimes = 80;
+const double _textSize = 12;
+
 class ChartWidget extends StatefulWidget {
   final ChartData chartData;
 
@@ -28,7 +40,18 @@ class ChartWidget extends StatefulWidget {
 class _ChartWidgetState extends AnimatedState<ChartWidget> {
   double _fraction = 0.0;
   ui.Image image;
-  List<ui.Image> iconImage;
+  ImageInfo imageInfo;
+  List<ImageInfo> weatherImagesInfo;
+  BehaviorSubject<ImageInfo> humidityBehaviorSubject = BehaviorSubject();
+  BehaviorSubject<List<ImageInfo>> weatherImageInfoSubject = BehaviorSubject();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    humidityBehaviorSubject.close();
+    weatherImageInfoSubject.close();
+  }
 
   @override
   void initState() {
@@ -37,25 +60,19 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
     animateTween(duration: 500, curve: Curves.linear);
   }
 
-  bool isImageLoaded = false;
-  bool isIconImageLoaded = false;
-
   Future<Null> init() async {
-    image = await loadImage(
-        mIcPrecipitationWhite, humidityIconWidth, humidityIconHeight);
-    setState(() {
-      isImageLoaded = true;
-    });
-    iconImage = await getListIcon(widget.chartData.iconCode);
-    setState(() {
-      isIconImageLoaded = true;
-    });
+    await Future.delayed(Duration(seconds: 1));
+    imageInfo = await getImageInfo(context, mIcPrecipitationWhite);
+    humidityBehaviorSubject.add(imageInfo);
+
+    weatherImagesInfo = await getListIcon(widget.chartData.iconCode);
+    weatherImageInfoSubject.add(weatherImagesInfo);
   }
 
-  Future<List<ui.Image>> getListIcon(List<String> iconCode) async {
-    List<ui.Image> list = List();
+  Future<List<ImageInfo>> getListIcon(List<String> iconCode) async {
+    List<ImageInfo> list = List();
     for (String code in iconCode) {
-      ui.Image image = await loadImage(getIconForecastUrl(code), 20, 20);
+      ImageInfo image = await getImageInfo(context, getIconForecastUrl(code));
       list.add(image);
     }
     return list;
@@ -71,6 +88,17 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
         await ui.instantiateImageCodec(images.encodePng(resizeImage));
     ui.FrameInfo frameInfo = await codec.getNextFrame();
     return frameInfo.image;
+  }
+
+  Future<ImageInfo> getImageInfo(BuildContext context, String imagePath) async {
+    AssetImage assetImage = AssetImage(imagePath);
+    ImageStream stream =
+        assetImage.resolve(createLocalImageConfiguration(context));
+    Completer<ImageInfo> completer = Completer();
+    stream.addListener(ImageStreamListener((imageInfo, _) {
+      return completer.complete(imageInfo);
+    }));
+    return completer.future;
   }
 
   @override
@@ -91,19 +119,32 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
   }
 
   Widget _getChartWidget() {
-    return CustomPaint(
-        key: Key("chart_widget_custom_paint"),
-        painter: _ChartPainter(
-          widget.chartData.points,
-          widget.chartData.pointLabels,
-          widget.chartData.width,
-          widget.chartData.height,
-          widget.chartData.axes,
-          _fraction,
-          isImageLoaded ? image : null,
-          widget.chartData.dateTimeLabels,
-          isIconImageLoaded ? iconImage : null,
-        ));
+    return StreamBuilder<Object>(
+        stream: Rx.combineLatest2(
+            humidityBehaviorSubject.stream,
+            weatherImageInfoSubject,
+            (ImageInfo humidity, List<ImageInfo> weatherIcons) =>
+                ImageInfoWeather(humidity, weatherIcons)),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            ImageInfoWeather imageInfoWeather = snapshot.data;
+            return CustomPaint(
+                key: Key("chart_widget_custom_paint"),
+                painter: _ChartPainter(
+                  widget.chartData.points,
+                  widget.chartData.pointLabels,
+                  widget.chartData.width,
+                  widget.chartData.height,
+                  widget.chartData.axes,
+                  _fraction,
+                  imageInfoWeather.humidityInfo,
+                  widget.chartData.dateTimeLabels,
+                  imageInfoWeather.weatherIconsInfo,
+                ));
+          } else {
+            return Container();
+          }
+        });
   }
 
   Widget _getChartUnavailableWidget(BuildContext context) {
@@ -130,7 +171,7 @@ class _ChartPainter extends CustomPainter {
       this.height,
       this.axes,
       this.fraction,
-      this.image,
+      this.imageInfo,
       this.dateTimeLabels,
       this.iconImage);
 
@@ -140,8 +181,8 @@ class _ChartPainter extends CustomPainter {
   final double height;
   final List<ChartLine> axes;
   final double fraction;
-  final ui.Image image;
-  final List<ui.Image> iconImage;
+  final ImageInfo imageInfo;
+  final List<ImageInfo> iconImage;
   final List<String> dateTimeLabels;
 
   @override
@@ -199,17 +240,37 @@ class _ChartPainter extends CustomPainter {
   }
 
   void _drawHumidity(Offset offset, Canvas canvas) async {
-    canvas.drawImage(image, Offset(offset.dx - 20, offset.dy), Paint());
+    paintImage(
+      canvas: canvas,
+      rect: Rect.fromLTWH(offset.dx - _marginLeftHumidity, offset.dy,
+          _iconHumiditySize, _iconHumiditySize),
+      image: imageInfo.image, // <- the loaded image
+      filterQuality: FilterQuality.high,
+    );
   }
 
-  void _drawIcon(Offset offset, Canvas canvas, ui.Image image) async {
-    canvas.drawImage(image, Offset(offset.dx - 20, offset.dy), Paint());
-    print('_drawIcon');
+  void _drawIcon(Offset offset, Canvas canvas, ImageInfo image) async {
+    paintImage(
+      canvas: canvas,
+      rect: Rect.fromLTWH(
+          offset.dx, offset.dy, _iconWeatherSize, _iconWeatherSize),
+      image: image.image, // <- the loaded image
+      filterQuality: FilterQuality.high,
+    );
+  }
+
+  void _drawIconList(Canvas canvas) {
+    for (int i = 0; i < iconImage.length; i++) {
+      Offset offset =
+          Offset(points[i].x - _marginLeftIconWeather, _marginTopIconWeather);
+      _drawIcon(offset, canvas, iconImage[i]);
+    }
   }
 
   void _drawDateTimes(Canvas canvas) async {
     for (int index = 0; index < dateTimeLabels.length; index++) {
-      Offset offset = Offset(points[index].x - 20, -80);
+      Offset offset =
+          Offset(points[index].x - _marginLeftDateTimes, -_marginTopDateTimes);
       TextStyle textStyle = _getTextStyle(1, false);
       TextSpan textSpan =
           TextSpan(style: textStyle, text: dateTimeLabels[index]);
@@ -220,23 +281,16 @@ class _ChartPainter extends CustomPainter {
     }
   }
 
-  void _drawIconList(Canvas canvas) {
-    for (int i = 0; i < iconImage.length; i++) {
-      print('_drawIconList ${iconImage.length}');
-      Offset offset = Offset(points[i].x + 10, -50);
-      _drawIcon(offset, canvas, iconImage[i]);
-    }
-  }
-
   TextStyle _getTextStyle(double alphaFraction, bool textShadow) {
     if (textShadow) {
       return new TextStyle(
         color: Colors.white,
-        fontSize: 12,
+        fontSize: _textSize,
         letterSpacing: 0,
       );
     } else {
-      return new TextStyle(color: Colors.white, fontSize: 12, letterSpacing: 0);
+      return new TextStyle(
+          color: Colors.white, fontSize: _textSize, letterSpacing: 0);
     }
   }
 
@@ -265,10 +319,7 @@ class _ChartPainter extends CustomPainter {
         }
 
         _drawText(canvas, lineAxis.textOffset, lineAxis.label, 1, false);
-
-        if (image != null) {
-          _drawHumidity(lineAxis.textOffset, canvas);
-        }
+        _drawHumidity(lineAxis.textOffset, canvas);
       }
       _buildBottomLine(canvas, axesPaint);
     }
@@ -293,4 +344,11 @@ class _ChartPainter extends CustomPainter {
     paint..style = PaintingStyle.stroke;
     return paint;
   }
+}
+
+class ImageInfoWeather {
+  final ImageInfo humidityInfo;
+  final List<ImageInfo> weatherIconsInfo;
+
+  ImageInfoWeather(this.humidityInfo, this.weatherIconsInfo);
 }
