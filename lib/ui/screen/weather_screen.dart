@@ -1,3 +1,5 @@
+import 'dart:core';
+import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:weather_app/model/weather_response.dart';
 import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/text_style.dart';
+import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
 import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
 
@@ -28,15 +31,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   final WeatherBloc bloc = WeatherBloc();
   final WeatherForecastBloc weatherForecastBloc = WeatherForecastBloc();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  new GlobalKey<RefreshIndicatorState>();
+      new GlobalKey<RefreshIndicatorState>();
   WeatherResponse weatherResponse;
 
   @override
   void initState() {
     super.initState();
-    // SchedulerBinding.instance.addPostFrameCallback((_) {
-    //   _refreshIndicatorKey.currentState?.show();
-    // });
     bloc.fetchWeather(widget.lat, widget.lon);
     weatherForecastBloc.fetchWeatherForecastResponse(widget.lat, widget.lon);
   }
@@ -88,10 +88,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           children: [
             Container(
               child: Column(
-                children: [
-                  _currentWeather(),
-                  _buildHourlyForecast()
-                ],
+                children: [_currentWeather(), _buildHourlyForecast()],
               ),
             )
           ],
@@ -110,8 +107,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             if (snapshot.hasData) {
               if (snapshot.data is WeatherStateSuccess) {
                 WeatherStateSuccess weatherStateSuccess = snapshot.data;
-                weatherResponse =
-                    weatherStateSuccess.weatherResponse;
+                weatherResponse = weatherStateSuccess.weatherResponse;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +123,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     _buildFeelsLike(weatherResponse.mainWeatherData.feelsLike,
                         weatherResponse.mainWeatherData.humidity),
                     SizedBox(height: margin),
-                    _buildMaxMinTemp(weatherResponse.mainWeatherData.tempMax.toInt(),
+                    _buildMaxMinTemp(
+                        weatherResponse.mainWeatherData.tempMax.toInt(),
                         weatherResponse.mainWeatherData.tempMin.toInt())
                   ],
                 );
@@ -194,8 +191,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 
-  _buildMaxMinTemp(int maxTemp, int minTemp) =>
-      Row(
+  _buildMaxMinTemp(int maxTemp, int minTemp) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
@@ -221,36 +217,85 @@ class _WeatherScreenState extends State<WeatherScreen> {
       );
 
   _buildHourlyForecast() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: StreamBuilder<WeatherState>(
-          stream: weatherForecastBloc.weatherForecastStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data is WeatherForecastStateSuccess) {
-                WeatherForecastStateSuccess weatherForecastStateSuccess = snapshot
-                    .data;
-                WeatherForecastListResponse weatherForecastListResponse = weatherForecastStateSuccess
-                    .weatherResponse;
-                return Container(
-                  height: 100,
-                  padding: EdgeInsets.symmetric(vertical: 30),
-                  margin: EdgeInsets.symmetric(horizontal: 50),
-                  child: ChartWidget(chartData: WeatherForecastHolder(
-                      weatherForecastListResponse.list,
-                      weatherForecastListResponse.city, weatherResponse.system)
-                      .setupChartData(ChartDataType.temperature, 1600, 50),),
-                );
-              }
+    return StreamBuilder<WeatherState>(
+        stream: weatherForecastBloc.weatherForecastStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data is WeatherForecastStateSuccess) {
+              WeatherForecastStateSuccess weatherForecastStateSuccess =
+                  snapshot.data;
+              WeatherForecastListResponse weatherForecastListResponse =
+                  weatherForecastStateSuccess.weatherResponse;
+              return Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Hourly Forecast',
+                          style: textTitleWhite,
+                        ),
+                        GestureDetector(
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HourlyForecastScreen(
+                                          weatherForecastListResponse:
+                                              weatherForecastListResponse,
+                                        ))),
+                            child: Text(
+                              'More',
+                              style: textTitleUnderlineWhite,
+                            ))
+                      ],
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      height: 220,
+                      width: 2000,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      child: Center(
+                        child: ChartWidget(
+                          chartData: WeatherForecastHolder(
+                            weatherForecastListResponse.list,
+                            weatherForecastListResponse.city,
+                          ).setupChartData(ChartDataType.temperature, 2000, 50),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
             }
-            return Text('Error', style: textTitleH1White,);
           }
-      ),
+          return Container(
+            height: 220,
+          );
+        });
+  }
+
+  _buildRowTitle(String title1, String title2) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title1,
+          style: textTitleWhite,
+        ),
+        Text(
+          title2,
+          style: textTitleWhite,
+        )
+      ],
     );
   }
 
-  _buildDetail() {
-  }
+  _buildDetail() {}
 
   Future<void> get() async {
     await bloc.fetchWeather(widget.lat, widget.lon);
@@ -258,6 +303,4 @@ class _WeatherScreenState extends State<WeatherScreen> {
         widget.lat, widget.lon);
     return;
   }
-
-
 }

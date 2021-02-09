@@ -1,18 +1,25 @@
 import 'dart:math';
 import 'dart:ui';
 
-
 import 'package:weather_app/model/point.dart';
 import 'package:weather_app/shared/dimensions.dart';
+import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/weather_helper.dart';
+import 'package:weather_app/utils/utils.dart';
 
 import 'chart_line.dart';
 import 'weather_forecast_holder.dart';
 import 'weather_forecast_response.dart';
 
+const double marginTopHourLabel = 10;
+const double marginRightHourLabel = 10;
+
 class ChartData {
   List<Point> _points;
   List<String> _pointLabels;
+  List<String> _dateTimeLabels;
+  List<String> _labelsPops;
+  List<String> _iconCodes;
   double _width;
   double _height;
   List<ChartLine> _axes;
@@ -32,17 +39,20 @@ class ChartData {
       ChartDataType chartDataType,
       double width,
       double height) {
-
     List<double> values = _getChartValues(holder, chartDataType);
     print(chartDataType.toString() + " Values: " + values.toString());
     double averageValue = _getChartAverageValue(holder, chartDataType);
     this._points = _getPoints(values, averageValue, width, height);
     this._pointLabels = _getPointLabels(values);
+    this._labelsPops =
+        _getPointPops(holder.pops);
     List<DateTime> dateTimes = _getDateTimes(forecastList);
+    this._dateTimeLabels = _getListDateTimeString(dateTimes);
     String mainAxisText = _getMainAxisText(chartDataType, averageValue);
-    this._axes = _getAxes(_points, dateTimes, height, width, mainAxisText);
+    this._axes = _getAxes(_points, labelPops, height, width, mainAxisText);
     this._width = width;
     this._height = height;
+    this._iconCodes = _getIconCodes(forecastList);
   }
 
   List<double> _getChartValues(
@@ -57,7 +67,10 @@ class ChartData {
         break;
       case ChartDataType.wind:
         dataSet = holder.winds;
-        dataSet = dataSet.map((value) => WeatherHelper.convertMetersPerSecondToMilesPerHour(value)).toList();
+        dataSet = dataSet
+            .map((value) =>
+                WeatherHelper.convertMetersPerSecondToMilesPerHour(value))
+            .toList();
         // if (applicationBloc.isMetricUnits()){
         //   dataSet = dataSet.map((value) => WeatherHelper.convertMetersPerSecondToKilometersPerHour(value)).toList();
         // } else {
@@ -86,7 +99,8 @@ class ChartData {
         break;
       case ChartDataType.wind:
         averageValue = holder.averageWind;
-        averageValue = WeatherHelper.convertMetersPerSecondToMilesPerHour(averageValue);
+        averageValue =
+            WeatherHelper.convertMetersPerSecondToMilesPerHour(averageValue);
         // if (applicationBloc.isMetricUnits()){
         //   averageValue = WeatherHelper.convertMetersPerSecondToKilometersPerHour(averageValue);
         // } else {
@@ -106,7 +120,6 @@ class ChartData {
   List<Point> _getPoints(
       List<double> values, double averageValue, double width, double height) {
     List<Point> points = List();
-    print('averageValue $averageValue');
     double halfHeight = (height - Dimensions.chartPadding) / 2;
     double widthStep = width / (values.length - 1);
     double currentX = 0;
@@ -146,7 +159,15 @@ class ChartData {
   List<String> _getPointLabels(List<double> values) {
     List<String> points = List();
     for (double value in values) {
-      points.add(value.toStringAsFixed(1));
+      points.add('${value.toStringAsFixed(0)}$degree');
+    }
+    return points;
+  }
+
+  List<String> _getPointPops(List<double> values) {
+    List<String> points = List();
+    for (double value in values) {
+      points.add('${value.toStringAsFixed(0)}$percent');
     }
     return points;
   }
@@ -159,32 +180,27 @@ class ChartData {
     return dateTimes;
   }
 
-  List<ChartLine> _getAxes(List<Point> points, List<DateTime> dateTimes,
-      double height, double width, String mainAxisText) {
-    List<ChartLine> list = new List();
-
-
-    for (int index = 0; index < points.length; index++) {
-      Point point = points[index];
-      DateTime dateTime = dateTimes[index];
-      list.add(ChartLine(
-          _getPointAxisLabel(dateTime),
-          Offset(point.x , height ),
-          Offset(point.x, height ),
-          Offset(point.x, point.y)));
+  List<String> _getListDateTimeString(List<DateTime> dateTimes){
+    List<String> list = List();
+    for(DateTime dateTime in dateTimes){
+      list.add(getTimeLabel(dateTime));
     }
     return list;
   }
 
-  String _getPointAxisLabel(DateTime dateTime) {
-    int hour = dateTime.hour;
-    String hourText = "";
-    if (hour < 10) {
-      hourText = "0${hour.toString()}";
-    } else {
-      hourText = hour.toString();
+  List<ChartLine> _getAxes(List<Point> points, List<String> pops,
+      double height, double width, String mainAxisText) {
+    List<ChartLine> list = new List();
+
+    for (int index = 0; index < points.length; index++) {
+      Point point = points[index];
+      list.add(ChartLine(
+          pops[index],
+          Offset(point.x , height + marginTopHourLabel),
+          Offset(point.x, height),
+          Offset(point.x, point.y)));
     }
-    return "${hourText.toString()}:00";
+    return list;
   }
 
   String _getMainAxisText(ChartDataType chartDataType, double averageValue) {
@@ -209,6 +225,14 @@ class ChartData {
     }
     return text;
   }
+  
+  List<String> _getIconCodes(List<WeatherForecastResponse> forecastList){
+    List<String> list = List();
+    for(WeatherForecastResponse weatherForecastResponse in forecastList){
+      list.add(weatherForecastResponse.overallWeatherData[0].icon);
+    }
+    return list;
+  }
 
   List<ChartLine> get axes => _axes;
 
@@ -218,7 +242,14 @@ class ChartData {
 
   List<String> get pointLabels => _pointLabels;
 
+  List<String> get labelPops => _labelsPops;
+
+  List<String> get dateTimeLabels => _dateTimeLabels;
+  
+  List<String> get iconCode => _iconCodes;
+
   List<Point> get points => _points;
+
 }
 
 enum ChartDataType { temperature, wind, rain, pressure }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'colors.dart';
@@ -15,31 +14,28 @@ const double _fontBadgeSize = 8;
 const double _fontMainTemp = 72;
 
 const textSecondaryWhite = TextStyle(
-    color: mWhite,
-    fontSize: _fontSizeLarge,
-    fontWeight: FontWeight.normal);
+    color: mWhite, fontSize: _fontSizeLarge, fontWeight: FontWeight.normal);
 
 const textSecondaryGrey = TextStyle(
-    color: mTextGrey,
-    fontSize: _fontSize,
-    fontWeight: FontWeight.normal);
+    color: mTextGrey, fontSize: _fontSize, fontWeight: FontWeight.normal);
 
 const textTitleWhite = TextStyle(
+    color: mWhite, fontSize: _fontTitleSize, fontWeight: FontWeight.normal);
+
+const textTitleUnderlineWhite = TextStyle(
     color: mWhite,
     fontSize: _fontTitleSize,
-    fontWeight: FontWeight.normal);
+    fontWeight: FontWeight.normal,
+    decoration: TextDecoration.underline);
 
 const textTitleH1White = TextStyle(
-    color: mWhite,
-    fontSize: _fontTitleSizeH1,
-    fontWeight: FontWeight.normal,);
+  color: mWhite,
+  fontSize: _fontTitleSizeH1,
+  fontWeight: FontWeight.normal,
+);
 
 const textTitleH2WhiteBold = TextStyle(
-    color: mWhite,
-    fontSize: _fontTitleSizeH2,
-    fontWeight: FontWeight.bold);
+    color: mWhite, fontSize: _fontTitleSizeH2, fontWeight: FontWeight.bold);
 
 const textMainTemp = TextStyle(
-    color: mWhite,
-    fontSize: _fontMainTemp,
-    fontWeight: FontWeight.normal);
+    color: mWhite, fontSize: _fontMainTemp, fontWeight: FontWeight.normal);
