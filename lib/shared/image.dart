@@ -89,3 +89,9 @@ const mIconSnow = '$mImgPath'
 
 const mIconThunderstorm = '$mImgPath'
     'icon_thunderstorm.png';
+
+const mIconCloudCover = '$mImgPath'
+    'ic_cloud_cover.png';
+
+const mIconSettingWind = '$mImgPath'
+    'ic_setting_wind.png';

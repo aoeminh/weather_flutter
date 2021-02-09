@@ -34,10 +34,9 @@ class WeatherForecastHolder {
   String _weatherCodeAsset;
   List<WeatherForecastResponse> _forecastList;
   City _city;
-  System _system;
 
   WeatherForecastHolder(
-      List<WeatherForecastResponse> forecastList, City city, System system) {
+      List<WeatherForecastResponse> forecastList, City city) {
     _forecastList = forecastList;
     _temperatures = _getTemperaturesList();
     _pops =_getPopsList();
@@ -63,7 +62,6 @@ class WeatherForecastHolder {
     setupDateFormatted(forecastList[0].dateTime);
     // setupWeatherCode(forecastList);
     _city = city;
-    _system = system;
   }
 
   List<double> _getTemperaturesList() {
@@ -238,5 +236,4 @@ class WeatherForecastHolder {
 
   List<double> get pressures => _pressures;
 
-  System get system => _system;
 }

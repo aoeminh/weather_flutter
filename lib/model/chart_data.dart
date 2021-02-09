@@ -5,6 +5,7 @@ import 'package:weather_app/model/point.dart';
 import 'package:weather_app/shared/dimensions.dart';
 import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/weather_helper.dart';
+import 'package:weather_app/utils/utils.dart';
 
 import 'chart_line.dart';
 import 'weather_forecast_holder.dart';
@@ -182,7 +183,7 @@ class ChartData {
   List<String> _getListDateTimeString(List<DateTime> dateTimes){
     List<String> list = List();
     for(DateTime dateTime in dateTimes){
-      list.add(_getDateTimeLabel(dateTime));
+      list.add(getTimeLabel(dateTime));
     }
     return list;
   }
@@ -200,17 +201,6 @@ class ChartData {
           Offset(point.x, point.y)));
     }
     return list;
-  }
-
-  String _getDateTimeLabel(DateTime dateTime) {
-    int hour = dateTime.hour;
-    String hourText = "";
-    if (hour < 10) {
-      hourText = "0${hour.toString()}";
-    } else {
-      hourText = hour.toString();
-    }
-    return "${hourText.toString()}:00";
   }
 
   String _getMainAxisText(ChartDataType chartDataType, double averageValue) {
