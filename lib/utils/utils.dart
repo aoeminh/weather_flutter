@@ -55,7 +55,7 @@ String getIconForecastUrl(String iconCode) {
     case mCloudsN:
     case mBrokenClouds:
     case mBrokenCloudsN:
-      return mIconClearsNight;
+      return mIconBrokenClouds;
     case mShowerRain:
     case mShowerRainN:
     case mRain:
