@@ -14,8 +14,8 @@ import 'package:image/image.dart' as images;
 
 const humidityIconWidth = 15;
 const humidityIconHeight = 15;
-const marginBottomTemp = 20;
-const marginLeftTemp = 5;
+const marginBottomTemp = 24;
+const marginLeftTemp = 8;
 
 const double _marginLeftHumidity = 20;
 const double _iconHumiditySize = 14;
@@ -131,16 +131,17 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
             return CustomPaint(
                 key: Key("chart_widget_custom_paint"),
                 painter: _ChartPainter(
-                  widget.chartData.points,
-                  widget.chartData.pointLabels,
-                  widget.chartData.width,
-                  widget.chartData.height,
-                  widget.chartData.axes,
-                  _fraction,
-                  imageInfoWeather.humidityInfo,
-                  widget.chartData.dateTimeLabels,
-                  imageInfoWeather.weatherIconsInfo,
-                ));
+                    widget.chartData.points,
+                    widget.chartData.pointLabels,
+                    widget.chartData.width,
+                    widget.chartData.height,
+                    widget.chartData.axes,
+                    _fraction,
+                    imageInfoWeather.humidityInfo,
+                    widget.chartData.dateTimeLabels,
+                    imageInfoWeather.weatherIconsInfo,
+                    widget.chartData.maxTempIndex,
+                    widget.chartData.minTempIndex));
           } else {
             return Container();
           }
@@ -173,7 +174,9 @@ class _ChartPainter extends CustomPainter {
       this.fraction,
       this.imageInfo,
       this.dateTimeLabels,
-      this.iconImage);
+      this.iconImage,
+      this.maxTempIndex,
+      this.minTempIndex);
 
   final List<Point> points;
   final List<String> pointLabels;
@@ -184,11 +187,13 @@ class _ChartPainter extends CustomPainter {
   final ImageInfo imageInfo;
   final List<ImageInfo> iconImage;
   final List<String> dateTimeLabels;
+  final int maxTempIndex;
+  final int minTempIndex;
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = _getLinePaint(Colors.blue, 2);
-    _drawAxes(canvas);
+
     if (iconImage != null) {
       _drawIconList(canvas);
     }
@@ -202,31 +207,27 @@ class _ChartPainter extends CustomPainter {
     for (int index = 0; index < pointsFraction - 1; index++) {
       Offset textOffset = Offset(
           points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
-      if (index == pointsFraction - 2) {
-        Point startPoint = points[index];
-        Point endPoint = points[index + 1];
-        Offset startOffset = _getOffsetFromPoint(startPoint);
-
-        double diffX = endPoint.x - startPoint.x;
-        double diffY = endPoint.y - startPoint.y;
-
-        Offset endOffset = Offset(
-            startPoint.x + diffX * lastLineFractionPercentage,
-            startPoint.y + diffY * lastLineFractionPercentage);
-        canvas.drawLine(startOffset, endOffset, paint);
-        _drawText(canvas, textOffset, pointLabels[index + 1],
-            lastLineFractionPercentage, true);
+      canvas.drawLine(_getOffsetFromPoint(points[index]),
+          _getOffsetFromPoint(points[index + 1]), paint);
+      if (index == maxTempIndex) {
+        _drawTempText(canvas, textOffset, pointLabels[index],
+            lastLineFractionPercentage, true,
+            isMax: true);
+      } else if (index == minTempIndex) {
+        _drawTempText(canvas, textOffset, pointLabels[index],
+            lastLineFractionPercentage, true,
+            isMin: true);
       } else {
-        canvas.drawLine(_getOffsetFromPoint(points[index]),
-            _getOffsetFromPoint(points[index + 1]), paint);
-        _drawText(canvas, textOffset, pointLabels[index], 1, true);
+        _drawTempText(canvas, textOffset, pointLabels[index], 1, true);
       }
     }
     if (fraction > 0.999) {
-      Offset textOffset = Offset(
-          points[points.length - 1].x - 5, points[points.length - 1].y - 15);
-      _drawText(canvas, textOffset, pointLabels[points.length - 1], 1, true);
+      Offset textOffset = Offset(points[points.length - 1].x - marginLeftTemp,
+          points[points.length - 1].y - marginBottomTemp);
+      _drawTempText(
+          canvas, textOffset, pointLabels[points.length - 1], 1, true);
     }
+    _drawAxes(canvas);
   }
 
   void _drawText(Canvas canvas, Offset offset, String text,
@@ -237,6 +238,70 @@ class _ChartPainter extends CustomPainter {
         TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     textPainter.layout();
     textPainter.paint(canvas, offset);
+  }
+
+  void _drawTempText(Canvas canvas, Offset offset, String text,
+      double alphaFraction, bool textShadow,
+      {bool isMax = false, bool isMin = false}) {
+    _drawRectangle(canvas, offset, isMax: isMax, isMin: isMin);
+    TextStyle textStyle =
+        TextStyle(color: Colors.white, fontSize: _textSize, letterSpacing: 0);
+
+    TextSpan textSpan = TextSpan(style: textStyle, text: text);
+    TextPainter textPainter =
+        TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+    textPainter.layout();
+    textPainter.paint(canvas, offset);
+  }
+
+  _drawRectangle(Canvas canvas, Offset offset,
+      {bool isMax = false, bool isMin = false}) {
+    Color color;
+    if (isMax) {
+      color = Colors.orange;
+    } else if (isMin) {
+      color = Color(0xff638965);
+    } else {
+      color = Colors.green;
+    }
+    var paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    //a rectangle
+    var height = 20;
+    var width = 24;
+    var newDx = offset.dx - 4;
+    var newDy = offset.dy - 2;
+    var marginQuadraticBezier = 1;
+    var marginConner = 2;
+
+    var path = Path();
+    path.moveTo(newDx, newDy + marginConner);
+    path.lineTo(newDx, newDy + (height - marginConner));
+    path.quadraticBezierTo(
+        newDx + marginQuadraticBezier,
+        newDy + (height - marginQuadraticBezier),
+        newDx + marginConner,
+        newDy + height);
+
+    path.lineTo(newDx + (width / 2) - 4, newDy + height);
+    path.lineTo(newDx + (width / 2), newDy + height + 4);
+    path.lineTo(newDx + (width / 2) + 4, newDy + height);
+    path.lineTo(newDx + (width - marginConner), newDy + height);
+
+    path.quadraticBezierTo(
+        newDx + (width - marginQuadraticBezier),
+        newDy + (height - marginQuadraticBezier),
+        newDx + width,
+        newDy + (height - marginConner));
+    path.lineTo(newDx + width, newDy + marginConner);
+    path.quadraticBezierTo(newDx + (width - marginQuadraticBezier),
+        newDy + marginQuadraticBezier, newDx + (width - marginConner), newDy);
+    path.lineTo(newDx + marginConner, newDy);
+    path.quadraticBezierTo(newDx + marginQuadraticBezier,
+        newDy + marginQuadraticBezier, newDx, newDy + marginConner);
+
+    canvas.drawPath(path, paint);
   }
 
   void _drawHumidity(Offset offset, Canvas canvas) async {
@@ -317,12 +382,21 @@ class _ChartPainter extends CustomPainter {
               Offset(lineAxis.lineEndOffset.dx, starty - dashWidth), axesPaint);
           starty -= space;
         }
-
+        _drawCirclePoint(canvas,
+            Offset(lineAxis.lineStartOffset.dx, lineAxis.lineEndOffset.dy));
         _drawText(canvas, lineAxis.textOffset, lineAxis.label, 1, false);
         _drawHumidity(lineAxis.textOffset, canvas);
       }
       _buildBottomLine(canvas, axesPaint);
     }
+  }
+
+  _drawCirclePoint(Canvas canvas, Offset offset) {
+    Paint whitePaint = Paint();
+    whitePaint.color = Colors.white;
+    whitePaint..strokeWidth = 1;
+    whitePaint..style = PaintingStyle.stroke;
+    canvas.drawCircle(offset, 2, whitePaint);
   }
 
   _buildBottomLine(Canvas canvas, Paint paint) {
