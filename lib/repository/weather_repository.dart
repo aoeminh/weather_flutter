@@ -1,5 +1,6 @@
 import 'package:weather_app/api/weather_api.dart';
 import 'package:weather_app/api/weather_api_impl.dart';
+import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
 import 'package:weather_app/model/weather_response.dart';
 
@@ -14,4 +15,10 @@ class WeatherRepository {
       double lat, double lon, String units) {
     return _weatherApi.fetchWeatherForecast(lat, lon, units);
   }
+
+  Future<WeatherForecast7Day> fetchWeatherForecast7Day(
+      double lat, double lon, String units,String exclude) {
+    return _weatherApi.fetchWeatherForecast7Day(lat, lon, units,exclude);
+  }
+
 }

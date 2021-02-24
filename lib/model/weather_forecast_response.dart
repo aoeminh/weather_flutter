@@ -11,7 +11,7 @@ import '../utils/types_helper.dart';
 
 class WeatherForecastResponse {
   final MainWeatherData mainWeatherData;
-  final List<OverallWeatherData> overallWeatherData;
+  final List<Weather> overallWeatherData;
   final Clouds clouds;
   final Wind wind;
   final DateTime dateTime;
@@ -25,7 +25,7 @@ class WeatherForecastResponse {
 
   WeatherForecastResponse.fromJson(Map<String, dynamic> json)
       : overallWeatherData = (json["weather"] as List)
-            .map((i) => OverallWeatherData.fromJson(i))
+            .map((i) => Weather.fromJson(i))
             .toList(),
         mainWeatherData = MainWeatherData.fromJson(json["main"]),
         wind = Wind.fromJson(json["wind"]),

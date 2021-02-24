@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:weather_app/model/application_error.dart';
+import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'weather_api.dart';
 import '../model/weather_forecast_list_response.dart';
 import '../model/weather_response.dart';
@@ -10,7 +11,8 @@ class WeatherApiImpl extends WeatherApi {
   final String _apiPath = "/data/2.5";
   final String _apiWeatherEndpoint = "/weather";
   final String _apiWeatherForecastEndpoint = "/forecast";
-  static final String apiKey = "2b557cc4c291a6293e22bc44e49231d8";
+  final String _apiWeatherForecast7Day = "/onecall";
+  static final String apiKey = "980fd15d8985bd9e265eac0593d3c9bd";
 
   @override
   Future<WeatherResponse> fetchWeather(
@@ -30,7 +32,7 @@ class WeatherApiImpl extends WeatherApi {
     Uri uri = _buildUri(lat, lon, _apiWeatherForecastEndpoint, units);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
-      print('Success: ${response.data}');
+      print('fetchWeatherForecast Success: ${response.data}');
       return WeatherForecastListResponse.fromJson(response.data);
     } else {
       return WeatherForecastListResponse.withErrorCode(
@@ -38,16 +40,38 @@ class WeatherApiImpl extends WeatherApi {
     }
   }
 
-  _buildUri(double lat, double lon, String endpoint, String unit) {
+  @override
+  Future<WeatherForecast7Day> fetchWeatherForecast7Day(
+      double lat, double lon, String units, String exclude) async {
+    Uri uri =
+        _buildUri(lat, lon, _apiWeatherForecast7Day, units, exclude: exclude);
+    print('uri $uri');
+    Response response = await _dio.get(uri.toString());
+    if (response.statusCode == 200) {
+      print('fetchWeatherForecast7Day Success: ${response.data}');
+      return WeatherForecast7Day.fromJson(response.data);
+    } else {
+      return WeatherForecast7Day.withErrorCode(ApplicationError.apiError);
+    }
+  }
+
+  _buildUri(double lat, double lon, String endpoint, String unit,
+      {String exclude}) {
+    Map<String, dynamic> param = {
+      'lat': lat.toString(),
+      'lon': lon.toString(),
+      'apiKey': apiKey,
+      'units': unit
+    };
+
+    // add param to 7 day api
+    if (exclude != null) {
+      param['exclude'] = exclude;
+    }
     return Uri(
         scheme: 'https',
         host: _baseUrl,
         path: '$_apiPath$endpoint',
-        queryParameters: {
-          'lat': lat.toString(),
-          'lon': lon.toString(),
-          'apiKey': apiKey,
-          'units': unit
-        });
+        queryParameters: param);
   }
 }

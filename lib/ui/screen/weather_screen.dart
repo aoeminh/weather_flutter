@@ -1,5 +1,5 @@
 import 'dart:core';
-import 'package:rxdart/rxdart.dart';
+
 import 'package:flutter/material.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
@@ -16,6 +16,7 @@ import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
 
 const double _mainWeatherHeight = 200;
+const String _exclude7DayForecast = 'current,minutely,hourly';
 
 class WeatherScreen extends StatefulWidget {
   final double lat;
@@ -39,6 +40,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
     super.initState();
     bloc.fetchWeather(widget.lat, widget.lon);
     weatherForecastBloc.fetchWeatherForecastResponse(widget.lat, widget.lon);
+    weatherForecastBloc.fetchWeatherForecast7Day(
+        widget.lat, widget.lon, _exclude7DayForecast);
   }
 
   @override
@@ -92,7 +95,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               ),
             )
           ],
-          onRefresh: get,
+          onRefresh: refresh,
         ),
       ),
     );
@@ -228,30 +231,16 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   weatherForecastStateSuccess.weatherResponse;
               return Column(
                 children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Hourly Forecast',
-                          style: textTitleWhite,
-                        ),
-                        GestureDetector(
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HourlyForecastScreen(
-                                          weatherForecastListResponse:
-                                              weatherForecastListResponse,
-                                        ))),
-                            child: Text(
-                              'More',
-                              style: textTitleUnderlineWhite,
-                            ))
-                      ],
-                    ),
-                  ),
+                  _buildRowTitle(
+                      'Hourly Forecast',
+                      'More',
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HourlyForecastScreen(
+                                    weatherForecastListResponse:
+                                        weatherForecastListResponse,
+                                  )))),
                   Container(
                     margin: EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -262,7 +251,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       child: Container(
                         height: 200,
                         width: 2000,
-                        margin: EdgeInsets.only( left: 30, right: 30),
+                        margin: EdgeInsets.only(left: 30, right: 30),
                         child: Center(
                           child: ChartWidget(
                             chartData: WeatherForecastHolder(
@@ -285,28 +274,36 @@ class _WeatherScreenState extends State<WeatherScreen> {
         });
   }
 
-  _buildRowTitle(String title1, String title2) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title1,
-          style: textTitleWhite,
-        ),
-        Text(
-          title2,
-          style: textTitleWhite,
-        )
-      ],
+  _buildRowTitle(String title1, String title2, VoidCallback voidCallback) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title1,
+            style: textTitleWhite,
+          ),
+          GestureDetector(
+            onTap: voidCallback,
+            child: Text(
+              title2,
+              style: textTitleUnderlineWhite,
+            ),
+          )
+        ],
+      ),
     );
   }
 
   _buildDetail() {}
 
-  Future<void> get() async {
+  Future<void> refresh() async {
     await bloc.fetchWeather(widget.lat, widget.lon);
     await weatherForecastBloc.fetchWeatherForecastResponse(
         widget.lat, widget.lon);
+    await weatherForecastBloc.fetchWeatherForecast7Day(
+        widget.lat, widget.lon, _exclude7DayForecast);
     return;
   }
 }
