@@ -17,11 +17,11 @@ const humidityIconHeight = 15;
 const marginBottomTemp = 24;
 const marginLeftTemp = 8;
 
-const double _marginLeftHumidity = 20;
+const double _marginLeftHumidity = 16;
 const double _iconHumiditySize = 14;
 
 const double _marginLeftIconWeather = 15;
-const double _marginTopIconWeather = -55;
+const double _marginTopIconWeather = -60;
 const double _iconWeatherSize = 30;
 
 const double _marginLeftDateTimes = 18;
@@ -128,20 +128,23 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             ImageInfoWeather imageInfoWeather = snapshot.data;
-            return CustomPaint(
-                key: Key("chart_widget_custom_paint"),
-                painter: _ChartPainter(
-                    widget.chartData.points,
-                    widget.chartData.pointLabels,
-                    widget.chartData.width,
-                    widget.chartData.height,
-                    widget.chartData.axes,
-                    _fraction,
-                    imageInfoWeather.humidityInfo,
-                    widget.chartData.dateTimeLabels,
-                    imageInfoWeather.weatherIconsInfo,
-                    widget.chartData.maxTempIndex,
-                    widget.chartData.minTempIndex));
+            return Container(
+              margin: EdgeInsets.only(top: 25),
+              child: CustomPaint(
+                  key: Key("chart_widget_custom_paint"),
+                  painter: _ChartPainter(
+                      widget.chartData.points,
+                      widget.chartData.pointLabels,
+                      widget.chartData.width,
+                      widget.chartData.height,
+                      widget.chartData.axes,
+                      _fraction,
+                      imageInfoWeather.humidityInfo,
+                      widget.chartData.dateTimeLabels,
+                      imageInfoWeather.weatherIconsInfo,
+                      widget.chartData.maxTempIndex,
+                      widget.chartData.minTempIndex)),
+            );
           } else {
             return Container();
           }
@@ -268,7 +271,7 @@ class _ChartPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.fill;
     //a rectangle
-    var height = 20;
+    var height = 18;
     var width = 24;
     var newDx = offset.dx - 4;
     var newDy = offset.dy - 2;
