@@ -252,19 +252,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       ],
                     ),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                      height: 220,
-                      width: 2000,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                      child: Center(
-                        child: ChartWidget(
-                          chartData: WeatherForecastHolder(
-                            weatherForecastListResponse.list,
-                            weatherForecastListResponse.city,
-                          ).setupChartData(ChartDataType.temperature, 2000, 50),
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                        height: 200,
+                        width: 2000,
+                        margin: EdgeInsets.only( left: 30, right: 30),
+                        child: Center(
+                          child: ChartWidget(
+                            chartData: WeatherForecastHolder(
+                              weatherForecastListResponse.list,
+                              weatherForecastListResponse.city,
+                            ).setupChartData(
+                                ChartDataType.temperature, 2000, 60),
+                          ),
                         ),
                       ),
                     ),
@@ -274,7 +280,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             }
           }
           return Container(
-            height: 220,
+            height: 200,
           );
         });
   }
