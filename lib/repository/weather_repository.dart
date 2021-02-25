@@ -16,7 +16,7 @@ class WeatherRepository {
     return _weatherApi.fetchWeatherForecast(lat, lon, units);
   }
 
-  Future<WeatherForecast7Day> fetchWeatherForecast7Day(
+  Future<WeatherForecastDaily> fetchWeatherForecast7Day(
       double lat, double lon, String units,String exclude) {
     return _weatherApi.fetchWeatherForecast7Day(lat, lon, units,exclude);
   }

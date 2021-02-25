@@ -5,7 +5,7 @@ import 'package:weather_app/model/weather_forecast_list_response.dart';
 
 class WeatherForecastBloc extends BlocBase {
   BehaviorSubject<WeatherState> _behaviorSubject = BehaviorSubject();
-  BehaviorSubject<WeatherState> _behaviorSubjectFor7Day = BehaviorSubject();
+  BehaviorSubject<WeatherState> _behaviorSubjectForDailyDay = BehaviorSubject();
 
   fetchWeatherForecastResponse(double lat, double lon,
       {String units = 'metric'}) async {
@@ -24,22 +24,24 @@ class WeatherForecastBloc extends BlocBase {
 
   fetchWeatherForecast7Day(double lat, double lon, String exclude,
       {String units = 'metric'}) async {
-    WeatherForecast7Day weatherForecast7Day = await weatherRepository
+    WeatherForecastDaily weatherForecast7Day = await weatherRepository
         .fetchWeatherForecast7Day(lat, lon, units, exclude);
     if (weatherForecast7Day.errorCode != null) {
-      _behaviorSubjectFor7Day
+      _behaviorSubjectForDailyDay
           .add(WeatherStateError(weatherForecast7Day.errorCode));
     } else {
-      _behaviorSubjectFor7Day
-          .add(WeatherForecast7DayStateSuccess(weatherForecast7Day));
+      _behaviorSubjectForDailyDay
+          .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
     }
   }
 
   @override
   void dispose() {
     _behaviorSubject.close();
-    _behaviorSubjectFor7Day.close();
+    _behaviorSubjectForDailyDay.close();
   }
 
   Stream get weatherForecastStream => _behaviorSubject.stream;
+
+  Stream get weatherForecastDailyStream => _behaviorSubjectForDailyDay.stream;
 }

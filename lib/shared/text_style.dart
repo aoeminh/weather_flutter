@@ -22,6 +22,9 @@ const textSecondaryGrey = TextStyle(
 const textTitleWhite = TextStyle(
     color: mWhite, fontSize: _fontTitleSize, fontWeight: FontWeight.normal);
 
+const textTitleGrey = TextStyle(
+    color: mTextGrey, fontSize: _fontTitleSize, fontWeight: FontWeight.normal);
+
 const textTitleUnderlineWhite = TextStyle(
     color: mWhite,
     fontSize: _fontTitleSize,

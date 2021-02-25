@@ -1,21 +1,30 @@
 import 'dart:core';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
 import 'package:weather_app/bloc/weather_forecast_bloc.dart';
 import 'package:weather_app/model/chart_data.dart';
+import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'package:weather_app/model/weather_forecast_holder.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
 import 'package:weather_app/model/weather_response.dart';
+import 'package:weather_app/shared/colors.dart';
 import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
+import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/text_style.dart';
 import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
 import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
+import 'package:weather_app/utils/utils.dart';
 
 const double _mainWeatherHeight = 200;
+const double _mainWeatherWidth = 2000;
+const double _marginTopScreen = 50;
+const double _chartHeight = 30;
 const String _exclude7DayForecast = 'current,minutely,hourly';
 
 class WeatherScreen extends StatefulWidget {
@@ -84,20 +93,19 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   _body() {
-    return Container(
-      child: SingleChildScrollView(
-        child: SmartRefresher(
-          refreshIndicatorKey: _refreshIndicatorKey,
+    return SmartRefresher(
+      refreshIndicatorKey: _refreshIndicatorKey,
+      children: Container(
+        margin: EdgeInsets.only(top: _marginTopScreen),
+        child: Column(
           children: [
-            Container(
-              child: Column(
-                children: [_currentWeather(), _buildHourlyForecast()],
-              ),
-            )
+            _currentWeather(),
+            _buildHourlyForecast(),
+            _buildDailyForecast()
           ],
-          onRefresh: refresh,
         ),
       ),
+      onRefresh: refresh,
     );
   }
 
@@ -242,23 +250,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                         weatherForecastListResponse,
                                   )))),
                   Container(
-                    margin: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(margin),
                     decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(5)),
+                        border: Border.all(color: Colors.grey, width: 0.5),
+                        color: transparentBg,
+                        borderRadius: BorderRadius.circular(radiusSmall)),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Container(
-                        height: 200,
-                        width: 2000,
-                        margin: EdgeInsets.only(left: 30, right: 30),
+                        height: _mainWeatherHeight,
+                        width: _mainWeatherWidth,
+                        margin: EdgeInsets.only(
+                            left: marginXLarge, right: marginXLarge),
                         child: Center(
                           child: ChartWidget(
                             chartData: WeatherForecastHolder(
                               weatherForecastListResponse.list,
                               weatherForecastListResponse.city,
-                            ).setupChartData(
-                                ChartDataType.temperature, 2000, 60),
+                            ).setupChartData(ChartDataType.temperature,
+                                _mainWeatherWidth, _chartHeight),
                           ),
                         ),
                       ),
@@ -269,14 +279,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
             }
           }
           return Container(
-            height: 200,
+            height: _mainWeatherHeight,
           );
         });
   }
 
   _buildRowTitle(String title1, String title2, VoidCallback voidCallback) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10),
+      margin: EdgeInsets.symmetric(horizontal: margin),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -296,7 +306,126 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 
-  _buildDetail() {}
+  _buildDailyForecast() {
+    return StreamBuilder<WeatherState>(
+        stream: weatherForecastBloc.weatherForecastDailyStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            WeatherState weatherState = snapshot.data;
+            if (weatherState is WeatherForecastDailyStateSuccess) {
+              WeatherForecastDaily data = weatherState.weatherResponse;
+              return Container(
+                height: 450,
+                margin: EdgeInsets.all(margin),
+                decoration: BoxDecoration(
+                    color: transparentBg,
+                    borderRadius: BorderRadius.circular(radiusSmall),
+                    border: Border.all(color: Colors.grey, width: 0.5)),
+                child: Column(
+                  children: [
+                    Container(
+                        padding: EdgeInsets.all(paddingLarge),
+                        child: Text(
+                          "${data.daily[0].weather[0].description}",
+                          style: textTitleH1White,
+                        )),
+                    Divider(
+                      height: 1,
+                      color: Colors.white,
+                    ),
+                    Expanded(child: _buildDailyRow(data))
+                  ],
+                ),
+              );
+            }
+          }
+
+          return Container();
+        });
+  }
+
+  _buildDailyRow(WeatherForecastDaily data) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: margin),
+      child: ListView.separated(
+        padding: EdgeInsets.zero,
+        itemCount: data.daily.length,
+        scrollDirection: Axis.vertical,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          DateFormat dayFormat = DateFormat("mm/DD");
+          DateFormat weekDayFormat = DateFormat("E");
+          String day = dayFormat.format(
+              DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
+          String weekday = weekDayFormat.format(
+              DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
+          return Container(
+            margin:
+                EdgeInsets.symmetric(vertical: marginSmall, horizontal: margin),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        weekday,
+                        style: textTitleWhite,
+                      ),
+                      Text(
+                        day,
+                        style: textSecondaryGrey,
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                    flex: 1,
+                    child: getIconForecastImage(
+                        data.daily[index].weather[0].icon,
+                        width: 30,
+                        height: 30)),
+                Expanded(
+                    flex: 4,
+                    child: Container(
+                      margin: EdgeInsets.only(left: margin),
+                      child: Text(
+                        '${data.daily[index].weather[0].description}',
+                        style: textTitleGrey,
+                      ),
+                    )),
+                Expanded(
+                    flex: 3,
+                    child: Container(
+                      margin: EdgeInsets.only(left: marginLarge),
+                      child: Text(
+                        '${data.daily[index].temp.min.toInt()}$degree - ${data.daily[index].temp.max.toInt()}$degree',
+                        style: textTitleWhite,
+                      ),
+                    )),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                      margin: EdgeInsets.only(left: marginLarge),
+                      child: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.white54,
+                        size: 20,
+                      )),
+                )
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (context, index) => Divider(
+          height: 1,
+          color: Colors.grey,
+        ),
+      ),
+    );
+  }
 
   Future<void> refresh() async {
     await bloc.fetchWeather(widget.lat, widget.lon);

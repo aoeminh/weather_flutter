@@ -41,7 +41,7 @@ class WeatherApiImpl extends WeatherApi {
   }
 
   @override
-  Future<WeatherForecast7Day> fetchWeatherForecast7Day(
+  Future<WeatherForecastDaily> fetchWeatherForecast7Day(
       double lat, double lon, String units, String exclude) async {
     Uri uri =
         _buildUri(lat, lon, _apiWeatherForecast7Day, units, exclude: exclude);
@@ -49,9 +49,9 @@ class WeatherApiImpl extends WeatherApi {
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       print('fetchWeatherForecast7Day Success: ${response.data}');
-      return WeatherForecast7Day.fromJson(response.data);
+      return WeatherForecastDaily.fromJson(response.data);
     } else {
-      return WeatherForecast7Day.withErrorCode(ApplicationError.apiError);
+      return WeatherForecastDaily.withErrorCode(ApplicationError.apiError);
     }
   }
 

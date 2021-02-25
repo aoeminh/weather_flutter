@@ -1,13 +1,13 @@
 import 'application_error.dart';
 import 'daily.dart';
 
-class WeatherForecast7Day {
+class WeatherForecastDaily {
   List<Daily> daily;
   ApplicationError _errorCode;
 
-  WeatherForecast7Day({this.daily});
+  WeatherForecastDaily({this.daily});
 
-  WeatherForecast7Day.fromJson(Map<String, dynamic> json) {
+  WeatherForecastDaily.fromJson(Map<String, dynamic> json) {
     if (json['daily'] != null) {
       daily = new List<Daily>();
       json['daily'].forEach((v) {
@@ -24,8 +24,8 @@ class WeatherForecast7Day {
     return data;
   }
 
-  static WeatherForecast7Day withErrorCode(ApplicationError errorCode) {
-    WeatherForecast7Day response = new WeatherForecast7Day(daily: null);
+  static WeatherForecastDaily withErrorCode(ApplicationError errorCode) {
+    WeatherForecastDaily response = new WeatherForecastDaily(daily: null);
     response._errorCode = errorCode;
     return response;
   }

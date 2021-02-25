@@ -33,8 +33,8 @@ class WeatherForecastStateSuccess extends WeatherState {
   WeatherForecastStateSuccess(this.weatherResponse);
 }
 
-class WeatherForecast7DayStateSuccess extends WeatherState {
-  final WeatherForecast7Day weatherResponse;
+class WeatherForecastDailyStateSuccess extends WeatherState {
+  final WeatherForecastDaily weatherResponse;
 
-  WeatherForecast7DayStateSuccess(this.weatherResponse);
+  WeatherForecastDailyStateSuccess(this.weatherResponse);
 }
