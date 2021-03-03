@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:core';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
 import 'package:weather_app/bloc/weather_forecast_bloc.dart';
@@ -16,14 +18,16 @@ import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/text_style.dart';
+import 'package:weather_app/ui/screen/daily_forecast_screen.dart';
 import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
 import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
 import 'package:weather_app/utils/utils.dart';
 
+import 'detail_daily_forecast.dart';
+
 const double _mainWeatherHeight = 200;
 const double _mainWeatherWidth = 2000;
-const double _marginTopScreen = 50;
 const double _chartHeight = 30;
 const String _exclude7DayForecast = 'current,minutely,hourly';
 
@@ -31,7 +35,7 @@ class WeatherScreen extends StatefulWidget {
   final double lat;
   final double lon;
 
-  const WeatherScreen({Key key, this.lat, this.lon}) : super(key: key);
+  const WeatherScreen({Key key, this.lat, this.lon});
 
   @override
   _WeatherScreenState createState() => _WeatherScreenState();
@@ -43,6 +47,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   WeatherResponse weatherResponse;
+  WeatherForecastListResponse weatherForecastListResponse;
+  BehaviorSubject<DateTime> timeSubject =
+      BehaviorSubject.seeded(DateTime.now());
 
   @override
   void initState() {
@@ -51,6 +58,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
     weatherForecastBloc.fetchWeatherForecastResponse(widget.lat, widget.lon);
     weatherForecastBloc.fetchWeatherForecast7Day(
         widget.lat, widget.lon, _exclude7DayForecast);
+    Timer.periodic(
+        Duration(seconds: 1), (t) => {timeSubject.add(DateTime.now())});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timeSubject.close();
   }
 
   @override
@@ -64,29 +79,51 @@ class _WeatherScreenState extends State<WeatherScreen> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            centerTitle: true,
-            title: Column(
-              children: [
-                Text(
-                  'Hanoi',
-                  style: textTitleH2WhiteBold,
+          body: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxScrolled) => [
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                elevation: 0.0,
+                centerTitle: true,
+                pinned: true,
+                title: Column(
+                  children: [
+                    StreamBuilder(
+                        stream: bloc.weatherStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data is WeatherStateSuccess) {
+                              WeatherStateSuccess weatherStateSuccess =
+                                  snapshot.data;
+                              weatherResponse =
+                                  weatherStateSuccess.weatherResponse;
+                              return Text('${weatherResponse.name}');
+                            }
+                            return weatherResponse != null
+                                ? Text('${weatherResponse.name}')
+                                : Container();
+                          } else {
+                            return Container();
+                          }
+                        }),
+                    StreamBuilder<DateTime>(
+                        stream: timeSubject.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                                '${formatWeekDayAndTime(snapshot.data)}',
+                                style: textSecondaryGrey);
+                          }
+                          return Text('');
+                        }),
+                  ],
                 ),
-                Text('13:14', style: textSecondaryGrey),
-              ],
-            ),
-            leading: Icon(Icons.menu, color: Colors.white),
-            actions: [
-              Icon(
-                Icons.add,
-                color: Colors.white,
-              )
+              ),
             ],
+            body: _body(),
+            // _body(),
           ),
-          body: _body(),
         )
       ],
     );
@@ -96,7 +133,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return SmartRefresher(
       refreshIndicatorKey: _refreshIndicatorKey,
       children: Container(
-        margin: EdgeInsets.only(top: _marginTopScreen),
         child: Column(
           children: [
             _currentWeather(),
@@ -119,26 +155,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               if (snapshot.data is WeatherStateSuccess) {
                 WeatherStateSuccess weatherStateSuccess = snapshot.data;
                 weatherResponse = weatherStateSuccess.weatherResponse;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${weatherResponse.overallWeatherData[0].main}',
-                      style: textTitleH1White,
-                    ),
-                    SizedBox(
-                      height: marginLarge,
-                    ),
-                    _buildTempRow(weatherResponse.mainWeatherData.temp.toInt()),
-                    _buildFeelsLike(weatherResponse.mainWeatherData.feelsLike,
-                        weatherResponse.mainWeatherData.humidity),
-                    SizedBox(height: margin),
-                    _buildMaxMinTemp(
-                        weatherResponse.mainWeatherData.tempMax.toInt(),
-                        weatherResponse.mainWeatherData.tempMin.toInt())
-                  ],
-                );
+                return _buildBodyCurrentWeather(weatherResponse);
               }
 
               if (snapshot.data is WeatherStateError) {
@@ -147,11 +164,37 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     child: Text('${weatherStateError.error.toString()}'));
               }
 
-              return Container();
+              return weatherResponse != null
+                  ? _buildBodyCurrentWeather(weatherResponse)
+                  : Container();
             } else {
-              return Container();
+              return weatherResponse != null
+                  ? _buildBodyCurrentWeather(weatherResponse)
+                  : Container();
             }
           }),
+    );
+  }
+
+  _buildBodyCurrentWeather(WeatherResponse weatherResponse) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '${weatherResponse.overallWeatherData[0].main}',
+          style: textTitleH1White,
+        ),
+        SizedBox(
+          height: marginLarge,
+        ),
+        _buildTempRow(weatherResponse.mainWeatherData.temp.toInt()),
+        _buildFeelsLike(weatherResponse.mainWeatherData.feelsLike,
+            weatherResponse.mainWeatherData.humidity),
+        SizedBox(height: margin),
+        _buildMaxMinTemp(weatherResponse.mainWeatherData.tempMax.toInt(),
+            weatherResponse.mainWeatherData.tempMin.toInt())
+      ],
     );
   }
 
@@ -174,7 +217,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   _buildFeelsLike(double temp, double humidity) {
-    print('_buildFeelsLike $temp');
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -235,53 +277,59 @@ class _WeatherScreenState extends State<WeatherScreen> {
             if (snapshot.data is WeatherForecastStateSuccess) {
               WeatherForecastStateSuccess weatherForecastStateSuccess =
                   snapshot.data;
-              WeatherForecastListResponse weatherForecastListResponse =
+              weatherForecastListResponse =
                   weatherForecastStateSuccess.weatherResponse;
-              return Column(
-                children: [
-                  _buildRowTitle(
-                      'Hourly Forecast',
-                      'More',
-                      () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HourlyForecastScreen(
-                                    weatherForecastListResponse:
-                                        weatherForecastListResponse,
-                                  )))),
-                  Container(
-                    margin: EdgeInsets.all(margin),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 0.5),
-                        color: transparentBg,
-                        borderRadius: BorderRadius.circular(radiusSmall)),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                        height: _mainWeatherHeight,
-                        width: _mainWeatherWidth,
-                        margin: EdgeInsets.only(
-                            left: marginXLarge, right: marginXLarge),
-                        child: Center(
-                          child: ChartWidget(
-                            chartData: WeatherForecastHolder(
-                              weatherForecastListResponse.list,
-                              weatherForecastListResponse.city,
-                            ).setupChartData(ChartDataType.temperature,
-                                _mainWeatherWidth, _chartHeight),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
+              return _buildBodyHourlyForecast(weatherForecastListResponse);
             }
           }
-          return Container(
-            height: _mainWeatherHeight,
-          );
+          return weatherForecastListResponse != null
+              ? _buildBodyHourlyForecast(weatherForecastListResponse)
+              : Container(
+                  height: _mainWeatherHeight,
+                );
         });
+  }
+
+  _buildBodyHourlyForecast(
+      WeatherForecastListResponse weatherForecastListResponse) {
+    return Column(
+      children: [
+        _buildRowTitle(
+            'Hourly Forecast',
+            'More',
+            () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HourlyForecastScreen(
+                          weatherForecastListResponse:
+                              weatherForecastListResponse,
+                        )))),
+        Container(
+          margin: EdgeInsets.all(margin),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey, width: 0.5),
+              color: transparentBg,
+              borderRadius: BorderRadius.circular(radiusSmall)),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              height: _mainWeatherHeight,
+              width: _mainWeatherWidth,
+              margin: EdgeInsets.only(left: marginXLarge, right: marginXLarge),
+              child: Center(
+                child: ChartWidget(
+                  chartData: WeatherForecastHolder(
+                    weatherForecastListResponse.list,
+                    weatherForecastListResponse.city,
+                  ).setupChartData(ChartDataType.temperature, _mainWeatherWidth,
+                      _chartHeight),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   _buildRowTitle(String title1, String title2, VoidCallback voidCallback) {
@@ -314,28 +362,41 @@ class _WeatherScreenState extends State<WeatherScreen> {
             WeatherState weatherState = snapshot.data;
             if (weatherState is WeatherForecastDailyStateSuccess) {
               WeatherForecastDaily data = weatherState.weatherResponse;
-              return Container(
-                height: 450,
-                margin: EdgeInsets.all(margin),
-                decoration: BoxDecoration(
-                    color: transparentBg,
-                    borderRadius: BorderRadius.circular(radiusSmall),
-                    border: Border.all(color: Colors.grey, width: 0.5)),
-                child: Column(
-                  children: [
-                    Container(
-                        padding: EdgeInsets.all(paddingLarge),
-                        child: Text(
-                          "${data.daily[0].weather[0].description}",
-                          style: textTitleH1White,
-                        )),
-                    Divider(
-                      height: 1,
-                      color: Colors.white,
+              return Column(
+                children: [
+                  _buildRowTitle(
+                      'Daily Forecast',
+                      'More',
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DailyForecastScreen(
+                                    weatherForecastDaily: data,
+                                  )))),
+                  Container(
+                    height: 450,
+                    margin: EdgeInsets.all(margin),
+                    decoration: BoxDecoration(
+                        color: transparentBg,
+                        borderRadius: BorderRadius.circular(radiusSmall),
+                        border: Border.all(color: Colors.grey, width: 0.5)),
+                    child: Column(
+                      children: [
+                        Container(
+                            padding: EdgeInsets.all(paddingLarge),
+                            child: Text(
+                              "${data.daily[0].weather[0].description}",
+                              style: textTitleH1White,
+                            )),
+                        Divider(
+                          height: 1,
+                          color: Colors.white,
+                        ),
+                        Expanded(child: _buildDailyRow(data))
+                      ],
                     ),
-                    Expanded(child: _buildDailyRow(data))
-                  ],
-                ),
+                  ),
+                ],
               );
             }
           }
@@ -353,69 +414,72 @@ class _WeatherScreenState extends State<WeatherScreen> {
         scrollDirection: Axis.vertical,
         physics: NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          DateFormat dayFormat = DateFormat("mm/DD");
+          DateFormat dayFormat = DateFormat("MM/dd");
           DateFormat weekDayFormat = DateFormat("E");
           String day = dayFormat.format(
               DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
           String weekday = weekDayFormat.format(
               DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
-          return Container(
-            margin:
-                EdgeInsets.symmetric(vertical: marginSmall, horizontal: margin),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        weekday,
-                        style: textTitleWhite,
-                      ),
-                      Text(
-                        day,
-                        style: textSecondaryGrey,
-                      )
-                    ],
+          return GestureDetector(
+            onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => DetailDailyForecast(weatherForecastDaily: data,currentIndex: index,))),
+            child: Container(
+              margin:
+                  EdgeInsets.symmetric(vertical: marginSmall, horizontal: margin),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          weekday,
+                          style: textTitleWhite,
+                        ),
+                        Text(
+                          day,
+                          style: textSecondaryGrey,
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                    flex: 1,
-                    child: getIconForecastImage(
-                        data.daily[index].weather[0].icon,
-                        width: 30,
-                        height: 30)),
-                Expanded(
-                    flex: 4,
-                    child: Container(
-                      margin: EdgeInsets.only(left: margin),
-                      child: Text(
-                        '${data.daily[index].weather[0].description}',
-                        style: textTitleGrey,
-                      ),
-                    )),
-                Expanded(
-                    flex: 3,
-                    child: Container(
-                      margin: EdgeInsets.only(left: marginLarge),
-                      child: Text(
-                        '${data.daily[index].temp.min.toInt()}$degree - ${data.daily[index].temp.max.toInt()}$degree',
-                        style: textTitleWhite,
-                      ),
-                    )),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                      margin: EdgeInsets.only(left: marginLarge),
-                      child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.white54,
-                        size: 20,
+                  Expanded(
+                      flex: 1,
+                      child: getIconForecastImage(
+                          data.daily[index].weather[0].icon,
+                          width: 30,
+                          height: 30)),
+                  Expanded(
+                      flex: 4,
+                      child: Container(
+                        margin: EdgeInsets.only(left: margin),
+                        child: Text(
+                          '${data.daily[index].weather[0].description}',
+                          style: textTitleGrey,
+                        ),
                       )),
-                )
-              ],
+                  Expanded(
+                      flex: 3,
+                      child: Container(
+                        margin: EdgeInsets.only(left: marginLarge),
+                        child: Text(
+                          '${data.daily[index].temp.min.toInt()}$degree - ${data.daily[index].temp.max.toInt()}$degree',
+                          style: textTitleWhite,
+                        ),
+                      )),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                        margin: EdgeInsets.only(left: marginLarge),
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.white54,
+                          size: 20,
+                        )),
+                  )
+                ],
+              ),
             ),
           );
         },

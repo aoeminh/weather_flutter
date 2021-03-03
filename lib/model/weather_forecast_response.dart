@@ -33,7 +33,7 @@ class WeatherForecastResponse {
         dateTime = DateTime.parse(json["dt_txt"]),
         rain = _getRain(json["rain"]),
         visibility = TypesHelper.toDouble(json["visibility"]),
-        pop = TypesHelper.toDouble(json["pop"]),
+        pop = TypesHelper.toDouble(json["pop"]) * 100,
         snow = _getRain(json["snow"]);
 
 

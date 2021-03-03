@@ -95,3 +95,18 @@ const mIconCloudCover = '$mImgPath'
 
 const mIconSettingWind = '$mImgPath'
     'ic_setting_wind.png';
+
+const mIconSunrise = '$mImgPath'
+    'ic_sunrise.png';
+
+const mIconSunset = '$mImgPath'
+    'ic_sunset.png';
+
+const mIconSettingTemp = '$mImgPath'
+    'ic_setting_temp.png';
+
+const mIconWind= '$mImgPath'
+    'ic_wind.png';
+
+const mIconUVIndex= '$mImgPath'
+    'ic_uv_index.png';

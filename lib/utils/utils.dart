@@ -126,8 +126,32 @@ String getTimeLabel(DateTime dateTime) {
   return "${hourText.toString()}:00";
 }
 
-String formatDate(DateTime dateTime) {
+String formatDateAndWeekDay(DateTime dateTime) {
   final df = new DateFormat('EEE MM/dd');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatDate(DateTime dateTime) {
+  final df = new DateFormat('M/dd');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatWeekDayAndTime(DateTime dateTime) {
+  final df = new DateFormat('EEE HH:mm');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatTime(DateTime dateTime) {
+  final df = new DateFormat('HH:mm');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatWeekday(DateTime dateTime) {
+  final df = new DateFormat('EEE');
   String date = df.format(dateTime);
   return date;
 }
@@ -203,10 +227,7 @@ String formatRain(double rain) {
 
 String formatWind(double wind) {
   String unit = "km/h";
-
-  unit = "mi/h";
-
-  return "${wind.toStringAsFixed(1)} $unit";
+  return "${wind.toStringAsFixed(0)} $unit";
 }
 
 String formatHumidity(double humidity) {

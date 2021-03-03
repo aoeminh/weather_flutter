@@ -38,9 +38,9 @@ class Daily {
       this.uvi});
 
   Daily.fromJson(Map<String, dynamic> json) {
-    dt = json['dt'];
-    sunrise = json['sunrise'];
-    sunset = json['sunset'];
+    dt = json['dt']*1000;
+    sunrise = json['sunrise']*1000;
+    sunset = json['sunset']*1000;
     temp = json['temp'] != null ? new Temp.fromJson(json['temp']) : null;
     feelsLike = json['feels_like'] != null
         ? new FeelsLike.fromJson(json['feels_like'])
@@ -57,7 +57,7 @@ class Daily {
       });
     }
     clouds = json['clouds'];
-    pop = TypesHelper.toDouble(json['pop']);
+    pop = TypesHelper.toDouble(json['pop'])*100;
     uvi = TypesHelper.toDouble(json['uvi']);
   }
 
