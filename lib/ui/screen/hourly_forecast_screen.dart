@@ -97,7 +97,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
                 return Container(
                     margin: EdgeInsets.all(padding),
 
-                    child: Text('${formatDate(dateTime)}',style: textTitleWhite,));
+                    child: Text('${formatDateAndWeekDay(dateTime)}',style: textTitleWhite,));
               }else{
                 return Container();
               }

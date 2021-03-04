@@ -10,7 +10,7 @@ import 'overall_weather_data.dart';
 
 class WeatherResponse {
   final Coordinates cord;
-  final List<OverallWeatherData> overallWeatherData;
+  final List<Weather> overallWeatherData;
   final MainWeatherData mainWeatherData;
   final Wind wind;
   final Clouds clouds;
@@ -37,7 +37,7 @@ class WeatherResponse {
       : cord = Coordinates.fromJson(json["coord"]),
         system = System.fromJson(json["sys"]),
         overallWeatherData = (json["weather"] as List)
-            .map((i) => OverallWeatherData.fromJson(i))
+            .map((i) => Weather.fromJson(i))
             .toList(),
         mainWeatherData = MainWeatherData.fromJson(json["main"]),
         wind = Wind.fromJson(json["wind"]),

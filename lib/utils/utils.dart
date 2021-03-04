@@ -7,37 +7,77 @@ import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:intl/intl.dart';
 
-Image getIconForecastImage(String iconCode) {
+Image getIconForecastImage(String iconCode, {double width, double height}) {
   switch (iconCode) {
     case mClear:
-      return Image.asset(mIconClears);
+      return Image.asset(
+        mIconClears,
+        width: width,
+        height: height,
+      );
     case mClearN:
-      return Image.asset(mIconClearsNight);
+      return Image.asset(
+        mIconClearsNight,
+        width: width,
+        height: height,
+      );
     case mFewClouds:
-      return Image.asset(mIconFewCloudsDay);
+      return Image.asset(
+        mIconFewCloudsDay,
+        width: width,
+        height: height,
+      );
     case mFewCloudsN:
-      return Image.asset(mIconFewCloudsNight);
+      return Image.asset(
+        mIconFewCloudsNight,
+        width: width,
+        height: height,
+      );
     case mClouds:
     case mCloudsN:
     case mBrokenClouds:
     case mBrokenCloudsN:
-      return Image.asset(mIconBrokenClouds);
+      return Image.asset(
+        mIconBrokenClouds,
+        width: width,
+        height: height,
+      );
     case mShowerRain:
     case mShowerRainN:
     case mRain:
     case mRainN:
-      return Image.asset(mIconRainy);
+      return Image.asset(
+        mIconRainy,
+        width: width,
+        height: height,
+      );
     case mthunderstorm:
     case mthunderstormN:
-      return Image.asset(mIconThunderstorm);
+      return Image.asset(
+        mIconThunderstorm,
+        width: width,
+        height: height,
+      );
     case mSnow:
     case mSnowN:
-      return Image.asset(mIconSnow);
+      return Image.asset(
+        mIconSnow,
+        width: width,
+        height: height,
+      );
     case mist:
     case mistN:
-      return Image.asset(mIconFog);
+      return Image.asset(
+        mIconFog,
+        width: width,
+        height: height,
+      );
     default:
-      return Image.asset(mIconClears);
+      return Image.asset(
+        mIconClears,
+        width: width,
+        height: height,
+      );
   }
 }
 
@@ -86,8 +126,32 @@ String getTimeLabel(DateTime dateTime) {
   return "${hourText.toString()}:00";
 }
 
-String formatDate(DateTime dateTime) {
+String formatDateAndWeekDay(DateTime dateTime) {
   final df = new DateFormat('EEE MM/dd');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatDate(DateTime dateTime) {
+  final df = new DateFormat('M/dd');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatWeekDayAndTime(DateTime dateTime) {
+  final df = new DateFormat('EEE HH:mm');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatTime(DateTime dateTime) {
+  final df = new DateFormat('HH:mm');
+  String date = df.format(dateTime);
+  return date;
+}
+
+String formatWeekday(DateTime dateTime) {
+  final df = new DateFormat('EEE');
   String date = df.format(dateTime);
   return date;
 }
@@ -163,10 +227,7 @@ String formatRain(double rain) {
 
 String formatWind(double wind) {
   String unit = "km/h";
-
-  unit = "mi/h";
-
-  return "${wind.toStringAsFixed(1)} $unit";
+  return "${wind.toStringAsFixed(0)} $unit";
 }
 
 String formatHumidity(double humidity) {
@@ -188,4 +249,16 @@ int getDayModeFromSunriseSunset(int sunrise, int sunset) {
   } else {
     return -1;
   }
+}
+
+String getRiseAndSetTime(DateTime rise, DateTime set) {
+  int sunMilli = rise.millisecondsSinceEpoch;
+  int setMilli = set.millisecondsSinceEpoch;
+  int sub = setMilli - sunMilli;
+  double hour = sub / (60 * 60 * 1000);
+
+  double minute = (sub / (60 * 60 * 100)) % 60;
+
+  print('hour $hour minute $minute');
+  return '${hour.toStringAsFixed(0)} hour ${minute.toStringAsFixed(0)} minute';
 }

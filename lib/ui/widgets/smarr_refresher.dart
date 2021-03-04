@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SmartRefresher extends StatefulWidget {
-  final List<Widget> children;
+  final Widget children;
   final VoidCallback onRefresh;
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
   const SmartRefresher({this.refreshIndicatorKey, this.children, this.onRefresh});
@@ -16,13 +16,9 @@ class _SmartRefresherState extends State<SmartRefresher> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       key: widget.refreshIndicatorKey,
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          return widget.children[index];
-        },
-        itemCount: widget.children.length,
-        shrinkWrap: true,
-      ),
+      child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: widget.children),
       onRefresh: widget.onRefresh,
     );
   }

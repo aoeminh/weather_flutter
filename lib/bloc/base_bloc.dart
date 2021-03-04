@@ -1,37 +1,40 @@
 import 'package:weather_app/model/application_error.dart';
+import 'package:weather_app/model/weather_forecast_7_day.dart';
 import '../model/weather_forecast_list_response.dart';
 
 import 'package:weather_app/model/weather_response.dart';
 import 'package:weather_app/repository/weather_repository.dart';
 
-abstract class BlocBase{
-  final WeatherRepository   weatherRepository = WeatherRepository();
+abstract class BlocBase {
+  final WeatherRepository weatherRepository = WeatherRepository();
+
   void dispose();
 }
 
-abstract class WeatherState{
+abstract class WeatherState {}
 
-}
-
-class WeatherStateSuccess extends WeatherState{
+class WeatherStateSuccess extends WeatherState {
   final WeatherResponse weatherResponse;
 
   WeatherStateSuccess(this.weatherResponse);
 }
 
-class WeatherStateError extends WeatherState{
+class WeatherStateError extends WeatherState {
   final ApplicationError error;
 
   WeatherStateError(this.error);
-
 }
 
-class WeatherStateLoading extends WeatherState{
+class WeatherStateLoading extends WeatherState {}
 
-}
-
-class WeatherForecastStateSuccess extends WeatherState{
+class WeatherForecastStateSuccess extends WeatherState {
   final WeatherForecastListResponse weatherResponse;
 
   WeatherForecastStateSuccess(this.weatherResponse);
+}
+
+class WeatherForecastDailyStateSuccess extends WeatherState {
+  final WeatherForecastDaily weatherResponse;
+
+  WeatherForecastDailyStateSuccess(this.weatherResponse);
 }
