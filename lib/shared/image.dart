@@ -110,3 +110,9 @@ const mIconWind= '$mImgPath'
 
 const mIconUVIndex= '$mImgPath'
     'ic_uv_index.png';
+
+const mIconMoon = '$mImgPath'
+    'icon_moon.png';
+
+const mIconSun = '$mImgPath'
+    'icon_sun.png';

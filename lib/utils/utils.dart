@@ -250,3 +250,15 @@ int getDayModeFromSunriseSunset(int sunrise, int sunset) {
     return -1;
   }
 }
+
+String getRiseAndSetTime(DateTime rise, DateTime set) {
+  int sunMilli = rise.millisecondsSinceEpoch;
+  int setMilli = set.millisecondsSinceEpoch;
+  int sub = setMilli - sunMilli;
+  double hour = sub / (60 * 60 * 1000);
+
+  double minute = (sub / (60 * 60 * 100)) % 60;
+
+  print('hour $hour minute $minute');
+  return '${hour.toStringAsFixed(0)} hour ${minute.toStringAsFixed(0)} minute';
+}

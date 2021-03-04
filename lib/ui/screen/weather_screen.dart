@@ -29,6 +29,7 @@ import 'detail_daily_forecast.dart';
 const double _mainWeatherHeight = 200;
 const double _mainWeatherWidth = 2000;
 const double _chartHeight = 30;
+const double _dailySectionHeight = 480;
 const String _exclude7DayForecast = 'current,minutely,hourly';
 
 class WeatherScreen extends StatefulWidget {
@@ -374,8 +375,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                     weatherForecastDaily: data,
                                   )))),
                   Container(
-                    height: 450,
+                    height: _dailySectionHeight,
                     margin: EdgeInsets.all(margin),
+                    padding: EdgeInsets.only(bottom: padding),
                     decoration: BoxDecoration(
                         color: transparentBg,
                         borderRadius: BorderRadius.circular(radiusSmall),
@@ -418,13 +420,22 @@ class _WeatherScreenState extends State<WeatherScreen> {
           DateFormat weekDayFormat = DateFormat("E");
           String day = dayFormat.format(
               DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
-          String weekday = weekDayFormat.format(
-              DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
+          String weekday = DateTime.now().day ==
+                  DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt).day
+              ? 'Today'
+              : weekDayFormat.format(
+                  DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
           return GestureDetector(
-            onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => DetailDailyForecast(weatherForecastDaily: data,currentIndex: index,))),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetailDailyForecast(
+                          weatherForecastDaily: data,
+                          currentIndex: index,
+                        ))),
             child: Container(
-              margin:
-                  EdgeInsets.symmetric(vertical: marginSmall, horizontal: margin),
+              margin: EdgeInsets.symmetric(
+                  vertical: marginSmall, horizontal: margin),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

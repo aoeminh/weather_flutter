@@ -16,7 +16,8 @@ class DetailDailyForecast extends StatefulWidget {
   final WeatherForecastDaily weatherForecastDaily;
   final int currentIndex;
 
-  const DetailDailyForecast({Key key, this.weatherForecastDaily, this.currentIndex})
+  const DetailDailyForecast(
+      {Key key, this.weatherForecastDaily, this.currentIndex})
       : super(key: key);
 
   @override
@@ -28,7 +29,6 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -100,7 +100,9 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
             children: [
               _buildDetail(daily, isDay: true),
               _divider(),
-              _buildDetail(daily, isDay: false)
+              _buildDetail(daily, isDay: false),
+              _divider(),
+              _buildSunAndMoon(daily)
             ],
           ),
         ),
@@ -195,6 +197,10 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
         color: Colors.white70,
       );
 
+  _verticalMargin() => const SizedBox(
+        height: margin,
+      );
+
   _buildRowDetail(String image, String title, String content) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -220,4 +226,81 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
           )
         ],
       );
+
+  _buildSunAndMoon(Daily daily) {
+    return Container(
+      decoration: BoxDecoration(),
+      margin: EdgeInsets.all(margin),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Sun & Moon',
+            style: textTitleH2White,
+          ),
+          _sunDetail(daily)
+        ],
+      ),
+    );
+  }
+
+  _sunDetail(Daily daily) {
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(vertical: margin),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset(
+                  mIconSun,
+                  width: _iconStatusSize,
+                  height: _iconStatusSize,
+                ),
+                Text(
+                  '${getRiseAndSetTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise), DateTime.fromMillisecondsSinceEpoch(daily.sunset))}',
+                  style: textTitleWhite,
+                )
+              ],
+            ),
+          ),
+          _divider(),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: margin),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Rise',
+                  style: textSmallWhite70,
+                ),
+                Text(
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise))}',
+                  style: textTitleWhite,
+                )
+              ],
+            ),
+          ),
+          _divider(),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: margin),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Set',
+                  style: textSmallWhite70,
+                ),
+                Text(
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset))}',
+                  style: textTitleWhite,
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }
