@@ -115,6 +115,40 @@ String getIconForecastUrl(String iconCode) {
   }
 }
 
+String getBgImagePath(String iconCode) {
+  switch (iconCode) {
+    case mClear:
+      return mBgClear;
+    case mClearN:
+      return mBgClearN;
+    case mFewClouds:
+    case mClouds:
+      return mBgAFewCloudy;
+    case mFewCloudsN:
+    case mCloudsN:
+      return mBgAFewCloudyN;
+    case mBrokenClouds:
+    case mBrokenCloudsN:
+      return mBgCloudy;
+    case mShowerRain:
+    case mShowerRainN:
+    case mRain:
+    case mRainN:
+      return mBgRain;
+    case mthunderstorm:
+    case mthunderstormN:
+      return mBgStorm;
+    case mSnow:
+    case mSnowN:
+      return mBgSnow;
+    case mist:
+    case mistN:
+      return mBgHazy;
+    default:
+      return mIconClears;
+  }
+}
+
 String getTimeLabel(DateTime dateTime) {
   int hour = dateTime.hour;
   String hourText = "";
@@ -227,7 +261,38 @@ String formatRain(double rain) {
 
 String formatWind(double wind) {
   String unit = "km/h";
-  return "${wind.toStringAsFixed(0)} $unit";
+  double newWind = wind * 3.6;
+  return "${newWind.toStringAsFixed(1)} $unit";
+}
+
+String formatVisibility(double visibility) {
+  String unit = "km";
+  double newVisibility = visibility / 1000;
+  return "${newVisibility.toStringAsFixed(0)} $unit";
+}
+
+String getWindDirection(double degree) {
+  final arr = [
+    "N",
+    "NNE",
+    "NE",
+    "ENE",
+    "E",
+    "ESE",
+    "SE",
+    "SSE",
+    "S",
+    "SSW",
+    "SW",
+    "WSW",
+    "W",
+    "WNW",
+    "NW",
+    "NNW"
+  ];
+
+  int value = (degree / 22.5 + 0.5).toInt();
+  return arr[value % 16];
 }
 
 String formatHumidity(double humidity) {

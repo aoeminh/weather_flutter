@@ -1,8 +1,11 @@
+import 'package:weather_app/model/current_daily_weather.dart';
+
 import 'application_error.dart';
 import 'daily.dart';
 
 class WeatherForecastDaily {
   List<Daily> daily;
+  CurrentDailyWeather current;
   ApplicationError _errorCode;
 
   WeatherForecastDaily({this.daily});
@@ -14,6 +17,7 @@ class WeatherForecastDaily {
         daily.add(new Daily.fromJson(v));
       });
     }
+    current = CurrentDailyWeather.fromJson(json['current']);
   }
 
   Map<String, dynamic> toJson() {

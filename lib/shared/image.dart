@@ -116,3 +116,21 @@ const mIconMoon = '$mImgPath'
 
 const mIconSun = '$mImgPath'
     'icon_sun.png';
+
+const mIconHumidity = '$mImgPath'
+    'ic_humidity.png';
+
+const mIconVisibility = '$mImgPath'
+    'ic_visibility.png';
+
+const mIconDewPoint= '$mImgPath'
+    'ic_dew_point.png';
+
+const mIconDownArrow= '$mImgPath'
+    'down_arrow.png';
+
+const mIconWindPillar= '$mImgPath'
+    'wind_pillar.png';
+
+const mIconWindPath= '$mImgPath'
+    'wind_path.png';
