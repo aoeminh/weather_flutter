@@ -30,7 +30,7 @@ import 'dart:math' as math;
 
 import 'detail_daily_forecast.dart';
 
-const double _mainWeatherHeight = 200;
+const double _mainWeatherHeight = 220;
 const double _mainWeatherWidth = 2000;
 const double _chartHeight = 30;
 const double _dailySectionHeight = 480;

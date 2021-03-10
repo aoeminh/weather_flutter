@@ -9,7 +9,7 @@ import '../../shared/strings.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:rxdart/rxdart.dart';
 
-const double iconWeatherSize = 30;
+const double iconWeatherSize = 40;
 const double iconDetailSize = 20;
 
 class HourlyForecastScreen extends StatefulWidget {
@@ -159,12 +159,12 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
           height: margin,
         ),
         _buildRowDetails(mIconSettingWind, 'Wind',
-            '${convertMetersPerSecondToKilometersPerHour(weatherForecastResponse.wind.speed).toInt()}km/h'),
+            '${formatWind(weatherForecastResponse.wind.speed)}'),
         const Divider(
           color: Colors.grey,
         ),
         _buildRowDetails(mIcPrecipitation, 'Precipitation',
-            '${weatherForecastResponse.pop}$percent'),
+            '${formatHumidity(weatherForecastResponse.pop)}'),
         const Divider(
           color: Colors.grey,
         ),
