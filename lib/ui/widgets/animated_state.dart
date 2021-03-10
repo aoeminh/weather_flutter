@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:weather_app/ui/widgets/empty_animation.dart';
 abstract class AnimatedState<T extends StatefulWidget> extends State<T>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController controller;
   StreamController _streamController;
   StreamSubscription subscription;
@@ -13,7 +13,7 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
   animateTween(
       {double start = 0.0,
       double end = 1.0,
-      int duration: 1000,
+      int duration: 2000,
       Curve curve = Curves.easeInOut}) {
     controller = _getAnimationController(this, duration);
     Animation animation = _getCurvedAnimation(controller, curve);
@@ -22,36 +22,26 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     Animation<double> tween = _getTween(start, end, animation);
     var valueListener = () {
       _streamController.sink.add(tween.value);
+
     };
     tween..addListener(valueListener);
     tween.addStatusListener((status) {
       if (status == AnimationStatus.completed ||
           status == AnimationStatus.dismissed) {
         _streamController.close();
+        subscription.cancel();
       }
     });
     subscription =
-        _streamController.stream.listen((value) => onAnimatedValue(value as double));
+        _streamController.stream.listen((value) {
+          onAnimatedValue(value as double);
+        });
     controller.forward();
   }
 
-  Animation<double> setupAnimation(
-      {Curve curve = Curves.easeInOut,
-      int duration = 2000,
-      bool noAnimation = false}) {
-    if (controller == null) {
-      controller = _getAnimationController(this, duration);
-    }
-    controller.forward();
-    if (!noAnimation) {
-      return _getCurvedAnimation(controller, curve);
-    } else {
-      return EmptyAnimation();
-    }
-  }
 
   AnimationController _getAnimationController(
-      SingleTickerProviderStateMixin object, int duration) {
+      TickerProviderStateMixin object, int duration) {
     return AnimationController(
         duration: Duration(milliseconds: duration), vsync: object);
   }

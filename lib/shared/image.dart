@@ -134,3 +134,6 @@ const mIconWindPillar= '$mImgPath'
 
 const mIconWindPath= '$mImgPath'
     'wind_path.png';
+
+const mIconLittleSun= '$mImgPath'
+    'ic_little_sun.png';

@@ -24,6 +24,7 @@ import 'package:weather_app/ui/screen/daily_forecast_screen.dart';
 import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
 import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
+import 'package:weather_app/ui/widgets/sun_path_widget.dart';
 import 'package:weather_app/utils/utils.dart';
 import 'dart:math' as math;
 
@@ -189,7 +190,8 @@ class _WeatherScreenState extends State<WeatherScreen>
             _buildHourlyForecast(),
             _buildDailyForecast(),
             _buildDetail(),
-            _buildWindAndPressure()
+            _buildWindAndPressure(),
+            _buildSunTime()
           ],
         ),
       ),
@@ -356,25 +358,34 @@ class _WeatherScreenState extends State<WeatherScreen>
                           weatherForecastListResponse:
                               weatherForecastListResponse,
                         )))),
-        Container(
-          margin: EdgeInsets.all(margin),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 0.5),
-              color: transparentBg,
-              borderRadius: BorderRadius.circular(radiusSmall)),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Container(
-              height: _mainWeatherHeight,
-              width: _mainWeatherWidth,
-              margin: EdgeInsets.only(left: marginXLarge, right: marginXLarge),
-              child: Center(
-                child: ChartWidget(
-                  chartData: WeatherForecastHolder(
-                    weatherForecastListResponse.list,
-                    weatherForecastListResponse.city,
-                  ).setupChartData(ChartDataType.temperature, _mainWeatherWidth,
-                      _chartHeight),
+        GestureDetector(
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HourlyForecastScreen(
+                    weatherForecastListResponse:
+                    weatherForecastListResponse,
+                  ))),
+          child: Container(
+            margin: EdgeInsets.all(margin),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 0.5),
+                color: transparentBg,
+                borderRadius: BorderRadius.circular(radiusSmall)),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                height: _mainWeatherHeight,
+                width: _mainWeatherWidth,
+                margin: EdgeInsets.only(left: marginXLarge, right: marginXLarge),
+                child: Center(
+                  child: ChartWidget(
+                    chartData: WeatherForecastHolder(
+                      weatherForecastListResponse.list,
+                      weatherForecastListResponse.city,
+                    ).setupChartData(ChartDataType.temperature, _mainWeatherWidth,
+                        _chartHeight),
+                  ),
                 ),
               ),
             ),
@@ -885,6 +896,88 @@ class _WeatherScreenState extends State<WeatherScreen>
           ),
         )
       ],
+    );
+  }
+
+  _buildSunTime() {
+    return Column(
+      children: [
+        _buildRowTitle(
+            'Sun & Moon',
+            'More',
+            weatherForecastDaily != null
+                ? () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailDailyForecast(
+                              currentIndex: 0,
+                              weatherForecastDaily: weatherForecastDaily,
+                            )))
+                : () {}),
+        StreamBuilder<WeatherState>(
+            stream: bloc.weatherStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                WeatherState weatherState = snapshot.data;
+                if (weatherState is WeatherStateSuccess) {
+                  WeatherResponse weatherResponse =
+                      weatherState.weatherResponse;
+
+                  return _buildSunTimeBody(weatherResponse);
+                }
+              }
+              return weatherResponse != null
+                  ? _buildSunTimeBody(weatherResponse)
+                  : Container();
+            }),
+      ],
+    );
+  }
+
+  _buildSunTimeBody(WeatherResponse weatherResponse) {
+    return Container(
+      margin: EdgeInsets.all(margin),
+      padding:
+          EdgeInsets.symmetric(vertical: margin, horizontal: padding),
+      decoration: BoxDecoration(
+          color: transparentBg,
+          borderRadius: BorderRadius.circular(radiusSmall),
+          border: Border.all(color: Colors.grey, width: 0.5)),
+      child: Column(
+        children: [
+          GestureDetector(
+              onTap: weatherForecastDaily != null
+                  ? () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailDailyForecast(
+                                currentIndex: 0,
+                                weatherForecastDaily: weatherForecastDaily,
+                              )))
+                  : () {},
+              child: SunPathWidget(
+                sunrise: weatherResponse.system.sunrise,
+                sunset: weatherResponse.system.sunset,
+              )),
+          Container(
+            margin:
+                EdgeInsets.symmetric( vertical: margin),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunrise))}',
+                  style: textTitleWhite,
+                ),
+                Text(
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunset))}',
+                  style: textTitleWhite,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 

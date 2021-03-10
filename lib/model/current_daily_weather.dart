@@ -8,7 +8,7 @@ class CurrentDailyWeather {
   double feelsLike;
   int pressure;
   int humidity;
-  int dewPoint;
+  double dewPoint;
   double uvi;
   int clouds;
   int visibility;
@@ -40,7 +40,7 @@ class CurrentDailyWeather {
     feelsLike = json['feels_like'].toDouble();
     pressure = json['pressure'];
     humidity = json['humidity'];
-    dewPoint = json['dew_point'];
+    dewPoint = json['dew_point'].toDouble();
     uvi = json['uvi'];
     clouds = json['clouds'];
     visibility = json['visibility'];

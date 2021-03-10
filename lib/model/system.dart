@@ -5,7 +5,7 @@ class System{
 
   System(this.country, this.sunrise, this.sunset);
 
-  System.fromJson(Map<String,dynamic> json): country = json["country"], sunrise = json["sunrise"], sunset = json["sunset"];
+  System.fromJson(Map<String,dynamic> json): country = json["country"], sunrise = json["sunrise"]*1000, sunset = json["sunset"]*1000;
 
   Map<String,dynamic> toJson() =>{
     "country": country,

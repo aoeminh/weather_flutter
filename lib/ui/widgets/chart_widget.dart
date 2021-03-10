@@ -57,7 +57,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
   void initState() {
     super.initState();
     init();
-    animateTween(duration: 500, curve: Curves.linear);
+    animateTween(duration: 3000, curve: Curves.linear);
   }
 
   Future<Null> init() async {
@@ -96,6 +96,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
         assetImage.resolve(createLocalImageConfiguration(context));
     Completer<ImageInfo> completer = Completer();
     stream.addListener(ImageStreamListener((imageInfo, _) {
+      print('done');
       return completer.complete(imageInfo);
     }));
     return completer.future;
@@ -201,12 +202,7 @@ class _ChartPainter extends CustomPainter {
       _drawIconList(canvas);
     }
     _drawDateTimes(canvas);
-    double fractionLinePerPoint = 1 / points.length;
-
     int pointsFraction = (points.length * fraction).ceil();
-    double lastLineFraction =
-        fraction - (pointsFraction - 1) * fractionLinePerPoint;
-    double lastLineFractionPercentage = lastLineFraction / (1 / points.length);
     for (int index = 0; index < pointsFraction - 1; index++) {
       Offset textOffset = Offset(
           points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
@@ -214,21 +210,21 @@ class _ChartPainter extends CustomPainter {
           _getOffsetFromPoint(points[index + 1]), paint);
       if (index == maxTempIndex) {
         _drawTempText(canvas, textOffset, pointLabels[index],
-            lastLineFractionPercentage, true,
+             true,
             isMax: true);
       } else if (index == minTempIndex) {
         _drawTempText(canvas, textOffset, pointLabels[index],
-            lastLineFractionPercentage, true,
+             true,
             isMin: true);
       } else {
-        _drawTempText(canvas, textOffset, pointLabels[index], 1, true);
+        _drawTempText(canvas, textOffset, pointLabels[index], true);
       }
     }
     if (fraction > 0.999) {
       Offset textOffset = Offset(points[points.length - 1].x - marginLeftTemp,
           points[points.length - 1].y - marginBottomTemp);
       _drawTempText(
-          canvas, textOffset, pointLabels[points.length - 1], 1, true);
+          canvas, textOffset, pointLabels[points.length - 1], true);
     }
     _drawAxes(canvas);
   }
@@ -244,7 +240,7 @@ class _ChartPainter extends CustomPainter {
   }
 
   void _drawTempText(Canvas canvas, Offset offset, String text,
-      double alphaFraction, bool textShadow,
+       bool textShadow,
       {bool isMax = false, bool isMin = false}) {
     _drawRectangle(canvas, offset, isMax: isMax, isMin: isMin);
     TextStyle textStyle =
