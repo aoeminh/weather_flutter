@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/model/chart_data.dart';
@@ -5,12 +8,8 @@ import 'package:weather_app/model/chart_line.dart';
 import 'package:weather_app/model/point.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/utils/utils.dart';
+
 import 'animated_state.dart';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-import 'package:flutter/services.dart' show rootBundle;
-import 'dart:async';
-import 'package:image/image.dart' as images;
 
 const humidityIconWidth = 15;
 const humidityIconHeight = 15;
@@ -78,17 +77,6 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
     return list;
   }
 
-  Future<ui.Image> loadImage(String imageUrl, int width, int height) async {
-    final ByteData data = await rootBundle.load(imageUrl);
-    images.Image baseSizeImage =
-        images.decodeImage(new Uint8List.view(data.buffer));
-    images.Image resizeImage =
-        images.copyResize(baseSizeImage, height: height, width: width);
-    ui.Codec codec =
-        await ui.instantiateImageCodec(images.encodePng(resizeImage));
-    ui.FrameInfo frameInfo = await codec.getNextFrame();
-    return frameInfo.image;
-  }
 
   Future<ImageInfo> getImageInfo(BuildContext context, String imagePath) async {
     AssetImage assetImage = AssetImage(imagePath);

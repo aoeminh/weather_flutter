@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'bloc/position_bloc.dart';
-import 'ui/screen/detail_daily_forecast.dart';
 import 'ui/screen/home_screen.dart';
 
 void main() {
@@ -17,7 +15,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        textTheme: GoogleFonts.robotoTextTheme( Theme.of(context).textTheme,),
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

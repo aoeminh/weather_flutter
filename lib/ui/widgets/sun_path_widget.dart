@@ -32,7 +32,7 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
   @override
   void initState() {
     super.initState();
-    animateTween(duration: 10000);
+    animateTween(duration: 5000);
     _fractions.add(_fraction);
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _init();
