@@ -20,6 +20,7 @@ import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/text_style.dart';
+import 'package:weather_app/ui/screen/add_city_screen.dart';
 import 'package:weather_app/ui/screen/daily_forecast_screen.dart';
 import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
 import 'package:weather_app/ui/widgets/chart_widget.dart';
@@ -138,6 +139,11 @@ class _WeatherScreenState extends State<WeatherScreen>
                 elevation: 0.0,
                 centerTitle: true,
                 pinned: true,
+                actions: [
+                  GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCityScreen())),
+                      child: Icon(Icons.add,color: Colors.white,))
+                ],
                 title: Column(
                   children: [
                     StreamBuilder(

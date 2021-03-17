@@ -1,7 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/model/weather_response.dart';
-import 'package:weather_app/repository/weather_repository.dart';
 
 class WeatherBloc extends BlocBase{
 
