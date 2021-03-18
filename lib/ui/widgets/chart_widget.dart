@@ -84,7 +84,6 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
         assetImage.resolve(createLocalImageConfiguration(context));
     Completer<ImageInfo> completer = Completer();
     stream.addListener(ImageStreamListener((imageInfo, _) {
-      print('done');
       return completer.complete(imageInfo);
     }));
     return completer.future;

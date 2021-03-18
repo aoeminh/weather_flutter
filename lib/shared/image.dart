@@ -137,3 +137,6 @@ const mIconWindPath= '$mImgPath'
 
 const mIconLittleSun= '$mImgPath'
     'ic_little_sun.png';
+
+const mIconSettingLocation= '$mImgPath'
+    'icon_setting_location.png';

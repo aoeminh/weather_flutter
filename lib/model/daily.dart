@@ -47,11 +47,11 @@ class Daily {
         : null;
     pressure = json['pressure'];
     humidity = json['humidity'];
-    dewPoint = json['dew_point'];
+    dewPoint = json['dew_point'].toDouble();
     windSpeed = json['wind_speed'];
     windDeg = json['wind_deg'];
     if (json['weather'] != null) {
-      weather = new List<Weather>();
+      weather = [];
       json['weather'].forEach((v) {
         weather.add(new Weather.fromJson(v));
       });

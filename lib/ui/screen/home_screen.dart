@@ -16,17 +16,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Position> positions = [];
   int currentPage = 0;
+
   @override
   void initState() {
     super.initState();
     cityBloc.getListCity();
-    pageBloc.addPage(widget.position.latitude,widget.position.longitude);
-    pageBloc.pageStream.listen((event) {
-      List<Position> positionss = event as  List<Position>;
-      positions.add(positionss.last);
-      currentPage = positions.length;
-      controller.jumpToPage(currentPage);
-      setState(() {});
+    pageBloc.addPage(widget.position.latitude, widget.position.longitude);
+    pageBloc.currentPage.listen((event) {
+      if (controller.hasClients) {
+        controller.jumpToPage(event);
+        setState(() {});
+      }
     });
   }
 
@@ -37,25 +37,23 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: StreamBuilder(
+      child: StreamBuilder<List<Position>>(
         stream: pageBloc.pageStream,
-        builder: (context, snapshot){
-          if(snapshot.hasData){
-            return  PageView(
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return PageView(
               controller: controller,
               scrollDirection: Axis.horizontal,
-              children: positions
+              children: snapshot.data
                   .map((data) =>
-                  WeatherScreen(lat: data.latitude, lon: data.longitude))
+                      WeatherScreen(lat: data.latitude, lon: data.longitude))
                   .toList(),
               onPageChanged: (page) {},
             );
           }
           return CircularProgressIndicator();
         },
-
       ),
     );
   }
-
 }

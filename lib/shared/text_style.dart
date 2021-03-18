@@ -21,6 +21,10 @@ const textSmallWhite = TextStyle(
 const textSecondaryWhite = TextStyle(
     color: mWhite, fontSize: _fontSizeLarge, fontWeight: FontWeight.normal);
 
+const textSecondaryWhite70 = TextStyle(
+    color: Colors.white70, fontSize: _fontSizeLarge, fontWeight: FontWeight.normal);
+
+
 const textSecondaryWhiteBold = TextStyle(
     color: mWhite, fontSize: _fontSizeLarge, fontWeight: FontWeight.bold);
 
