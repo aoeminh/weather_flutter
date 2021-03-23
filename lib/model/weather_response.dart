@@ -6,6 +6,7 @@ import 'clouds.dart';
 import 'coordinates.dart';
 import 'main_weather_data.dart';
 import 'overall_weather_data.dart';
+import 'package:weather_app/shared/constant.dart';
 
 class WeatherResponse {
   final int dt;
@@ -35,7 +36,7 @@ class WeatherResponse {
       this.station});
 
   WeatherResponse.fromJson(Map<String, dynamic> json)
-      : dt = json["dt"]*1000,
+      : dt = json["dt"] * 1000,
         cord = Coordinates.fromJson(json["coord"]),
         system = System.fromJson(json["sys"]),
         overallWeatherData =
@@ -60,6 +61,23 @@ class WeatherResponse {
         "cod": cod,
         "station": station,
       };
+
+  static WeatherResponse formatWithTimezone(
+      WeatherResponse weatherResponse, int differentTime) {
+    return WeatherResponse(
+      dt: weatherResponse.dt + differentTime * oneHourMilli,
+      cord: weatherResponse.cord,
+      overallWeatherData: weatherResponse.overallWeatherData,
+      mainWeatherData: weatherResponse.mainWeatherData,
+      wind: weatherResponse.wind,
+      clouds: weatherResponse.clouds,
+      system: System.withTimezone(weatherResponse.system, differentTime),
+      id: weatherResponse.id,
+      name: weatherResponse.name,
+      cod: weatherResponse.cod,
+      station: weatherResponse.station,
+    );
+  }
 
   static WeatherResponse withErrorCode(ApplicationError errorCode) {
     WeatherResponse response = new WeatherResponse();

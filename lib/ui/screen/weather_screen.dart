@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:core';
+import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
+import 'package:weather_app/bloc/city_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
 import 'package:weather_app/bloc/weather_forecast_bloc.dart';
 import 'package:weather_app/model/chart_data.dart';
 import 'package:weather_app/model/current_daily_weather.dart';
 import 'package:weather_app/model/daily.dart';
+import 'package:weather_app/model/timezone.dart';
 import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'package:weather_app/model/weather_forecast_holder.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
@@ -27,7 +30,6 @@ import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
 import 'package:weather_app/ui/widgets/sun_path_widget.dart';
 import 'package:weather_app/utils/utils.dart';
-import 'dart:math' as math;
 
 import 'detail_daily_forecast.dart';
 
@@ -65,36 +67,32 @@ class _WeatherScreenState extends State<WeatherScreen>
   WeatherResponse weatherResponse;
   WeatherForecastListResponse weatherForecastListResponse;
   WeatherForecastDaily weatherForecastDaily;
+  WeatherData weatherData;
   BehaviorSubject<DateTime> timeSubject =
       BehaviorSubject.seeded(DateTime.now());
   AnimationController _controller;
   AnimationController _controller2;
-  int currentTime;
+  int currentTime = 0;
+  String timezone = '';
+  int differentTime = 0;
 
   @override
   void initState() {
     super.initState();
     getData();
-    _createTime();
     _initAnim();
   }
 
-  _createTime() {
-    bloc.weatherStream.listen((event) {
-      if (event is WeatherStateSuccess) {
-        WeatherResponse weatherResponse = event.weatherResponse;
-        currentTime = weatherResponse.dt;
-        setState(() {
-          
-        });
-      }
-    });
-
-    Timer.periodic(
-        Duration(seconds: 1),
-        (t) => {
-              if (!timeSubject.isClosed) {_addTime()}
-            });
+  _createTime(DateTime dateTime) {
+    print('_createTime ${dateTime.toUtc().millisecondsSinceEpoch}');
+    if (currentTime <= dateTime.millisecondsSinceEpoch) {
+      currentTime = dateTime.millisecondsSinceEpoch;
+      Timer.periodic(
+          Duration(milliseconds: 1000),
+          (t) => {
+                if (!timeSubject.isClosed) {_addTime()}
+              });
+    }
   }
 
   _addTime() {
@@ -103,10 +101,10 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   getData() {
-    bloc.fetchWeather(widget.lat, widget.lon);
-    weatherForecastBloc.fetchWeatherForecastResponse(widget.lat, widget.lon);
     weatherForecastBloc.fetchWeatherForecast7Day(
         widget.lat, widget.lon, _exclude7DayForecast);
+    bloc.fetchWeather(widget.lat, widget.lon);
+    weatherForecastBloc.fetchWeatherForecastResponse(widget.lat, widget.lon);
   }
 
   _initAnim() {
@@ -128,197 +126,144 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        StreamBuilder(
-          stream: bloc.weatherStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              WeatherState state = snapshot.data;
-              if (state is WeatherStateSuccess) {
-                WeatherResponse data = state.weatherResponse;
-                return Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                              getBgImagePath(data.overallWeatherData[0].icon)),
-                          fit: BoxFit.cover)),
-                );
-              }
-            }
-            return weatherResponse != null
-                ? Container(
+    return StreamBuilder<WeatherData>(
+      stream: Rx.combineLatest3(
+          bloc.weatherStream,
+          weatherForecastBloc.weatherForecastStream,
+          weatherForecastBloc.weatherForecastDailyStream, (a, b, c) {
+        if (a is WeatherStateSuccess &&
+            b is WeatherForecastStateSuccess &&
+            c is WeatherForecastDailyStateSuccess) {
+          differentTime = _getDifferentTime(c.weatherResponse.timezone);
+          return WeatherData(
+              weatherResponse: WeatherResponse.formatWithTimezone(
+                  a.weatherResponse, differentTime),
+              weatherForecastListResponse: b.weatherResponse,
+              weatherForecastDaily: WeatherForecastDaily.withTimezone(
+                  c.weatherResponse, differentTime));
+        }
+        return null;
+      }),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          weatherData = snapshot.data;
+          _createTime(DateTime.fromMillisecondsSinceEpoch(
+              weatherData.weatherForecastDaily.current.dt));
+        }
+        // keep old data when request fail
+        return weatherData != null
+            ? Stack(
+                children: [
+                  Container(
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage(getBgImagePath(
-                                weatherResponse.overallWeatherData[0].icon)),
+                            image: AssetImage(getBgImagePath(weatherData
+                                .weatherResponse.overallWeatherData[0].icon)),
                             fit: BoxFit.cover)),
-                  )
-                : Container(
-                    color: Colors.white.withOpacity(0.8),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-          },
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxScrolled) => [
-              SliverAppBar(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                elevation: 0.0,
-                centerTitle: true,
-                pinned: true,
-                actions: [
-                  GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddCityScreen())),
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                      ))
+                  ),
+                  _body(weatherData)
                 ],
-                title: Column(
-                  children: [
-                    const SizedBox(
-                      height: marginSmall,
-                    ),
-                    StreamBuilder(
-                        stream: bloc.weatherStream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data is WeatherStateSuccess) {
-                              WeatherStateSuccess weatherStateSuccess =
-                                  snapshot.data;
-                              weatherResponse =
-                                  weatherStateSuccess.weatherResponse;
-                              return Text('${weatherResponse.name}');
-                            }
-                            return weatherResponse != null
-                                ? Text('${weatherResponse.name}')
-                                : Container();
-                          } else {
-                            return Container();
-                          }
-                        }),
-                    const SizedBox(
-                      height: marginSmall,
-                    ),
-                    StreamBuilder<DateTime>(
-                        stream: timeSubject.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                                '${formatWeekDayAndTime(snapshot.data)}',
-                                style: textSecondaryWhite70);
-                          }
-                          return Text('');
-                        }),
-                  ],
+              )
+            : Scaffold(
+                body: Container(
+                  color: Colors.white.withOpacity(0.8),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
-              ),
+              );
+      },
+    );
+  }
+
+  int _getDifferentTime(String timezone) {
+    String value = '';
+    for (Timezone time in cityBloc.timezones) {
+      if (time.value.contains(getTimezone(timezone))) {
+        value = getTimezone(time.name);
+        print('_getDifferentTime ${getTimezone(timezone)}');
+      }
+    }
+
+    return value == '' ? 0 : convertTimezoneToNumber(value);
+  }
+
+  String getTimezone(String timezone) =>
+      timezone.substring(timezone.indexOf('/') + 1, timezone.length);
+
+  _body(WeatherData weatherData) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxScrolled) => [
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            elevation: 0.0,
+            centerTitle: true,
+            pinned: true,
+            actions: [
+              GestureDetector(
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddCityScreen())),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ))
             ],
-            body: _body(),
-            // _body(),
+            title: _titleAppbar(weatherData.weatherResponse),
           ),
-        )
+        ],
+        body: SmartRefresher(
+          refreshIndicatorKey: _refreshIndicatorKey,
+          children: Container(
+            child: Column(
+              children: [
+                _currentWeather(weatherData.weatherResponse),
+                _buildHourlyForecast(weatherData.weatherForecastListResponse),
+                _buildDailyForecast(weatherData.weatherForecastDaily),
+                _buildDetail(weatherData.weatherForecastDaily),
+                _buildWindAndPressure(weatherData.weatherResponse),
+                _buildSunTime(weatherData.weatherResponse)
+              ],
+            ),
+          ),
+          onRefresh: refresh,
+        ),
+        // _body(),
+      ),
+    );
+  }
+
+  _titleAppbar(WeatherResponse weatherResponse) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: marginSmall,
+        ),
+        weatherResponse != null ? Text('${weatherResponse.name}') : Container(),
+        const SizedBox(
+          height: marginSmall,
+        ),
+        StreamBuilder<DateTime>(
+            stream: timeSubject.stream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text('${formatWeekDayAndTime(snapshot.data)}',
+                    style: textSecondaryWhite70);
+              }
+              return Text('');
+            }),
       ],
     );
   }
 
-  _titleAppbar() {
-    return StreamBuilder(
-        stream: bloc.weatherStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data is WeatherStateSuccess) {
-              WeatherStateSuccess weatherStateSuccess = snapshot.data;
-              weatherResponse = weatherStateSuccess.weatherResponse;
-              return Text('${weatherResponse.name}');
-            }
-            if (weatherResponse != null) {
-              return Column(
-                children: [
-                  const SizedBox(
-                    height: marginSmall,
-                  ),
-                  Text('${weatherResponse.name}'),
-                  const SizedBox(
-                    height: marginSmall,
-                  ),
-                  StreamBuilder<DateTime>(
-                      stream: timeSubject.stream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text('${formatWeekDayAndTime(snapshot.data)}',
-                              style: textSecondaryWhite70);
-                        }
-                        return Text('');
-                      }),
-                ],
-              );
-            } else {
-              return Container();
-            }
-          } else {
-            return Container();
-          }
-        });
-  }
-
-  _body() {
-    return SmartRefresher(
-      refreshIndicatorKey: _refreshIndicatorKey,
-      children: Container(
-        child: Column(
-          children: [
-            _currentWeather(),
-            _buildHourlyForecast(),
-            _buildDailyForecast(),
-            _buildDetail(),
-            _buildWindAndPressure(),
-            _buildSunTime()
-          ],
-        ),
-      ),
-      onRefresh: refresh,
-    );
-  }
-
-  _currentWeather() {
+  _currentWeather(WeatherResponse weatherResponse) {
     return Container(
-      height: _mainWeatherHeight,
-      child: StreamBuilder<WeatherState>(
-          stream: bloc.weatherStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data is WeatherStateSuccess) {
-                WeatherStateSuccess weatherStateSuccess = snapshot.data;
-                weatherResponse = weatherStateSuccess.weatherResponse;
-                return _buildBodyCurrentWeather(weatherResponse);
-              }
-
-              if (snapshot.data is WeatherStateError) {
-                WeatherStateError weatherStateError = snapshot.data;
-                return Center(
-                    child: Text('${weatherStateError.error.toString()}'));
-              }
-
-              return weatherResponse != null
-                  ? _buildBodyCurrentWeather(weatherResponse)
-                  : Container();
-            } else {
-              return weatherResponse != null
-                  ? _buildBodyCurrentWeather(weatherResponse)
-                  : Container();
-            }
-          }),
-    );
+        height: _mainWeatherHeight,
+        child: weatherResponse != null
+            ? _buildBodyCurrentWeather(weatherResponse)
+            : Container());
   }
 
   _buildBodyCurrentWeather(WeatherResponse weatherResponse) {
@@ -344,7 +289,6 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _buildTempRow(int temp) {
-    print('_buildTempRow $temp');
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -396,43 +340,31 @@ class _WeatherScreenState extends State<WeatherScreen>
             mIconHigh,
             height: 20,
           ),
-          SizedBox(
+          const SizedBox(
             width: marginSmall,
           ),
           Text('$maxTemp°', style: textTitleH1White),
-          SizedBox(
+          const SizedBox(
             width: marginLarge,
           ),
           Image.asset(
             mIconLow,
             height: 20,
           ),
-          SizedBox(
+          const SizedBox(
             width: marginSmall,
           ),
           Text('$minTemp°', style: textTitleH1White),
         ],
       );
 
-  _buildHourlyForecast() {
-    return StreamBuilder<WeatherState>(
-        stream: weatherForecastBloc.weatherForecastStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data is WeatherForecastStateSuccess) {
-              WeatherForecastStateSuccess weatherForecastStateSuccess =
-                  snapshot.data;
-              weatherForecastListResponse =
-                  weatherForecastStateSuccess.weatherResponse;
-              return _buildBodyHourlyForecast(weatherForecastListResponse);
-            }
-          }
-          return weatherForecastListResponse != null
-              ? _buildBodyHourlyForecast(weatherForecastListResponse)
-              : Container(
-                  height: _mainWeatherHeight,
-                );
-        });
+  _buildHourlyForecast(
+      WeatherForecastListResponse weatherForecastListResponse) {
+    return weatherForecastListResponse != null
+        ? _buildBodyHourlyForecast(weatherForecastListResponse)
+        : Container(
+            height: _mainWeatherHeight,
+          );
   }
 
   _buildBodyHourlyForecast(
@@ -509,21 +441,10 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildDailyForecast() {
-    return StreamBuilder<WeatherState>(
-        stream: weatherForecastBloc.weatherForecastDailyStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            WeatherState weatherState = snapshot.data;
-            if (weatherState is WeatherForecastDailyStateSuccess) {
-              weatherForecastDaily = weatherState.weatherResponse;
-              return _buildBodyDailyForecast(weatherForecastDaily);
-            }
-          }
-          return weatherForecastDaily != null
-              ? _buildBodyDailyForecast(weatherForecastDaily)
-              : Container();
-        });
+  _buildDailyForecast(WeatherForecastDaily weatherForecastDaily) {
+    return weatherForecastDaily != null
+        ? _buildBodyDailyForecast(weatherForecastDaily)
+        : Container();
   }
 
   _buildBodyDailyForecast(WeatherForecastDaily weatherForecastDaily) {
@@ -634,7 +555,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                       child: Container(
                         margin: EdgeInsets.only(left: marginLarge),
                         child: Text(
-                          '${data.daily[index].temp.min.toInt()}$degree - ${data.daily[index].temp.max.toInt()}$degree',
+                          '${data.daily[index].temp.min.toInt()}$degree - '
+                          '${data.daily[index].temp.max.toInt()}$degree',
                           style: textTitleWhite,
                         ),
                       )),
@@ -661,23 +583,11 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildDetail() {
-    return StreamBuilder<WeatherState>(
-        stream: weatherForecastBloc.weatherForecastDailyStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            WeatherState state = snapshot.data;
-            if (state is WeatherForecastDailyStateSuccess) {
-              weatherForecastDaily = state.weatherResponse;
-              return _buildBodyDetail(
-                  weatherForecastDaily.daily[0], weatherForecastDaily.current);
-            }
-          }
-          return weatherForecastDaily != null
-              ? _buildBodyDetail(
-                  weatherForecastDaily.daily[0], weatherForecastDaily.current)
-              : Container();
-        });
+  _buildDetail(WeatherForecastDaily weatherForecastDaily) {
+    return weatherForecastDaily != null
+        ? _buildBodyDetail(
+            weatherForecastDaily.daily[0], weatherForecastDaily.current)
+        : Container();
   }
 
   _buildBodyDetail(Daily daily, CurrentDailyWeather currentDailyWeather) {
@@ -686,13 +596,14 @@ class _WeatherScreenState extends State<WeatherScreen>
         _buildRowTitle(
             'Detail',
             'More',
-            weatherForecastDaily != null
+            weatherData != null
                 ? () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => DetailDailyForecast(
                               currentIndex: 0,
-                              weatherForecastDaily: weatherForecastDaily,
+                              weatherForecastDaily:
+                                  weatherData.weatherForecastDaily,
                             )))
                 : () {}),
         GestureDetector(
@@ -810,21 +721,10 @@ class _WeatherScreenState extends State<WeatherScreen>
         ],
       );
 
-  _buildWindAndPressure() {
-    return StreamBuilder<WeatherState>(
-        stream: bloc.weatherStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            WeatherState weatherState = snapshot.data;
-            if (weatherState is WeatherStateSuccess) {
-              WeatherResponse weatherResponse = weatherState.weatherResponse;
-              return _bodyWindAndPressure(weatherResponse);
-            }
-          }
-          return weatherResponse != null
-              ? _bodyWindAndPressure(weatherResponse)
-              : Container();
-        });
+  _buildWindAndPressure(WeatherResponse weatherResponse) {
+    return weatherResponse != null
+        ? _bodyWindAndPressure(weatherResponse)
+        : Container();
   }
 
   _bodyWindAndPressure(WeatherResponse weatherResponse) {
@@ -991,83 +891,73 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildSunTime() {
+  _buildSunTime(WeatherResponse weatherResponse) {
+    return weatherResponse != null
+        ? _buildSunTimeBody(weatherResponse)
+        : Container();
+  }
+
+  _buildSunTimeBody(WeatherResponse weatherResponse) {
     return Column(
       children: [
         _buildRowTitle(
             'Sun & Moon',
             'More',
-            weatherForecastDaily != null
+            weatherData != null
                 ? () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => DetailDailyForecast(
                               currentIndex: 0,
-                              weatherForecastDaily: weatherForecastDaily,
+                              weatherForecastDaily:
+                                  weatherData.weatherForecastDaily,
                             )))
                 : () {}),
-        StreamBuilder<WeatherState>(
-            stream: bloc.weatherStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                WeatherState weatherState = snapshot.data;
-                if (weatherState is WeatherStateSuccess) {
-                  WeatherResponse weatherResponse =
-                      weatherState.weatherResponse;
-
-                  return _buildSunTimeBody(weatherResponse);
-                }
-              }
-              return weatherResponse != null
-                  ? _buildSunTimeBody(weatherResponse)
-                  : Container();
-            }),
+        Container(
+          margin: EdgeInsets.all(margin),
+          padding: EdgeInsets.symmetric(vertical: margin, horizontal: padding),
+          decoration: BoxDecoration(
+              color: transparentBg,
+              borderRadius: BorderRadius.circular(radiusSmall),
+              border: Border.all(color: Colors.grey, width: 0.5)),
+          child: Column(
+            children: [
+              GestureDetector(
+                  onTap: weatherData != null
+                      ? () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailDailyForecast(
+                                    currentIndex: 0,
+                                    weatherForecastDaily:
+                                        weatherData.weatherForecastDaily,
+                                  )))
+                      : () {},
+                  child: SunPathWidget(
+                    sunrise: weatherResponse.system.sunrise,
+                    sunset: weatherResponse.system.sunset,
+                    differentTime: _getDifferentTime(timezone),
+                  )),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: margin),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunrise))}',
+                      style: textTitleWhite,
+                    ),
+                    Text(
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunset))}',
+                      style: textTitleWhite,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ],
-    );
-  }
-
-  _buildSunTimeBody(WeatherResponse weatherResponse) {
-    return Container(
-      margin: EdgeInsets.all(margin),
-      padding: EdgeInsets.symmetric(vertical: margin, horizontal: padding),
-      decoration: BoxDecoration(
-          color: transparentBg,
-          borderRadius: BorderRadius.circular(radiusSmall),
-          border: Border.all(color: Colors.grey, width: 0.5)),
-      child: Column(
-        children: [
-          GestureDetector(
-              onTap: weatherForecastDaily != null
-                  ? () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DetailDailyForecast(
-                                currentIndex: 0,
-                                weatherForecastDaily: weatherForecastDaily,
-                              )))
-                  : () {},
-              child: SunPathWidget(
-                sunrise: weatherResponse.system.sunrise,
-                sunset: weatherResponse.system.sunset,
-              )),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: margin),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunrise))}',
-                  style: textTitleWhite,
-                ),
-                Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunset))}',
-                  style: textTitleWhite,
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 
@@ -1079,4 +969,17 @@ class _WeatherScreenState extends State<WeatherScreen>
         widget.lat, widget.lon, _exclude7DayForecast);
     return;
   }
+}
+
+class WeatherData {
+  final WeatherResponse weatherResponse;
+  final WeatherForecastListResponse weatherForecastListResponse;
+  final WeatherForecastDaily weatherForecastDaily;
+  final WeatherStateError error;
+
+  WeatherData(
+      {this.weatherResponse,
+      this.weatherForecastListResponse,
+      this.weatherForecastDaily,
+      this.error});
 }

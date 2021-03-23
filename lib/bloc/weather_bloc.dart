@@ -12,7 +12,6 @@ class WeatherBloc extends BlocBase{
     _behaviorSubject.add(WeatherStateLoading());
 
     WeatherResponse weatherResponse= await weatherRepository.fetchWeather(lat, lon, units);
-    print('fetchWeather ${weatherResponse.errorCode }');
     if(weatherResponse.errorCode !=null){
       _behaviorSubject.add(WeatherStateError(weatherResponse.errorCode));
     }else{

@@ -4,28 +4,30 @@ import 'application_error.dart';
 import 'daily.dart';
 
 class WeatherForecastDaily {
-  List<Daily> daily;
-  CurrentDailyWeather current;
+  final String timezone;
+  final List<Daily> daily;
+  final CurrentDailyWeather current;
   ApplicationError _errorCode;
 
-  WeatherForecastDaily({this.daily});
+  WeatherForecastDaily({
+    this.daily,
+    this.timezone,
+    this.current,
+  });
 
-  WeatherForecastDaily.fromJson(Map<String, dynamic> json) {
-    if (json['daily'] != null) {
-      daily = new List<Daily>();
-      json['daily'].forEach((v) {
-        daily.add(new Daily.fromJson(v));
-      });
-    }
-    current = CurrentDailyWeather.fromJson(json['current']);
-  }
+  WeatherForecastDaily.fromJson(Map<String, dynamic> json)
+      : daily = (json['daily'] as List).map((e) => Daily.fromJson(e)).toList(),
+        current = CurrentDailyWeather.fromJson(json['current']),
+        timezone = json['timezone'];
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.daily != null) {
-      data['daily'] = this.daily.map((v) => v.toJson()).toList();
-    }
-    return data;
+  static WeatherForecastDaily withTimezone(
+      WeatherForecastDaily weatherForecastDaily, int differentTime) {
+    return WeatherForecastDaily(
+      daily: weatherForecastDaily.daily.map((e) =>
+          Daily.withTimeZone(e, differentTime)).toList(),
+      current: CurrentDailyWeather.withTimezone(weatherForecastDaily.current, differentTime),
+      timezone: weatherForecastDaily.timezone
+    );
   }
 
   static WeatherForecastDaily withErrorCode(ApplicationError errorCode) {

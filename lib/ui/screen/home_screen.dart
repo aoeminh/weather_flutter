@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     cityBloc.getListCity();
+    cityBloc.getListTimezone();
     pageBloc.addPage(widget.position.latitude, widget.position.longitude);
     pageBloc.currentPage.listen((event) {
       if (controller.hasClients) {
