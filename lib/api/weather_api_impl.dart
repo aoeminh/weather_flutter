@@ -20,6 +20,7 @@ class WeatherApiImpl extends WeatherApi {
     Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, units);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
+      print('fetchWeather Success: ${response.data}');
       return WeatherResponse.fromJson(response.data);
     } else {
       return WeatherResponse.withErrorCode(ApplicationError.apiError);

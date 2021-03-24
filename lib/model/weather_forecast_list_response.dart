@@ -1,5 +1,3 @@
-
-
 import 'application_error.dart';
 import 'city.dart';
 import 'weather_forecast_response.dart';

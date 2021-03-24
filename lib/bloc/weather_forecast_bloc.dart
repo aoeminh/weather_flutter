@@ -17,6 +17,7 @@ class WeatherForecastBloc extends BlocBase {
       _behaviorSubject
           .add(WeatherStateError(weatherForecastListResponse.errorCode));
     } else {
+      print('fetchWeatherForecastResponse');
       _behaviorSubject
           .add(WeatherForecastStateSuccess(weatherForecastListResponse));
     }
@@ -30,6 +31,7 @@ class WeatherForecastBloc extends BlocBase {
       _behaviorSubjectForDailyDay
           .add(WeatherStateError(weatherForecast7Day.errorCode));
     } else {
+      print('fetchWeatherForecast7Day');
       _behaviorSubjectForDailyDay
           .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
     }

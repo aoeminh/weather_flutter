@@ -68,7 +68,7 @@ class ChartData {
 
   List<Point> _getPoints(
       List<double> values, double averageValue, double width, double height) {
-    List<Point> points = List();
+    List<Point> points = [];
     double halfHeight = (height - Dimensions.chartPadding) / 2;
     double widthStep = width / (values.length - 1);
     double currentX = 0;
@@ -90,7 +90,7 @@ class ChartData {
 
   List<double> _getAverageDifferenceValues(
       List<double> values, double averageValue) {
-    List<double> calculatedValues = new List();
+    List<double> calculatedValues = [];
     for (double value in values) {
       calculatedValues.add(value - averageValue);
     }
@@ -107,7 +107,7 @@ class ChartData {
 
   List<String> _getPointLabels(
       List<double> values, WeatherForecastHolder holder) {
-    List<String> points = List();
+    List<String> points = [];
     for (int i = 0; i < values.length; i++) {
       double value = values[i];
       if (value == holder.maxTemperature) {
@@ -125,7 +125,7 @@ class ChartData {
   }
 
   List<String> _getPointPops(List<double> values) {
-    List<String> points = List();
+    List<String> points = [];
     for (double value in values) {
       points.add('${value.toStringAsFixed(0)}$percent');
     }
@@ -133,7 +133,7 @@ class ChartData {
   }
 
   List<DateTime> _getDateTimes(List<WeatherForecastResponse> forecastList) {
-    List<DateTime> dateTimes = new List();
+    List<DateTime> dateTimes = [];
     for (WeatherForecastResponse response in forecastList) {
       dateTimes.add(response.dateTime);
     }
@@ -141,7 +141,7 @@ class ChartData {
   }
 
   List<String> _getListDateTimeString(List<DateTime> dateTimes) {
-    List<String> list = List();
+    List<String> list = [];
     for (DateTime dateTime in dateTimes) {
       list.add(getTimeLabel(dateTime));
     }
@@ -150,7 +150,7 @@ class ChartData {
 
   List<ChartLine> _getAxes(List<Point> points, List<String> pops, double height,
       double width, String mainAxisText) {
-    List<ChartLine> list = new List();
+    List<ChartLine> list = [];
 
     for (int index = 0; index < points.length; index++) {
       Point point = points[index];
@@ -187,7 +187,7 @@ class ChartData {
   }
 
   List<String> _getIconCodes(List<WeatherForecastResponse> forecastList) {
-    List<String> list = List();
+    List<String> list = [];
     for (WeatherForecastResponse weatherForecastResponse in forecastList) {
       list.add(weatherForecastResponse.overallWeatherData[0].icon);
     }

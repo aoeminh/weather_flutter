@@ -1,7 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/model/weather_response.dart';
-import 'package:weather_app/repository/weather_repository.dart';
 
 class WeatherBloc extends BlocBase{
 
@@ -13,7 +12,6 @@ class WeatherBloc extends BlocBase{
     _behaviorSubject.add(WeatherStateLoading());
 
     WeatherResponse weatherResponse= await weatherRepository.fetchWeather(lat, lon, units);
-    print('fetchWeather ${weatherResponse.errorCode }');
     if(weatherResponse.errorCode !=null){
       _behaviorSubject.add(WeatherStateError(weatherResponse.errorCode));
     }else{

@@ -1,11 +1,11 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:weather_app/model/system.dart';
 import 'package:weather_app/model/weather_forecast_response.dart';
-import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/image.dart';
-import 'package:intl/intl.dart';
+import 'package:weather_app/shared/strings.dart';
 
 Image getIconForecastImage(String iconCode, {double width, double height}) {
   switch (iconCode) {
@@ -197,7 +197,7 @@ Map<String, List<WeatherForecastResponse>> mapForecastsForSameDay(
     WeatherForecastResponse response = forecastList[i];
     String dayKey = _getDayKey(response.dateTime);
     if (!map.containsKey(dayKey)) {
-      map[dayKey] = List<WeatherForecastResponse>();
+      map[dayKey] = <WeatherForecastResponse>[];
     }
     map[dayKey].add(response);
   }
@@ -324,6 +324,13 @@ String getRiseAndSetTime(DateTime rise, DateTime set) {
 
   double minute = (sub / (60 * 60 * 100)) % 60;
 
-  print('hour $hour minute $minute');
   return '${hour.toStringAsFixed(0)} hour ${minute.toStringAsFixed(0)} minute';
+}
+
+int convertTimezoneToNumber(String timezone) {
+  String value = timezone.substring(0, timezone.indexOf(':'));
+  int valueInt = (int.parse(value) - 7);
+  print('convertTimezoneToNumber $valueInt');
+
+  return valueInt;
 }

@@ -1,5 +1,5 @@
 import 'overall_weather_data.dart';
-
+import 'package:weather_app/shared/constant.dart';
 class CurrentDailyWeather {
   int dt;
   int sunrise;
@@ -41,7 +41,7 @@ class CurrentDailyWeather {
     pressure = json['pressure'];
     humidity = json['humidity'];
     dewPoint = json['dew_point'].toDouble();
-    uvi = json['uvi'];
+    uvi = json['uvi'].toDouble();
     clouds = json['clouds'];
     visibility = json['visibility'];
     windSpeed = json['wind_speed'];
@@ -52,6 +52,24 @@ class CurrentDailyWeather {
         weather.add(new Weather.fromJson(v));
       });
     }
+  }
+
+  static CurrentDailyWeather withTimezone(CurrentDailyWeather currentDailyWeather, int differentTime){
+    return CurrentDailyWeather(windSpeed: currentDailyWeather.windSpeed,
+      windDeg: currentDailyWeather.windDeg,
+      weather: currentDailyWeather.weather,
+      uvi: currentDailyWeather.uvi,
+      temp: currentDailyWeather.temp,
+      sunset: currentDailyWeather.sunset + differentTime* oneHourMilli,
+      sunrise: currentDailyWeather.sunrise = differentTime* oneHourMilli,
+      pressure: currentDailyWeather.pressure,
+      humidity: currentDailyWeather.humidity,
+      feelsLike: currentDailyWeather.feelsLike,
+      dewPoint: currentDailyWeather.dewPoint,
+      clouds: currentDailyWeather.clouds,
+      dt: currentDailyWeather.dt + differentTime* oneHourMilli,
+      visibility: currentDailyWeather.visibility
+    );
   }
 
   Map<String, dynamic> toJson() {
