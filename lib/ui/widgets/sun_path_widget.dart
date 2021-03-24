@@ -75,7 +75,7 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
                     height: _height,
                     child: CustomPaint(
                       painter: _SunPathPainter(widget.sunrise, widget.sunset,
-                          _fraction, snapshot.data),
+                          _fraction, snapshot.data, widget.differentTime),
                     )),
               ],
             );
@@ -115,9 +115,11 @@ class _SunPathPainter extends CustomPainter {
   final int dayAsMs = 86400000;
   final int sunrise;
   final int sunset;
+  final int differentTime;
   final ImageInfo imageInfo;
 
-  _SunPathPainter(this.sunrise, this.sunset, this.fraction, this.imageInfo);
+  _SunPathPainter(this.sunrise, this.sunset, this.fraction, this.imageInfo,
+      this.differentTime);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -156,9 +158,19 @@ class _SunPathPainter extends CustomPainter {
   }
 
   Offset _getPosition(fraction) {
-    int now = DateTime.now().millisecondsSinceEpoch;
+    int now = DateTime.now().millisecondsSinceEpoch +
+        differentTime * oneHourMilli;
+
     double difference = 0;
-    difference = (now - sunrise) / (sunset - sunrise);
+
+    if (now < sunrise) {
+      difference = 0;
+    } else if (now > sunset) {
+      difference = 1;
+    } else {
+      difference = (now - sunrise) / (sunset - sunrise);
+    }
+
     var x = _width / 2 * cos((1 + difference * fraction) * pi) + _width / 2;
     var y = _height * sin((1 + difference * fraction) * pi) + _height;
     return Offset(x, y);
@@ -192,9 +204,15 @@ class _SunPathCliper extends CustomClipper<Path> {
   }
 
   double _getDifferent() {
-    int now =
-        DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli - sevenHourMilli;
-    return (now - sunrise) / (sunset - sunrise);
+    int now = DateTime.now().millisecondsSinceEpoch +
+        differentTime * oneHourMilli;
+    if (now < sunrise) {
+      return 0;
+    } else if (now > sunset) {
+      return 1;
+    } else {
+      return (now - sunrise) / (sunset - sunrise);
+    }
   }
 
   Offset _getPosition(fraction) {

@@ -36,7 +36,7 @@ import 'detail_daily_forecast.dart';
 const double _mainWeatherHeight = 220;
 const double _mainWeatherWidth = 2000;
 const double _chartHeight = 30;
-const double _dailySectionHeight = 480;
+const double _dailySectionHeight = 520;
 const String _exclude7DayForecast = 'minutely,hourly';
 
 const double bigIconSize = 16;
@@ -84,7 +84,6 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _createTime(DateTime dateTime) {
-    print('_createTime ${dateTime.toUtc().millisecondsSinceEpoch}');
     if (currentTime <= dateTime.millisecondsSinceEpoch) {
       currentTime = dateTime.millisecondsSinceEpoch;
       Timer.periodic(
@@ -135,6 +134,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
           differentTime = _getDifferentTime(c.weatherResponse.timezone);
+
           return WeatherData(
               weatherResponse: WeatherResponse.formatWithTimezone(
                   a.weatherResponse, differentTime),
@@ -177,14 +177,13 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   int _getDifferentTime(String timezone) {
+    print('_getDifferentTime $timezone');
     String value = '';
     for (Timezone time in cityBloc.timezones) {
       if (time.value.contains(getTimezone(timezone))) {
         value = getTimezone(time.name);
-        print('_getDifferentTime ${getTimezone(timezone)}');
       }
     }
-
     return value == '' ? 0 : convertTimezoneToNumber(value);
   }
 
@@ -224,7 +223,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                 _buildDailyForecast(weatherData.weatherForecastDaily),
                 _buildDetail(weatherData.weatherForecastDaily),
                 _buildWindAndPressure(weatherData.weatherResponse),
-                _buildSunTime(weatherData.weatherResponse)
+                _buildSunTime(weatherData.weatherResponse,weatherData.weatherForecastDaily.timezone)
               ],
             ),
           ),
@@ -891,13 +890,15 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildSunTime(WeatherResponse weatherResponse) {
+  _buildSunTime(WeatherResponse weatherResponse,String timezone) {
     return weatherResponse != null
-        ? _buildSunTimeBody(weatherResponse)
+        ? _buildSunTimeBody(weatherResponse,timezone)
         : Container();
   }
 
-  _buildSunTimeBody(WeatherResponse weatherResponse) {
+  _buildSunTimeBody(WeatherResponse weatherResponse,String timezone) {
+    print('_createTime ${weatherResponse.system.sunrise}  ${weatherResponse.system.sunset} ${weatherResponse.dt}');
+
     return Column(
       children: [
         _buildRowTitle(
