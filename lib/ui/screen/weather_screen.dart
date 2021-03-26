@@ -223,13 +223,28 @@ class _WeatherScreenState extends State<WeatherScreen>
                 _buildDailyForecast(weatherData.weatherForecastDaily),
                 _buildDetail(weatherData.weatherForecastDaily),
                 _buildWindAndPressure(weatherData.weatherResponse),
-                _buildSunTime(weatherData.weatherResponse,weatherData.weatherForecastDaily.timezone)
+                _buildSunTime(weatherData.weatherResponse,
+                    weatherData.weatherForecastDaily.timezone)
               ],
             ),
           ),
           onRefresh: refresh,
         ),
         // _body(),
+      ),
+      drawer: Drawer(
+        child: FractionallySizedBox(
+          child: Column(
+            children: [
+              Container(
+                child: Text(''),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -606,13 +621,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                             )))
                 : () {}),
         GestureDetector(
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DetailDailyForecast(
-                        currentIndex: 0,
-                        weatherForecastDaily: weatherForecastDaily,
-                      ))),
+          onTap: weatherData != null
+              ? () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailDailyForecast(
+                            currentIndex: 0,
+                            weatherForecastDaily:
+                                weatherData.weatherForecastDaily,
+                          )))
+              : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -732,23 +750,27 @@ class _WeatherScreenState extends State<WeatherScreen>
         _buildRowTitle(
             'Wind & Pressure',
             'More',
-            weatherForecastDaily != null
+            weatherData != null
                 ? () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => DetailDailyForecast(
                               currentIndex: 0,
-                              weatherForecastDaily: weatherForecastDaily,
+                              weatherForecastDaily:
+                                  weatherData.weatherForecastDaily,
                             )))
                 : () {}),
         GestureDetector(
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DetailDailyForecast(
-                        currentIndex: 0,
-                        weatherForecastDaily: weatherForecastDaily,
-                      ))),
+          onTap: weatherData != null
+              ? () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailDailyForecast(
+                            currentIndex: 0,
+                            weatherForecastDaily:
+                                weatherData.weatherForecastDaily,
+                          )))
+              : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -890,14 +912,15 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildSunTime(WeatherResponse weatherResponse,String timezone) {
+  _buildSunTime(WeatherResponse weatherResponse, String timezone) {
     return weatherResponse != null
-        ? _buildSunTimeBody(weatherResponse,timezone)
+        ? _buildSunTimeBody(weatherResponse, timezone)
         : Container();
   }
 
-  _buildSunTimeBody(WeatherResponse weatherResponse,String timezone) {
-    print('_createTime ${weatherResponse.system.sunrise}  ${weatherResponse.system.sunset} ${weatherResponse.dt}');
+  _buildSunTimeBody(WeatherResponse weatherResponse, String timezone) {
+    print(
+        '_createTime ${weatherResponse.system.sunrise}  ${weatherResponse.system.sunset} ${weatherResponse.dt}');
 
     return Column(
       children: [
