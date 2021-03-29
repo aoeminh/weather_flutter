@@ -1,5 +1,12 @@
 const String degree ='°';
+const String degreeC ='°C';
+const String degreeF ='°F';
 const String percent ='%';
+const String kmh ='km/h';
+const String ms ='m/s';
+const String mBar ='mBar';
+const String bar ='bar';
+const String mmHg ='mmHg';
 
 // icon list
 const String mClear ='01d';

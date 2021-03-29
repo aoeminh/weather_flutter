@@ -140,3 +140,12 @@ const mIconLittleSun= '$mImgPath'
 
 const mIconSettingLocation= '$mImgPath'
     'icon_setting_location.png';
+
+const mIconSettingNotify= '$mImgPath'
+    'icon_setting_notifications.png';
+
+const mIconSettingPressure= '$mImgPath'
+    'ic_setting_pressure.png';
+
+const mIconSettingVisibility= '$mImgPath'
+    'ic_setting_visibility.png';

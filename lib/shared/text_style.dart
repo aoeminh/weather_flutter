@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'colors.dart';
 
 const double _fontSize = 12;
-const double _fontSizeLarge = 14;
+const double _fontSizeSecondary = 14;
 const double _fontSizeSmall = 10;
 const double _fontTitleSize = 16;
 const double _fontTitleSizeH1 = 22;
@@ -19,17 +19,17 @@ const textSmallWhite70 = TextStyle(
 const textSmallWhite = TextStyle(
     color: Colors.white, fontSize: _fontSize, fontWeight: FontWeight.normal);
 const textSecondaryWhite = TextStyle(
-    color: mWhite, fontSize: _fontSizeLarge, fontWeight: FontWeight.normal);
+    color: mWhite, fontSize: _fontSizeSecondary, fontWeight: FontWeight.normal);
 
 const textSecondaryWhite70 = TextStyle(
-    color: Colors.white70, fontSize: _fontSizeLarge, fontWeight: FontWeight.normal);
+    color: Colors.white70, fontSize: _fontSizeSecondary, fontWeight: FontWeight.normal);
 
 
 const textSecondaryWhiteBold = TextStyle(
-    color: mWhite, fontSize: _fontSizeLarge, fontWeight: FontWeight.bold);
+    color: mWhite, fontSize: _fontSizeSecondary, fontWeight: FontWeight.bold);
 
 const textSecondaryGrey = TextStyle(
-    color: mTextGrey, fontSize: _fontSizeLarge, fontWeight: FontWeight.normal);
+    color: mTextGrey, fontSize: _fontSizeSecondary, fontWeight: FontWeight.normal);
 
 const textTitleWhite = TextStyle(
     color: mWhite, fontSize: _fontTitleSize, fontWeight: FontWeight.normal);
@@ -45,6 +45,12 @@ const textTitleGrey = TextStyle(
 const textTitleUnderlineWhite = TextStyle(
     color: mWhite,
     fontSize: _fontTitleSize,
+    fontWeight: FontWeight.normal,
+    decoration: TextDecoration.underline);
+
+const textSecondaryUnderlineBlue= TextStyle(
+    color: Colors.blue,
+    fontSize: _fontSizeSecondary,
     fontWeight: FontWeight.normal,
     decoration: TextDecoration.underline);
 
