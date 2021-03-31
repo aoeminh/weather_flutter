@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/city_bloc.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
 import 'package:weather_app/bloc/weather_forecast_bloc.dart';
 import 'package:weather_app/model/chart_data.dart';
@@ -76,6 +77,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   int currentTime = 0;
   String timezone = '';
   int differentTime = 0;
+  bool isOnNotification = true;
 
   @override
   void initState() {
@@ -259,10 +261,15 @@ class _WeatherScreenState extends State<WeatherScreen>
               const SizedBox(height: margin),
               Divider(height: 1, color: Colors.grey),
               _buildItemDrawer(mIconSettingNotify,'Notification',Switch(
-                 value: true,
+                 value: settingBloc.isOnNotification,
                 onChanged: (isOn){
-                },
-              ), (){}),
+                  isOnNotification = isOn;
+                  _showNotification(isOnNotification,weatherData.weatherResponse);
+                    },
+              ), (){
+                isOnNotification = !isOnNotification;
+                _showNotification(isOnNotification,weatherData.weatherResponse);
+              }),
               _buildItemUnit(mIconSettingTemp,'Temp Unit','$degree C', (){}),
               _buildItemUnit(mIconWind,'Wind Unit','km/h', (){}),
               _buildItemUnit(mIconSettingPressure,'Pressure Unit','mBar', (){}),
@@ -276,9 +283,14 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
+  _showNotification(bool isOn,WeatherResponse response){
+    settingBloc.onOffNotification(isOn,response);
+    setState(() {});
+  }
+
   _buildItemDrawer(String imagePath, String title, Widget widget,
       VoidCallback callback) {
-    return GestureDetector(
+    return InkWell(
       onTap: callback,
       child: Container(
         padding: EdgeInsets.only(

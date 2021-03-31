@@ -7,6 +7,11 @@ const String ms ='m/s';
 const String mBar ='mBar';
 const String bar ='bar';
 const String mmHg ='mmHg';
+const String twelveClock ='12-clock';
+const String twentyFourClock ='24-clock';
+const String ddMMYY ='dd/MM/yyyy';
+const String mmDDYY ='mm/DD/yyyy';
+const String yyMMDD ='yyyy/MM/dd';
 
 // icon list
 const String mClear ='01d';
