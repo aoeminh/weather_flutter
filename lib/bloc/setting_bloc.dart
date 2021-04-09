@@ -9,6 +9,14 @@ enum PressureEnum { mBar, bar, mmHg }
 enum VisibilityEnum { km, mile }
 enum TimeEnum { twelve, twentyFour }
 enum DateEnum { dd, mm, yy }
+enum SettingEnum {
+  TempEnum,
+  WindEnum,
+  PressureEnum,
+  VisibilityEnum,
+  TimeEnum,
+  DateEnum
+}
 
 extension TempExtenstion on TempEnum {
   String get value {
@@ -19,6 +27,17 @@ extension TempExtenstion on TempEnum {
         return '$degreeF';
       default:
         return '$degreeC';
+    }
+  }
+
+  TempEnum setValue(String value) {
+    switch (value) {
+      case degreeC:
+        return TempEnum.C;
+      case degreeF:
+        return TempEnum.F;
+      default:
+        return TempEnum.C;
     }
   }
 }
@@ -81,10 +100,12 @@ extension DateExtenstion on DateEnum {
 }
 
 class SettingBloc extends BlocBase {
-  bool _isOnNotify = true;
+  bool _isOnNotify = false;
   WeatherResponse _weatherResponse;
+  TempEnum _tempEnum = TempEnum.C;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
+  BehaviorSubject<SettingEnum> _settingBehavior = BehaviorSubject();
 
   onOffNotification(bool isOn, WeatherResponse weatherResponse) {
     _isOnNotify = isOn;
@@ -92,16 +113,45 @@ class SettingBloc extends BlocBase {
     _notificationSubject.add(_isOnNotify);
   }
 
+  changeSetting(String value,SettingEnum settingEnum) {
+    switch (settingEnum){
+      case SettingEnum.TempEnum:
+        _tempEnum = _tempEnum.setValue(value);
+        break;
+      case SettingEnum.WindEnum:
+        // TODO: Handle this case.
+        break;
+      case SettingEnum.PressureEnum:
+        // TODO: Handle this case.
+        break;
+      case SettingEnum.VisibilityEnum:
+        // TODO: Handle this case.
+        break;
+      case SettingEnum.TimeEnum:
+        // TODO: Handle this case.
+        break;
+      case SettingEnum.DateEnum:
+        // TODO: Handle this case.
+        break;
+    }
+    _settingBehavior.add(settingEnum);
+  }
+
   @override
   void dispose() {
     _notificationSubject.close();
+    _settingBehavior.close();
   }
+
+  TempEnum get tempEnum => _tempEnum;
 
   bool get isOnNotification => _isOnNotify;
 
   WeatherResponse get weatherResponse => _weatherResponse;
 
   Stream get notificationStream => _notificationSubject.stream;
+
+  Stream get settingStream => _settingBehavior.stream;
 }
 
 final settingBloc = SettingBloc();

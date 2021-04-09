@@ -2,7 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/system.dart';
+import 'package:weather_app/model/temp.dart';
 import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
@@ -208,19 +210,39 @@ String _getDayKey(DateTime dateTime) {
   return "${dateTime.day.toString()}-${dateTime.month.toString()}-${dateTime.year.toString()}";
 }
 
-String formatTemperature(
-    {double temperature, int positions = 0, round = true, metricUnits = true}) {
-  var unit = "°C";
-
-  if (!metricUnits) {
-    unit = "°F";
+  convertTemp(double temp, TempEnum tempEnum){
+  if(tempEnum == TempEnum.F){
+    temp = (temp * 1.8) +32;
   }
+  return temp;
+}
+
+String formatTemperature(
+    {double temperature,
+    int positions = 0,
+    round = true,
+    isShowUnit = false,
+    tempEnum = TempEnum.C}) {
+  var unit = degreeC;
+
+  if (tempEnum != TempEnum.C) {
+    temperature = (temperature * 1.8) + 32;
+    unit = degreeF;
+  }
+  unit = isShowUnit ? unit : degree;
 
   if (round) {
     temperature = temperature.floor().toDouble();
   }
 
-  return "${temperature.toStringAsFixed(positions)} $unit";
+  return "${temperature.toStringAsFixed(positions)}$unit";
+}
+
+double formatTemp(double temp, TempEnum tempEnum) {
+  if (tempEnum != TempEnum.C) {
+    temp = (temp * 1.8) + 32;
+  }
+  return temp;
 }
 
 double convertCelsiusToFahrenheit(double temperature) {
@@ -330,7 +352,6 @@ String getRiseAndSetTime(DateTime rise, DateTime set) {
 int convertTimezoneToNumber(String timezone) {
   String value = timezone.substring(0, timezone.indexOf(':'));
   int valueInt = (int.parse(value) - 7);
-  print('convertTimezoneToNumber $valueInt');
 
   return valueInt;
 }

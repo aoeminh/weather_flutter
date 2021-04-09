@@ -76,3 +76,6 @@ const textMainTemp = TextStyle(
 
 const textBigTemp = TextStyle(
     color: mWhite, fontSize: 50, fontWeight: FontWeight.normal);
+
+const textTitleBold = TextStyle(
+     fontSize: _fontTitleSize, fontWeight: FontWeight.bold);

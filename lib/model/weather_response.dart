@@ -6,7 +6,7 @@ import 'clouds.dart';
 import 'coordinates.dart';
 import 'main_weather_data.dart';
 import 'overall_weather_data.dart';
-import 'package:weather_app/shared/constant.dart';
+import '../shared/constant.dart';
 
 class WeatherResponse {
   final int dt;

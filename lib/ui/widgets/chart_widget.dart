@@ -3,11 +3,12 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:weather_app/model/chart_data.dart';
-import 'package:weather_app/model/chart_line.dart';
-import 'package:weather_app/model/point.dart';
-import 'package:weather_app/shared/image.dart';
-import 'package:weather_app/utils/utils.dart';
+import '../../bloc/setting_bloc.dart';
+import '../../model/chart_data.dart';
+import '../../model/chart_line.dart';
+import '../../model/point.dart';
+import '../../shared/image.dart';
+import '../../utils/utils.dart';
 
 import 'animated_state.dart';
 
@@ -56,6 +57,10 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
   void initState() {
     super.initState();
     init();
+    settingBloc.settingStream.listen((event) {
+      setState(() {
+      });
+    });
     animateTween(duration: 3000, curve: Curves.linear);
   }
 
@@ -69,7 +74,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
   }
 
   Future<List<ImageInfo>> getListIcon(List<String> iconCode) async {
-    List<ImageInfo> list = List();
+    List<ImageInfo> list = [];
     for (String code in iconCode) {
       ImageInfo image = await getImageInfo(context, getIconForecastUrl(code));
       list.add(image);

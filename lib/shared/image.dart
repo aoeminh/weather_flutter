@@ -149,3 +149,9 @@ const mIconSettingPressure= '$mImgPath'
 
 const mIconSettingVisibility= '$mImgPath'
     'ic_setting_visibility.png';
+
+const mIconEditingLocation = '$mImgPath'
+    'icon_setting_editlocation.png';
+
+const mIconMoreHoriz = '$mImgPath'
+    'ic_more_horiz.png';

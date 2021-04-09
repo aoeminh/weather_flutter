@@ -5,23 +5,24 @@ import 'package:geolocator/geolocator.dart';
 import 'bloc/position_bloc.dart';
 import 'ui/screen/home_screen.dart';
 
-void main() async{
+void main() async {
   runApp(MyApp());
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: selectNotification);
 }
+
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 const AndroidInitializationSettings initializationSettingsAndroid =
-AndroidInitializationSettings('ic_launcher');
+    AndroidInitializationSettings('ic_launcher');
 final IOSInitializationSettings initializationSettingsIOS =
-IOSInitializationSettings(
-    onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
 
 final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS);
+    android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
 Future selectNotification(String payload) async {
   if (payload != null) {
     debugPrint('notification payload: $payload');
@@ -44,9 +45,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      routes: {
-      },
-
+      routes: {},
       home: MyHomePage(),
     );
   }
