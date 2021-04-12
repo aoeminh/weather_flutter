@@ -12,7 +12,7 @@ class Daily {
   final int sunset;
   final Temp temp;
   final FeelsLike feelsLike;
-  final int pressure;
+  final double pressure;
   final int humidity;
   final double dewPoint;
   final double windSpeed;
@@ -46,7 +46,7 @@ class Daily {
         feelsLike = json['feels_like'] != null
             ? new FeelsLike.fromJson(json['feels_like'])
             : null,
-        pressure = json['pressure'],
+        pressure = json['pressure'].toDouble(),
         humidity = json['humidity'],
         dewPoint = json['dew_point'].toDouble(),
         windSpeed = json['wind_speed'].toDouble(),
@@ -81,7 +81,7 @@ class Daily {
       int sunset,
       Temp temp,
       FeelsLike feelsLike,
-      int pressure,
+      double pressure,
       int humidity,
       double dewPoint,
       double windSpeed,

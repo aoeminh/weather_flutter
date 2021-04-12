@@ -307,8 +307,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                 () => showSettingDialog(SettingEnum.TempEnum)),
             _buildItemUnit(mIconWind, 'Wind Unit', settingBloc.windEnum.value,
                 () => showSettingDialog(SettingEnum.WindEnum)),
-            _buildItemUnit(
-                mIconSettingPressure, 'Pressure Unit', 'mBar', () {}),
+            _buildItemUnit(mIconSettingPressure, 'Pressure Unit',
+                settingBloc.pressureEnum.value, ()=> showSettingDialog(SettingEnum.PressureEnum)),
             _buildItemUnit(
                 mIconSettingVisibility, 'Visibility Unit', 'km', () {}),
             _buildItemUnit(
@@ -1128,7 +1128,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                             ],
                           ),
                           Text(
-                            '${formatPressure(weatherResponse.mainWeatherData.pressure)}',
+                            '${formatPressure(weatherResponse.mainWeatherData.pressure, settingBloc.pressureEnum.value)}',
                             style: textTitleWhite,
                           )
                         ],
@@ -1234,7 +1234,11 @@ class _WeatherScreenState extends State<WeatherScreen>
         groupValue = settingBloc.windEnum.value;
         break;
       case SettingEnum.PressureEnum:
-        // TODO: Handle this case.
+        PressureEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Wind speed Unit';
+        groupValue = settingBloc.pressureEnum.value;
         break;
       case SettingEnum.VisibilityEnum:
         // TODO: Handle this case.

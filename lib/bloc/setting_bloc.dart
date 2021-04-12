@@ -11,7 +11,7 @@ import '../ui/screen/weather_screen.dart';
 
 enum TempEnum { C, F }
 enum WindEnum { kmh, mph, ms }
-enum PressureEnum { mBar, bar, mmHg }
+enum PressureEnum { mBar, bar, psi, inHg, mmHg }
 enum VisibilityEnum { km, mile }
 enum TimeEnum { twelve, twentyFour }
 enum DateEnum { dd, mm, yy }
@@ -85,8 +85,29 @@ extension PressureExtenstion on PressureEnum {
         return bar;
       case PressureEnum.mmHg:
         return mmHg;
+      case PressureEnum.psi:
+        return psi;
+      case PressureEnum.inHg:
+        return inHg;
       default:
         return mBar;
+    }
+  }
+
+  PressureEnum setValue(String value) {
+    switch (value) {
+      case mBar:
+        return PressureEnum.mBar;
+      case bar:
+        return PressureEnum.bar;
+      case mmHg:
+        return PressureEnum.mmHg;
+      case psi:
+        return PressureEnum.psi;
+      case inHg:
+        return PressureEnum.inHg;
+      default:
+        return PressureEnum.mBar;
     }
   }
 }
@@ -125,6 +146,7 @@ class SettingBloc extends BlocBase {
   WeatherData _weatherData;
   TempEnum _tempEnum = TempEnum.C;
   WindEnum _windEnum = WindEnum.kmh;
+  PressureEnum _pressureEnum = PressureEnum.mBar;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   BehaviorSubject<SettingEnum> _settingBehavior = BehaviorSubject();
@@ -144,7 +166,7 @@ class SettingBloc extends BlocBase {
         _windEnum = _windEnum.setValue(value);
         break;
       case SettingEnum.PressureEnum:
-        // TODO: Handle this case.
+        _pressureEnum = _pressureEnum.setValue(value);
         break;
       case SettingEnum.VisibilityEnum:
         // TODO: Handle this case.
@@ -176,6 +198,8 @@ class SettingBloc extends BlocBase {
             wind: weatherResponse.wind.copyWith(
                 speed: convertWindSpeed(weatherResponse.wind.speed, windEnum)),
             mainWeatherData: weatherResponse.mainWeatherData.copyWith(
+                pressure: convertPressure(
+                    weatherResponse.mainWeatherData.pressure, pressureEnum),
                 temp:
                     convertTemp(weatherResponse.mainWeatherData.temp, tempEnum),
                 tempMin: convertTemp(
@@ -191,19 +215,19 @@ class SettingBloc extends BlocBase {
             current: weatherForecastDaily.current.copyWith(
                 feelsLike: convertTemp(
                     weatherForecastDaily.current.feelsLike, tempEnum),
-                temp:
-                    convertTemp(weatherForecastDaily.current.temp, tempEnum))));
+                temp: convertTemp(weatherForecastDaily.current.temp, tempEnum))));
   }
 
   List<WeatherForecastResponse> _convertForecastListResponse(
       WeatherForecastListResponse weatherForecastListResponse) {
     List<WeatherForecastResponse> list =
         weatherForecastListResponse.list.map((e) {
-      print('${convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum)}');
       return e.copyWith(
           wind:
               e.wind.copyWith(speed: convertWindSpeed(e.wind.speed, windEnum)),
           mainWeatherData: e.mainWeatherData.copyWith(
+              pressure:
+                  convertPressure(e.mainWeatherData.pressure, pressureEnum),
               temp: convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum),
               feelsLike: convertTemp(
                   e.mainWeatherData.feelsLike, settingBloc.tempEnum),
@@ -220,6 +244,7 @@ class SettingBloc extends BlocBase {
         .map((e) => e.copyWith(
             windSpeed: convertWindSpeed(e.windSpeed, windEnum),
             dewPoint: convertTemp(e.temp.day, tempEnum),
+            pressure: convertPressure(e.pressure, pressureEnum),
             temp: e.temp.copyWith(
                 day: convertTemp(e.temp.day, tempEnum),
                 eve: convertTemp(e.temp.eve, tempEnum),
@@ -244,6 +269,8 @@ class SettingBloc extends BlocBase {
   TempEnum get tempEnum => _tempEnum;
 
   WindEnum get windEnum => _windEnum;
+
+  PressureEnum get pressureEnum => _pressureEnum;
 
   bool get isOnNotification => _isOnNotify;
 

@@ -232,6 +232,23 @@ double convertWindSpeed(double speed, WindEnum windEnum) {
   }
 }
 
+double convertPressure(double pressure, PressureEnum pressureEnum) {
+  switch (pressureEnum) {
+    case PressureEnum.mBar:
+      return pressure;
+    case PressureEnum.bar:
+      return pressure / 1000;
+    case PressureEnum.mmHg:
+      return pressure * 0.75;
+    case PressureEnum.psi:
+      return pressure * 0.015;
+    case PressureEnum.inHg:
+      return pressure * 0.0295;
+    default:
+      return pressure;
+  }
+}
+
 String formatTemperature(
     {double temperature, int positions = 0, round = true, String unit = ''}) {
   if (round) {
@@ -265,11 +282,7 @@ double convertFahrenheitToCelsius(double temperature) {
   return (temperature - 32) * 0.55;
 }
 
-String formatPressure(double pressure) {
-  String unit = "hPa";
-
-  unit = "mbar";
-
+String formatPressure(double pressure, String unit) {
   return "${pressure.toStringAsFixed(0)} $unit";
 }
 
