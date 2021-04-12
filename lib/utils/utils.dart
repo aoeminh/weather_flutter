@@ -210,40 +210,22 @@ String _getDayKey(DateTime dateTime) {
   return "${dateTime.day.toString()}-${dateTime.month.toString()}-${dateTime.year.toString()}";
 }
 
-  convertTemp(double temp, TempEnum tempEnum){
-  if(tempEnum == TempEnum.F){
-    temp = (temp * 1.8) +32;
+convertTemp(double temp, TempEnum tempEnum) {
+  if (tempEnum == TempEnum.F) {
+    temp = (temp * 1.8) + 32;
   }
   return temp;
 }
 
 String formatTemperature(
-    {double temperature,
-    int positions = 0,
-    round = true,
-    isShowUnit = false,
-    tempEnum = TempEnum.C}) {
-  var unit = degreeC;
-
-  if (tempEnum != TempEnum.C) {
-    temperature = (temperature * 1.8) + 32;
-    unit = degreeF;
-  }
-  unit = isShowUnit ? unit : degree;
-
+    {double temperature, int positions = 0, round = true, String unit=''}) {
   if (round) {
     temperature = temperature.floor().toDouble();
   }
 
-  return "${temperature.toStringAsFixed(positions)}$unit";
+  return "${temperature.toStringAsFixed(positions)}$degree$unit";
 }
 
-double formatTemp(double temp, TempEnum tempEnum) {
-  if (tempEnum != TempEnum.C) {
-    temp = (temp * 1.8) + 32;
-  }
-  return temp;
-}
 
 double convertCelsiusToFahrenheit(double temperature) {
   return 32 + temperature * 1.8;

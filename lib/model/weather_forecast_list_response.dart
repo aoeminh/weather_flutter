@@ -7,7 +7,7 @@ class WeatherForecastListResponse {
   final City city;
   ApplicationError _errorCode;
 
-  WeatherForecastListResponse(this.list, this.city);
+  WeatherForecastListResponse({this.list, this.city});
 
   WeatherForecastListResponse.fromJson(Map<String, dynamic> json)
       : list = (json["list"] as List)
@@ -18,10 +18,15 @@ class WeatherForecastListResponse {
   Map<String, dynamic> toJson() => {"list": list, "city": city};
 
   static WeatherForecastListResponse withErrorCode(ApplicationError errorCode) {
-    WeatherForecastListResponse response =
-        new WeatherForecastListResponse(null, null);
+    WeatherForecastListResponse response = new WeatherForecastListResponse();
     response._errorCode = errorCode;
     return response;
+  }
+
+  WeatherForecastListResponse copyWith(
+      {List<WeatherForecastResponse> list, City city}) {
+    return WeatherForecastListResponse(
+        list: list ?? this.list, city: city ?? this.city);
   }
 
   ApplicationError get errorCode => _errorCode;

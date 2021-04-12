@@ -23,11 +23,20 @@ class WeatherForecastDaily {
   static WeatherForecastDaily withTimezone(
       WeatherForecastDaily weatherForecastDaily, int differentTime) {
     return WeatherForecastDaily(
-      daily: weatherForecastDaily.daily.map((e) =>
-          Daily.withTimeZone(e, differentTime)).toList(),
-      current: CurrentDailyWeather.withTimezone(weatherForecastDaily.current, differentTime),
-      timezone: weatherForecastDaily.timezone
-    );
+        daily: weatherForecastDaily.daily
+            .map((e) => Daily.withTimeZone(e, differentTime))
+            .toList(),
+        current: CurrentDailyWeather.withTimezone(
+            weatherForecastDaily.current, differentTime),
+        timezone: weatherForecastDaily.timezone);
+  }
+
+  WeatherForecastDaily copyWith(
+      {String timezone, List<Daily> daily, CurrentDailyWeather current}) {
+    return WeatherForecastDaily(
+        timezone: timezone ?? this.timezone,
+        current: current ?? this.current,
+        daily: daily ?? this.daily);
   }
 
   static WeatherForecastDaily withErrorCode(ApplicationError errorCode) {

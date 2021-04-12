@@ -79,6 +79,33 @@ class WeatherResponse {
     );
   }
 
+  WeatherResponse copyWith(
+      {DateTime dt,
+      Coordinates cord,
+      List<Weather> overallWeatherData,
+      MainWeatherData mainWeatherData,
+      Wind wind,
+      Clouds clouds,
+      System system,
+      int id,
+      String name,
+      int cod,
+      String station}) {
+    return WeatherResponse(
+      dt: dt ?? this.dt,
+      cord: cord ?? this.cord,
+      overallWeatherData: overallWeatherData ?? this.overallWeatherData,
+      mainWeatherData: mainWeatherData ?? this.mainWeatherData,
+      wind: wind ?? this.wind,
+      clouds: clouds ?? this.clouds,
+      system: system ?? this.system,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      cod: cod ?? this.cod,
+      station: station ?? this.station,
+    );
+  }
+
   static WeatherResponse withErrorCode(ApplicationError errorCode) {
     WeatherResponse response = new WeatherResponse();
     response._errorCode = errorCode;

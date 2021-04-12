@@ -162,12 +162,13 @@ class _WeatherScreenState extends State<WeatherScreen>
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           weatherData = snapshot.data;
+          settingBloc.setWeatherData(snapshot.data);
           pageBloc.addCityName(weatherData.weatherResponse.name);
           _createTime(DateTime.fromMillisecondsSinceEpoch(
               weatherData.weatherForecastDaily.current.dt));
         }
         // keep old data when request fail
-        return weatherData != null
+        return settingBloc.weatherData != null
             ? Stack(
                 children: [
                   Container(
@@ -177,7 +178,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 .weatherResponse.overallWeatherData[0].icon)),
                             fit: BoxFit.cover)),
                   ),
-                  _body(weatherData)
+                  _body(settingBloc.weatherData)
                 ],
               )
             : Scaffold(
@@ -536,7 +537,8 @@ class _WeatherScreenState extends State<WeatherScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          formatTemperature(temperature: temp, tempEnum: settingBloc.tempEnum),
+          formatTemperature(
+              temperature: temp),
           style: textMainTemp,
         ),
         Text(
@@ -556,7 +558,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           style: textTitleH1White,
         ),
         Text(
-          formatTemperature(temperature: temp, tempEnum: settingBloc.tempEnum),
+          formatTemperature(
+              temperature: temp),
           style: textTitleH1White,
         ),
         SizedBox(
@@ -587,7 +590,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           ),
           Text(
               formatTemperature(
-                  temperature: maxTemp, tempEnum: settingBloc.tempEnum),
+                  temperature: maxTemp),
               style: textTitleH1White),
           const SizedBox(
             width: marginLarge,
@@ -601,7 +604,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           ),
           Text(
               formatTemperature(
-                  temperature: minTemp, tempEnum: settingBloc.tempEnum),
+                  temperature: minTemp),
               style: textTitleH1White),
         ],
       );
@@ -617,17 +620,6 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _buildBodyHourlyForecast(
       WeatherForecastListResponse weatherForecastListResponse) {
-   List<WeatherForecastResponse> list = weatherForecastListResponse.list.map((e) {
-      return e.copyWith(
-          mainWeatherData: e.mainWeatherData.copyWith(
-              temp: convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum),
-              feelsLike: convertTemp(
-                  e.mainWeatherData.feelsLike, settingBloc.tempEnum),
-              tempMax:
-                  convertTemp(e.mainWeatherData.tempMax, settingBloc.tempEnum),
-              tempMin: convertTemp(
-                  e.mainWeatherData.tempMin, settingBloc.tempEnum)));
-    }).toList();
 
     return Column(
       children: [
@@ -665,7 +657,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                 child: Center(
                   child: ChartWidget(
                     chartData: WeatherForecastHolder(
-                      list,
+                      weatherForecastListResponse.list,
                       weatherForecastListResponse.city,
                     ).setupChartData(ChartDataType.temperature,
                         _mainWeatherWidth, _chartHeight),
@@ -928,7 +920,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                     Expanded(
                       flex: 1,
                       child: _buildItemDetail('Dew Point', mIconDewPoint,
-                          '${daily.dewPoint.toStringAsFixed(0)}$degree'),
+                          formatTemperature(temperature: daily.dewPoint)),
                     ),
                     _verticalDivider(),
                     Expanded(
@@ -1328,4 +1320,17 @@ class WeatherData {
       this.weatherForecastListResponse,
       this.weatherForecastDaily,
       this.error});
+
+  WeatherData copyWith(
+      {WeatherResponse weatherResponse,
+      WeatherForecastListResponse weatherForecastListResponse,
+      WeatherForecastDaily weatherForecastDaily,
+      WeatherStateError error}) {
+    return WeatherData(
+        weatherResponse: weatherResponse ?? this.weatherResponse,
+        weatherForecastListResponse:
+            weatherForecastListResponse ?? this.weatherForecastListResponse,
+        weatherForecastDaily: weatherForecastDaily ?? this.weatherForecastDaily,
+        error: error ?? this.error);
+  }
 }

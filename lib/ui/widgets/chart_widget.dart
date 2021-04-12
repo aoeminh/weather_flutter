@@ -37,7 +37,7 @@ class ChartWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _ChartWidgetState();
 }
 
-class _ChartWidgetState extends AnimatedState<ChartWidget> {
+class _ChartWidgetState extends State<ChartWidget> {
   double _fraction = 0.0;
   ui.Image image;
   ImageInfo imageInfo;
@@ -61,7 +61,6 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
       setState(() {
       });
     });
-    animateTween(duration: 3000, curve: Curves.linear);
   }
 
   Future<Null> init() async {
@@ -115,7 +114,7 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
     return StreamBuilder<Object>(
         stream: Rx.combineLatest2(
             humidityBehaviorSubject.stream,
-            weatherImageInfoSubject,
+            weatherImageInfoSubject.stream,
             (ImageInfo humidity, List<ImageInfo> weatherIcons) =>
                 ImageInfoWeather(humidity, weatherIcons)),
         builder: (context, snapshot) {
@@ -152,12 +151,8 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
             style: Theme.of(context).textTheme.headline1));
   }
 
-  @override
-  void onAnimatedValue(double value) {
-    setState(() {
-      _fraction = value;
-    });
-  }
+
+
 }
 
 class _ChartPainter extends CustomPainter {
@@ -188,18 +183,14 @@ class _ChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = _getLinePaint(Colors.blue, 2);
-
     if (iconImage != null) {
       _drawIconList(canvas);
     }
     _drawDateTimes(canvas);
-    int pointsFraction = (points.length * fraction).ceil();
-    for (int index = 0; index < pointsFraction - 1; index++) {
+    for (int index = 0; index < points.length; index++) {
       Offset textOffset = Offset(
           points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
-      canvas.drawLine(_getOffsetFromPoint(points[index]),
-          _getOffsetFromPoint(points[index + 1]), paint);
+      _drawLine(canvas, index);
       if (index == maxTempIndex) {
         _drawTempText(canvas, textOffset, pointLabels[index],
              true,
@@ -219,6 +210,14 @@ class _ChartPainter extends CustomPainter {
           canvas, textOffset, pointLabels[points.length - 1], true);
     }
     _drawAxes(canvas);
+  }
+
+  _drawLine(Canvas canvas, int index){
+    Paint paint = _getLinePaint(Colors.blue, 2);
+    if(index<points.length-1){
+      canvas.drawLine(_getOffsetFromPoint(points[index]),
+          _getOffsetFromPoint(points[index+1]), paint);
+    }
   }
 
   void _drawText(Canvas canvas, Offset offset, String text,
@@ -352,7 +351,7 @@ class _ChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ChartPainter oldDelegate) {
-    return oldDelegate.fraction != fraction;
+    return true;
   }
 
   Offset _getOffsetFromPoint(Point point) {

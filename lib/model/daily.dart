@@ -74,4 +74,36 @@ class Daily {
         windDeg: daily.windDeg,
         windSpeed: daily.windSpeed);
   }
+
+  Daily copyWith(
+      {int dt,
+      int sunrise,
+      int sunset,
+      Temp temp,
+      FeelsLike feelsLike,
+      int pressure,
+      int humidity,
+      double dewPoint,
+      double windSpeed,
+      int windDeg,
+      List<Weather> weather,
+      int clouds,
+      double pop,
+      double uvi}) {
+    return Daily(
+        dt: dt ?? this.dt,
+        clouds: clouds ?? this.clouds,
+        dewPoint: dewPoint ?? this.dewPoint,
+        feelsLike: feelsLike ?? this.feelsLike,
+        humidity: humidity ?? this.humidity,
+        pop: pop ?? this.pop,
+        pressure: pressure ?? this.pressure,
+        sunrise: sunrise ?? this.sunrise,
+        sunset: sunset ?? this.sunset,
+        temp: temp ?? this.temp,
+        uvi: uvi ?? this.uvi,
+        weather: weather ?? this.weather,
+        windDeg: windDeg ?? this.windDeg,
+        windSpeed: windSpeed ?? this.windSpeed);
+  }
 }
