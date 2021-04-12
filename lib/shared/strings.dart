@@ -3,6 +3,7 @@ const String degreeC ='°C';
 const String degreeF ='°F';
 const String percent ='%';
 const String kmh ='km/h';
+const String mph ='mph';
 const String ms ='m/s';
 const String mBar ='mBar';
 const String bar ='bar';

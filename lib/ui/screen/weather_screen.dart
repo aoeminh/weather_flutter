@@ -19,7 +19,6 @@ import 'package:weather_app/model/timezone.dart';
 import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'package:weather_app/model/weather_forecast_holder.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
-import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/model/weather_response.dart';
 import 'package:weather_app/shared/colors.dart';
 import 'package:weather_app/shared/dimens.dart';
@@ -302,10 +301,12 @@ class _WeatherScreenState extends State<WeatherScreen>
               _showNotification(isOnNotification, weatherData.weatherResponse);
             }),
             _buildItemUnit(
-                mIconSettingTemp, 'Temp Unit', settingBloc.tempEnum.value, () {
-              showSettingDialog(SettingEnum.TempEnum);
-            }),
-            _buildItemUnit(mIconWind, 'Wind Unit', 'km/h', () {}),
+                mIconSettingTemp,
+                'Temp Unit',
+                settingBloc.tempEnum.value,
+                () => showSettingDialog(SettingEnum.TempEnum)),
+            _buildItemUnit(mIconWind, 'Wind Unit', settingBloc.windEnum.value,
+                () => showSettingDialog(SettingEnum.WindEnum)),
             _buildItemUnit(
                 mIconSettingPressure, 'Pressure Unit', 'mBar', () {}),
             _buildItemUnit(
@@ -537,8 +538,7 @@ class _WeatherScreenState extends State<WeatherScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          formatTemperature(
-              temperature: temp),
+          formatTemperature(temperature: temp),
           style: textMainTemp,
         ),
         Text(
@@ -558,8 +558,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           style: textTitleH1White,
         ),
         Text(
-          formatTemperature(
-              temperature: temp),
+          formatTemperature(temperature: temp),
           style: textTitleH1White,
         ),
         SizedBox(
@@ -588,9 +587,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           const SizedBox(
             width: marginSmall,
           ),
-          Text(
-              formatTemperature(
-                  temperature: maxTemp),
+          Text(formatTemperature(temperature: maxTemp),
               style: textTitleH1White),
           const SizedBox(
             width: marginLarge,
@@ -602,9 +599,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           const SizedBox(
             width: marginSmall,
           ),
-          Text(
-              formatTemperature(
-                  temperature: minTemp),
+          Text(formatTemperature(temperature: minTemp),
               style: textTitleH1White),
         ],
       );
@@ -620,7 +615,6 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _buildBodyHourlyForecast(
       WeatherForecastListResponse weatherForecastListResponse) {
-
     return Column(
       children: [
         _buildRowTitle(
@@ -1099,7 +1093,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         ],
                       ),
                       Text(
-                        '${formatWind(weatherResponse.wind.speed)} ${getWindDirection(weatherResponse.wind.deg)}',
+                        '${formatWind(weatherResponse.wind.speed, settingBloc.windEnum.value)} ${getWindDirection(weatherResponse.wind.deg)}',
                         style: textTitleWhite,
                       ),
                       Container(
@@ -1222,6 +1216,7 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   showSettingDialog(SettingEnum settingEnum) {
     List<String> settings = [];
+    String groupValue = '';
     String title = '';
     switch (settingEnum) {
       case SettingEnum.TempEnum:
@@ -1229,9 +1224,14 @@ class _WeatherScreenState extends State<WeatherScreen>
           settings.add(element.value);
         });
         title = 'Temp Unit';
+        groupValue = settingBloc.tempEnum.value;
         break;
       case SettingEnum.WindEnum:
-        // TODO: Handle this case.
+        WindEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Wind speed Unit';
+        groupValue = settingBloc.windEnum.value;
         break;
       case SettingEnum.PressureEnum:
         // TODO: Handle this case.
@@ -1278,7 +1278,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                               title: Text(e),
                               leading: Radio<String>(
                                 value: e,
-                                groupValue: settingBloc.tempEnum.value,
+                                groupValue: groupValue,
                                 onChanged: (String value) {
                                   _changeSetting(value, settingEnum);
                                 },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
 import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/dimens.dart';
@@ -159,7 +160,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
           height: margin,
         ),
         _buildRowDetails(mIconSettingWind, 'Wind',
-            '${formatWind(weatherForecastResponse.wind.speed)}'),
+            '${formatWind(weatherForecastResponse.wind.speed,settingBloc.windEnum.value)}'),
         const Divider(
           color: Colors.grey,
         ),

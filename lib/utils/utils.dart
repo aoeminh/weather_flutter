@@ -210,22 +210,36 @@ String _getDayKey(DateTime dateTime) {
   return "${dateTime.day.toString()}-${dateTime.month.toString()}-${dateTime.year.toString()}";
 }
 
-convertTemp(double temp, TempEnum tempEnum) {
+double convertTemp(double temp, TempEnum tempEnum) {
   if (tempEnum == TempEnum.F) {
     temp = (temp * 1.8) + 32;
   }
   return temp;
 }
 
+double convertWindSpeed(double speed, WindEnum windEnum) {
+  switch (windEnum) {
+    case WindEnum.kmh:
+      return speed;
+    case WindEnum.mph:
+      // TODO: Handle this case.
+      return speed = speed * 0.62;
+    case WindEnum.ms:
+      // TODO: Handle this case.
+      return speed = speed * 1000 / 3600;
+    default:
+      return speed;
+  }
+}
+
 String formatTemperature(
-    {double temperature, int positions = 0, round = true, String unit=''}) {
+    {double temperature, int positions = 0, round = true, String unit = ''}) {
   if (round) {
     temperature = temperature.floor().toDouble();
   }
 
   return "${temperature.toStringAsFixed(positions)}$degree$unit";
 }
-
 
 double convertCelsiusToFahrenheit(double temperature) {
   return 32 + temperature * 1.8;
@@ -263,10 +277,8 @@ String formatRain(double rain) {
   return "${rain.toStringAsFixed(2)} mm/h";
 }
 
-String formatWind(double wind) {
-  String unit = "km/h";
-  double newWind = wind * 3.6;
-  return "${newWind.toStringAsFixed(1)} $unit";
+String formatWind(double wind, String unit) {
+  return "${wind.toStringAsFixed(1)} $unit";
 }
 
 String formatVisibility(double visibility) {

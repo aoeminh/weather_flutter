@@ -10,7 +10,7 @@ import '../shared/strings.dart';
 import '../ui/screen/weather_screen.dart';
 
 enum TempEnum { C, F }
-enum WindEnum { kmh, ms }
+enum WindEnum { kmh, mph, ms }
 enum PressureEnum { mBar, bar, mmHg }
 enum VisibilityEnum { km, mile }
 enum TimeEnum { twelve, twentyFour }
@@ -53,11 +53,25 @@ extension WindExtenstion on WindEnum {
     switch (this) {
       case WindEnum.kmh:
         return kmh;
-
       case WindEnum.ms:
         return ms;
+      case WindEnum.mph:
+        return mph;
       default:
         return kmh;
+    }
+  }
+
+  WindEnum setValue(String value) {
+    switch (value) {
+      case kmh:
+        return WindEnum.kmh;
+      case mph:
+        return WindEnum.mph;
+      case ms:
+        return WindEnum.ms;
+      default:
+        return WindEnum.kmh;
     }
   }
 }
@@ -110,6 +124,7 @@ class SettingBloc extends BlocBase {
   WeatherResponse _weatherResponse;
   WeatherData _weatherData;
   TempEnum _tempEnum = TempEnum.C;
+  WindEnum _windEnum = WindEnum.kmh;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   BehaviorSubject<SettingEnum> _settingBehavior = BehaviorSubject();
@@ -126,7 +141,7 @@ class SettingBloc extends BlocBase {
         _tempEnum = _tempEnum.setValue(value);
         break;
       case SettingEnum.WindEnum:
-        // TODO: Handle this case.
+        _windEnum = _windEnum.setValue(value);
         break;
       case SettingEnum.PressureEnum:
         // TODO: Handle this case.
@@ -158,6 +173,8 @@ class SettingBloc extends BlocBase {
         _weatherData.weatherForecastDaily;
     _weatherData = _weatherData.copyWith(
         weatherResponse: weatherResponse.copyWith(
+            wind: weatherResponse.wind.copyWith(
+                speed: convertWindSpeed(weatherResponse.wind.speed, windEnum)),
             mainWeatherData: weatherResponse.mainWeatherData.copyWith(
                 temp:
                     convertTemp(weatherResponse.mainWeatherData.temp, tempEnum),
@@ -184,6 +201,8 @@ class SettingBloc extends BlocBase {
         weatherForecastListResponse.list.map((e) {
       print('${convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum)}');
       return e.copyWith(
+          wind:
+              e.wind.copyWith(speed: convertWindSpeed(e.wind.speed, windEnum)),
           mainWeatherData: e.mainWeatherData.copyWith(
               temp: convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum),
               feelsLike: convertTemp(
@@ -199,6 +218,7 @@ class SettingBloc extends BlocBase {
   _convertListDaily(List<Daily> dailies) {
     return dailies
         .map((e) => e.copyWith(
+            windSpeed: convertWindSpeed(e.windSpeed, windEnum),
             dewPoint: convertTemp(e.temp.day, tempEnum),
             temp: e.temp.copyWith(
                 day: convertTemp(e.temp.day, tempEnum),
@@ -222,6 +242,8 @@ class SettingBloc extends BlocBase {
   }
 
   TempEnum get tempEnum => _tempEnum;
+
+  WindEnum get windEnum => _windEnum;
 
   bool get isOnNotification => _isOnNotify;
 
