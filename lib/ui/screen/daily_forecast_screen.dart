@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:weather_app/bloc/setting_bloc.dart';
-import 'package:weather_app/model/daily.dart';
-import 'package:weather_app/model/weather_forecast_7_day.dart';
-import 'package:weather_app/shared/dimens.dart';
-import 'package:weather_app/shared/image.dart';
-import 'package:weather_app/shared/strings.dart';
-import 'package:weather_app/shared/text_style.dart';
-import 'package:weather_app/utils/utils.dart';
+import '../../bloc/setting_bloc.dart';
+import '../../model/daily.dart';
+import '../../model/weather_forecast_7_day.dart';
+import '../../shared/colors.dart';
+import '../../shared/dimens.dart';
+import '../../shared/image.dart';
+import '../../shared/strings.dart';
+import '../../shared/text_style.dart';
+import '../../utils/utils.dart';
 
 import 'detail_daily_forecast.dart';
 
@@ -44,7 +45,7 @@ class DailyForecastScreen extends StatelessWidget {
 
   _buildBody() {
     return Container(
-      color: Colors.black87,
+      color: backgroundColor,
       child: ListView.separated(
           padding: EdgeInsets.zero,
           itemBuilder: (context, index) {

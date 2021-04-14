@@ -6,7 +6,7 @@ class City {
   final Coordinates coordinates;
   final String country;
 
-  City(this.id, this.name, this.coordinates, this.country);
+  City({this.id, this.name, this.coordinates, this.country});
 
   City.fromJson(Map<String, dynamic> json)
       : id = json["id"].toDouble(),

@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'bloc/position_bloc.dart';
+import 'model/city.dart';
 import 'ui/screen/home_screen.dart';
 
 void main() async {
@@ -66,11 +67,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder<Position>(
+        body: StreamBuilder<City>(
             stream: positionBloc.positionStream,
-            builder: (context, AsyncSnapshot<Position> snapshot) {
+            builder: (context, AsyncSnapshot<City> snapshot) {
               if (snapshot.hasData) {
-                return HomePage(position: snapshot.data);
+                return HomePage(city: snapshot.data);
               } else {
                 return Center(
                   child: CircularProgressIndicator(),

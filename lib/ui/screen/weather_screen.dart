@@ -10,10 +10,10 @@ import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/city_bloc.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
-import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/bloc/weather_bloc.dart';
 import 'package:weather_app/bloc/weather_forecast_bloc.dart';
 import 'package:weather_app/model/chart_data.dart';
+import 'package:weather_app/model/city.dart';
 import 'package:weather_app/model/current_daily_weather.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/timezone.dart';
@@ -30,6 +30,7 @@ import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/text_style.dart';
 import 'package:weather_app/ui/screen/add_city_screen.dart';
 import 'package:weather_app/ui/screen/daily_forecast_screen.dart';
+import 'package:weather_app/ui/screen/edit_location_screen.dart';
 import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
 import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
@@ -156,7 +157,6 @@ class _WeatherScreenState extends State<WeatherScreen>
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
           differentTime = _getDifferentTime(c.weatherResponse.timezone);
-
           return WeatherData(
               weatherResponse: a.weatherResponse,
               weatherForecastListResponse: b.weatherResponse,
@@ -169,7 +169,8 @@ class _WeatherScreenState extends State<WeatherScreen>
         if (snapshot.hasData) {
           weatherData = snapshot.data;
           convertDataAndFormatTime();
-          pageBloc.addCityName(weatherData.weatherResponse.name);
+          pageBloc.removeItemWhenFirstLoadApp(
+              weatherData.weatherForecastListResponse.city);
           _createTime(DateTime.fromMillisecondsSinceEpoch(
               weatherData.weatherForecastDaily.current.dt));
         }
@@ -414,8 +415,8 @@ class _WeatherScreenState extends State<WeatherScreen>
       );
 
   _listLocation() {
-    return StreamBuilder<List<String>>(
-        stream: pageBloc.citiesStream,
+    return StreamBuilder<List<City>>(
+        stream: pageBloc.currentCitiesStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Column(
@@ -425,16 +426,25 @@ class _WeatherScreenState extends State<WeatherScreen>
                       left: padding, right: paddingSmall, bottom: padding),
                   child: Column(
                     children: [
-                      Row(
-                        children: [
-                          Image.asset(
-                            mIconEditingLocation,
-                            width: iconDrawerSize,
-                            height: iconDrawerSize,
-                          ),
-                          const SizedBox(width: padding),
-                          Text('Edit Location', style: textTitleWhite),
-                        ],
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditLocationScreen()));
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              mIconEditingLocation,
+                              width: iconDrawerSize,
+                              height: iconDrawerSize,
+                            ),
+                            const SizedBox(width: padding),
+                            Text('Edit Location', style: textTitleWhite),
+                          ],
+                        ),
                       ),
                       ListView.builder(
                           shrinkWrap: true,
@@ -458,7 +468,7 @@ class _WeatherScreenState extends State<WeatherScreen>
         });
   }
 
-  _itemLocation(String name, int index) {
+  _itemLocation(City city, int index) {
     return InkWell(
       onTap: () => pageBloc.jumpToPage(index),
       child: Container(
@@ -471,7 +481,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               height: iconDrawerSize,
             ),
             const SizedBox(width: padding),
-            Text(name, style: textTitleWhite),
+            Text('${city.name}', style: textTitleWhite),
           ],
         ),
       ),

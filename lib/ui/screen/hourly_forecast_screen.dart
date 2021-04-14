@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/bloc/setting_bloc.dart';
-import 'package:weather_app/model/weather_forecast_list_response.dart';
-import 'package:weather_app/model/weather_forecast_response.dart';
-import 'package:weather_app/shared/dimens.dart';
-import 'package:weather_app/shared/image.dart';
-import 'package:weather_app/utils/utils.dart';
+import '../../bloc/setting_bloc.dart';
+import '../../model/weather_forecast_list_response.dart';
+import '../../model/weather_forecast_response.dart';
+import '../../shared/colors.dart';
+import '../../shared/dimens.dart';
+import '../../shared/image.dart';
+import '../../utils/utils.dart';
 import '../../shared/text_style.dart';
 import '../../shared/strings.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import "package:scrollable_positioned_list/scrollable_positioned_list.dart";
 import 'package:rxdart/rxdart.dart';
 
 const double iconWeatherSize = 40;
@@ -63,7 +64,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
 
   _buildBody() {
     return Container(
-      color: Colors.black87,
+      color: backgroundColor,
       child: Column(
         children: [
           _buildDateHeader(),
