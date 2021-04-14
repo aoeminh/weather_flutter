@@ -162,21 +162,48 @@ String getTimeLabel(DateTime dateTime) {
   return "${hourText.toString()}:00";
 }
 
-String formatDateAndWeekDay(DateTime dateTime) {
-  final df = new DateFormat('EEE MM/dd');
+String formatDateAndWeekDay(DateTime dateTime,DateEnum dateEnum) {
+  DateFormat df;
+
+  switch(dateEnum){
+    case DateEnum.ddMMyyyyy:
+      df = new DateFormat('EEE dd/M');
+      break;
+    case DateEnum.mmddyyyyy:
+      df = new DateFormat('EEE M/dd');
+      break;
+    case DateEnum.yyyymmdd:
+      df = new DateFormat('EEE M/dd');
+      break;
+    default:
+      df = new DateFormat('EEE dd/M');
+  }
   String date = df.format(dateTime);
   return date;
 }
 
-String formatDate(DateTime dateTime) {
-  final df = new DateFormat('M/dd');
+String formatDateAndMonth(DateTime dateTime,DateEnum dateEnum) {
+  DateFormat df;
+  switch(dateEnum){
+    case DateEnum.ddMMyyyyy:
+      df = new DateFormat('dd/M');
+      break;
+    case DateEnum.mmddyyyyy:
+      df = new DateFormat('M/dd');
+      break;
+    case DateEnum.yyyymmdd:
+      df = new DateFormat('M/dd');
+      break;
+    default:
+      df = new DateFormat('dd/M');
+  }
   String date = df.format(dateTime);
   return date;
 }
 
-String formatWeekDayAndTime(DateTime dateTime,TimeEnum timeEnum) {
+String formatWeekDayAndTime(DateTime dateTime, TimeEnum timeEnum) {
   DateFormat df = new DateFormat('EEE HH:mm');
-  switch(timeEnum){
+  switch (timeEnum) {
     case TimeEnum.twelve:
       df = new DateFormat('EEE HH:mm a');
       break;
@@ -189,10 +216,9 @@ String formatWeekDayAndTime(DateTime dateTime,TimeEnum timeEnum) {
   return date;
 }
 
-String formatTime(DateTime dateTime,TimeEnum timeEnum) {
-
+String formatTime(DateTime dateTime, TimeEnum timeEnum) {
   DateFormat df;
-  switch(timeEnum){
+  switch (timeEnum) {
     case TimeEnum.twelve:
       df = new DateFormat('h:mm a');
       break;
@@ -335,7 +361,7 @@ String formatWind(double wind, String unit) {
   return "${wind.toStringAsFixed(1)} $unit";
 }
 
-String formatVisibility(double visibility,String unit) {
+String formatVisibility(double visibility, String unit) {
   return "${visibility.toStringAsFixed(0)} $unit";
 }
 

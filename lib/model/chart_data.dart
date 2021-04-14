@@ -115,10 +115,10 @@ class ChartData {
         _maxTempIndex = i;
 
         points.add('${(value + 1).toStringAsFixed(0)}$degree');
-      }else if (value == holder.minTemperature) {
+      } else if (value == holder.minTemperature) {
         _minTempIndex = i;
-        points.add('${(value-1).toStringAsFixed(0)}$degree');
-      }else{
+        points.add('${(value - 1).toStringAsFixed(0)}$degree');
+      } else {
         points.add('${value.toStringAsFixed(0)}$degree');
       }
     }
@@ -144,9 +144,7 @@ class ChartData {
   List<String> _getListDateTimeString(List<DateTime> dateTimes) {
     List<String> list = [];
     for (DateTime dateTime in dateTimes) {
-      print('${dateTime}');
-
-      list.add(formatTime(dateTime,settingBloc.timeEnum));
+      list.add(formatTime(dateTime, settingBloc.timeEnum));
     }
     return list;
   }

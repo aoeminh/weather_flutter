@@ -14,7 +14,7 @@ enum WindEnum { kmh, mph, ms }
 enum PressureEnum { mBar, bar, psi, inHg, mmHg }
 enum VisibilityEnum { km, mile }
 enum TimeEnum { twelve, twentyFour }
-enum DateEnum { dd, mm, yy }
+enum DateEnum { ddMMyyyyy, mmddyyyyy, yyyymmdd }
 enum SettingEnum {
   TempEnum,
   WindEnum,
@@ -165,14 +165,27 @@ extension TimeExtenstion on TimeEnum {
 extension DateExtenstion on DateEnum {
   String get value {
     switch (this) {
-      case DateEnum.dd:
+      case DateEnum.ddMMyyyyy:
         return ddMMYY;
-      case DateEnum.mm:
+      case DateEnum.mmddyyyyy:
         return mmDDYY;
-      case DateEnum.yy:
+      case DateEnum.yyyymmdd:
         return yyMMDD;
       default:
         return ddMMYY;
+    }
+  }
+
+  DateEnum setValue(String value) {
+    switch (value) {
+      case ddMMYY:
+        return DateEnum.ddMMyyyyy;
+      case mmDDYY:
+        return DateEnum.mmddyyyyy;
+      case yyMMDD:
+        return DateEnum.yyyymmdd;
+      default:
+        return DateEnum.ddMMyyyyy;
     }
   }
 }
@@ -186,6 +199,7 @@ class SettingBloc extends BlocBase {
   PressureEnum _pressureEnum = PressureEnum.mBar;
   VisibilityEnum _visibilityEnum = VisibilityEnum.km;
   TimeEnum _timeEnum = TimeEnum.twentyFour;
+  DateEnum _dateEnum = DateEnum.mmddyyyyy;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   BehaviorSubject<SettingEnum> _settingBehavior = BehaviorSubject();
@@ -214,7 +228,7 @@ class SettingBloc extends BlocBase {
         _timeEnum = _timeEnum.setValue(value);
         break;
       case SettingEnum.DateEnum:
-        // TODO: Handle this case.
+        _dateEnum = _dateEnum.setValue(value);
         break;
     }
     _settingBehavior.add(settingEnum);
@@ -235,6 +249,8 @@ class SettingBloc extends BlocBase {
   VisibilityEnum get visibilityEnum => _visibilityEnum;
 
   TimeEnum get timeEnum => _timeEnum;
+
+  DateEnum get dateEnum => _dateEnum;
 
   bool get isOnNotification => _isOnNotify;
 

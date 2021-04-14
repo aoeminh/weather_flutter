@@ -108,8 +108,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   _addTime() {
     currentTime += 1000;
     timeSubject.add(DateTime.fromMillisecondsSinceEpoch(
-        DateTime.now().millisecondsSinceEpoch +
-            differentTime * oneHourMilli));
+        DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli));
   }
 
   getData() {
@@ -406,7 +405,10 @@ class _WeatherScreenState extends State<WeatherScreen>
                 settingBloc.timeEnum.value,
                 () => showSettingDialog(SettingEnum.TimeEnum)),
             _buildItemUnit(
-                mIconSettingTemp, 'Date Format', 'dd/mm/yyyy', () {}),
+                mIconSettingTemp,
+                'Date Format',
+                settingBloc.dateEnum.value,
+                () => showSettingDialog(SettingEnum.DateEnum)),
           ],
         ),
       );
@@ -1344,11 +1346,15 @@ class _WeatherScreenState extends State<WeatherScreen>
         TimeEnum.values.forEach((element) {
           settings.add(element.value);
         });
-        title = 'Visibility Unit';
+        title = 'Time Format';
         groupValue = settingBloc.timeEnum.value;
         break;
       case SettingEnum.DateEnum:
-        // TODO: Handle this case.
+        DateEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Date Format';
+        groupValue = settingBloc.dateEnum.value;
         break;
     }
 

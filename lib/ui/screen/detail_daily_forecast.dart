@@ -69,7 +69,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                                 style: textTitleWhite70,
                               ),
                               Text(
-                                '${formatDate(DateTime.fromMillisecondsSinceEpoch(daily.dt))}',
+                                '${formatDateAndMonth(DateTime.fromMillisecondsSinceEpoch(daily.dt),settingBloc.dateEnum)}',
                                 style: textTitleWhite70,
                               ),
                             ]),

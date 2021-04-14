@@ -84,9 +84,10 @@ class DailyForecastScreen extends StatelessWidget {
 
   _dateRow(DateTime dateTime) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '${formatDate(dateTime)}',
+          '${formatDateAndMonth(dateTime,settingBloc.dateEnum)}',
           style: textSecondaryWhiteBold,
         ),
         const SizedBox(
@@ -94,7 +95,7 @@ class DailyForecastScreen extends StatelessWidget {
         ),
         Text(
           '${formatWeekday(dateTime)}',
-          style: textSecondaryGrey,
+          style: textSmallWhite70,
         ),
       ],
     );
@@ -132,8 +133,9 @@ class DailyForecastScreen extends StatelessWidget {
                     width: iconDetailSize,
                     height: iconDetailSize,
                   ),
+                  const SizedBox(width: marginSmall,),
                   Text(
-                    'Sunrise:',
+                    'Sunrise: ',
                     style: textSmallWhite70,
                   ),
                   Text(
@@ -196,8 +198,9 @@ class DailyForecastScreen extends StatelessWidget {
                     width: iconDetailSize,
                     height: iconDetailSize,
                   ),
+                  const SizedBox(width: marginSmall,),
                   Text(
-                    'Sunset:',
+                    'Sunset: ',
                     style: textSmallWhite70,
                   ),
                   Text(
