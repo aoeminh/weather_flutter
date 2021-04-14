@@ -112,6 +112,32 @@ extension PressureExtenstion on PressureEnum {
   }
 }
 
+extension VisibilityExtenstion on VisibilityEnum {
+  String get value {
+    switch (this) {
+      case VisibilityEnum.km:
+        return km;
+        break;
+      case VisibilityEnum.mile:
+        return mile;
+      default:
+        return km;
+    }
+  }
+
+  VisibilityEnum setValue(String value) {
+    switch (value) {
+      case km:
+        return VisibilityEnum.km;
+        break;
+      case mile:
+        return VisibilityEnum.mile;
+      default:
+        return VisibilityEnum.km;
+    }
+  }
+}
+
 extension TimeExtenstion on TimeEnum {
   String get value {
     switch (this) {
@@ -121,6 +147,17 @@ extension TimeExtenstion on TimeEnum {
         return twentyFourClock;
       default:
         return twentyFourClock;
+    }
+  }
+
+  TimeEnum setValue(String value) {
+    switch (value) {
+      case twelveClock:
+        return TimeEnum.twelve;
+      case twentyFourClock:
+        return TimeEnum.twentyFour;
+      default:
+        return TimeEnum.twelve;
     }
   }
 }
@@ -147,6 +184,8 @@ class SettingBloc extends BlocBase {
   TempEnum _tempEnum = TempEnum.C;
   WindEnum _windEnum = WindEnum.kmh;
   PressureEnum _pressureEnum = PressureEnum.mBar;
+  VisibilityEnum _visibilityEnum = VisibilityEnum.km;
+  TimeEnum _timeEnum = TimeEnum.twentyFour;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   BehaviorSubject<SettingEnum> _settingBehavior = BehaviorSubject();
@@ -169,95 +208,16 @@ class SettingBloc extends BlocBase {
         _pressureEnum = _pressureEnum.setValue(value);
         break;
       case SettingEnum.VisibilityEnum:
-        // TODO: Handle this case.
+        _visibilityEnum = _visibilityEnum.setValue(value);
         break;
       case SettingEnum.TimeEnum:
-        // TODO: Handle this case.
+        _timeEnum = _timeEnum.setValue(value);
         break;
       case SettingEnum.DateEnum:
         // TODO: Handle this case.
         break;
     }
-    convertDataWithUnit();
     _settingBehavior.add(settingEnum);
-  }
-
-  setWeatherData(WeatherData weatherData) {
-    _weatherData = weatherData;
-    convertDataWithUnit();
-  }
-
-  convertDataWithUnit() {
-    WeatherResponse weatherResponse = _weatherData.weatherResponse;
-    WeatherForecastListResponse weatherForecastListResponse =
-        _weatherData.weatherForecastListResponse;
-    WeatherForecastDaily weatherForecastDaily =
-        _weatherData.weatherForecastDaily;
-    _weatherData = _weatherData.copyWith(
-        weatherResponse: weatherResponse.copyWith(
-            wind: weatherResponse.wind.copyWith(
-                speed: convertWindSpeed(weatherResponse.wind.speed, windEnum)),
-            mainWeatherData: weatherResponse.mainWeatherData.copyWith(
-                pressure: convertPressure(
-                    weatherResponse.mainWeatherData.pressure, pressureEnum),
-                temp:
-                    convertTemp(weatherResponse.mainWeatherData.temp, tempEnum),
-                tempMin: convertTemp(
-                    weatherResponse.mainWeatherData.tempMin, tempEnum),
-                tempMax: convertTemp(
-                    weatherResponse.mainWeatherData.tempMax, tempEnum),
-                feelsLike: convertTemp(
-                    weatherResponse.mainWeatherData.feelsLike, tempEnum))),
-        weatherForecastListResponse: weatherForecastListResponse.copyWith(
-            list: _convertForecastListResponse(weatherForecastListResponse)),
-        weatherForecastDaily: weatherForecastDaily.copyWith(
-            daily: _convertListDaily(weatherForecastDaily.daily),
-            current: weatherForecastDaily.current.copyWith(
-                feelsLike: convertTemp(
-                    weatherForecastDaily.current.feelsLike, tempEnum),
-                temp: convertTemp(weatherForecastDaily.current.temp, tempEnum))));
-  }
-
-  List<WeatherForecastResponse> _convertForecastListResponse(
-      WeatherForecastListResponse weatherForecastListResponse) {
-    List<WeatherForecastResponse> list =
-        weatherForecastListResponse.list.map((e) {
-      return e.copyWith(
-          wind:
-              e.wind.copyWith(speed: convertWindSpeed(e.wind.speed, windEnum)),
-          mainWeatherData: e.mainWeatherData.copyWith(
-              pressure:
-                  convertPressure(e.mainWeatherData.pressure, pressureEnum),
-              temp: convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum),
-              feelsLike: convertTemp(
-                  e.mainWeatherData.feelsLike, settingBloc.tempEnum),
-              tempMax:
-                  convertTemp(e.mainWeatherData.tempMax, settingBloc.tempEnum),
-              tempMin: convertTemp(
-                  e.mainWeatherData.tempMin, settingBloc.tempEnum)));
-    }).toList();
-    return list;
-  }
-
-  _convertListDaily(List<Daily> dailies) {
-    return dailies
-        .map((e) => e.copyWith(
-            windSpeed: convertWindSpeed(e.windSpeed, windEnum),
-            dewPoint: convertTemp(e.temp.day, tempEnum),
-            pressure: convertPressure(e.pressure, pressureEnum),
-            temp: e.temp.copyWith(
-                day: convertTemp(e.temp.day, tempEnum),
-                eve: convertTemp(e.temp.eve, tempEnum),
-                max: convertTemp(e.temp.max, tempEnum),
-                min: convertTemp(e.temp.min, tempEnum),
-                morn: convertTemp(e.temp.morn, tempEnum),
-                night: convertTemp(e.temp.night, tempEnum)),
-            feelsLike: e.feelsLike.copyWith(
-                day: convertTemp(e.temp.day, tempEnum),
-                eve: convertTemp(e.feelsLike.eve, tempEnum),
-                morn: convertTemp(e.feelsLike.morn, tempEnum),
-                night: convertTemp(e.feelsLike.night, tempEnum))))
-        .toList();
   }
 
   @override
@@ -271,6 +231,10 @@ class SettingBloc extends BlocBase {
   WindEnum get windEnum => _windEnum;
 
   PressureEnum get pressureEnum => _pressureEnum;
+
+  VisibilityEnum get visibilityEnum => _visibilityEnum;
+
+  TimeEnum get timeEnum => _timeEnum;
 
   bool get isOnNotification => _isOnNotify;
 

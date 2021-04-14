@@ -277,7 +277,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise))}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise),settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],
@@ -294,7 +294,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset))}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset),settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],

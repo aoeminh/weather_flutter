@@ -174,14 +174,32 @@ String formatDate(DateTime dateTime) {
   return date;
 }
 
-String formatWeekDayAndTime(DateTime dateTime) {
-  final df = new DateFormat('EEE HH:mm');
+String formatWeekDayAndTime(DateTime dateTime,TimeEnum timeEnum) {
+  DateFormat df = new DateFormat('EEE HH:mm');
+  switch(timeEnum){
+    case TimeEnum.twelve:
+      df = new DateFormat('EEE HH:mm a');
+      break;
+    case TimeEnum.twentyFour:
+      df = new DateFormat('EEE HH:mm');
+      break;
+  }
+
   String date = df.format(dateTime);
   return date;
 }
 
-String formatTime(DateTime dateTime) {
-  final df = new DateFormat('HH:mm');
+String formatTime(DateTime dateTime,TimeEnum timeEnum) {
+
+  DateFormat df;
+  switch(timeEnum){
+    case TimeEnum.twelve:
+      df = new DateFormat('h:mm a');
+      break;
+    case TimeEnum.twentyFour:
+      df = new DateFormat('HH:mm');
+      break;
+  }
   String date = df.format(dateTime);
   return date;
 }
@@ -212,7 +230,7 @@ String _getDayKey(DateTime dateTime) {
 
 double convertTemp(double temp, TempEnum tempEnum) {
   if (tempEnum == TempEnum.F) {
-    temp = (temp * 1.8) + 32;
+    return convertCelsiusToFahrenheit(temp);
   }
   return temp;
 }
@@ -222,11 +240,9 @@ double convertWindSpeed(double speed, WindEnum windEnum) {
     case WindEnum.kmh:
       return speed;
     case WindEnum.mph:
-      // TODO: Handle this case.
-      return speed = speed * 0.62;
+      return convertKmHToMph(speed);
     case WindEnum.ms:
-      // TODO: Handle this case.
-      return speed = speed * 1000 / 3600;
+      return convertKmHToMps(speed);
     default:
       return speed;
   }
@@ -237,17 +253,42 @@ double convertPressure(double pressure, PressureEnum pressureEnum) {
     case PressureEnum.mBar:
       return pressure;
     case PressureEnum.bar:
-      return pressure / 1000;
+      return convertHpaToBar(pressure);
     case PressureEnum.mmHg:
-      return pressure * 0.75;
+      return convertHpaTommHg(pressure);
     case PressureEnum.psi:
-      return pressure * 0.015;
+      return convertHpaToPsi(pressure);
     case PressureEnum.inHg:
-      return pressure * 0.0295;
+      return convertHpaToinHg(pressure);
     default:
       return pressure;
   }
 }
+
+double convertVisibility(double visibility, VisibilityEnum visibilityEnum) {
+  switch (visibilityEnum) {
+    case VisibilityEnum.km:
+      return visibility;
+    case VisibilityEnum.mile:
+      return convertKmToMiles(visibility);
+    default:
+      return visibility;
+  }
+}
+
+double convertKmToMiles(double km) => km * 0.62137;
+
+double convertHpaToBar(double hPa) => hPa / 1000;
+
+double convertHpaTommHg(double hPa) => hPa * 0.75;
+
+double convertHpaToPsi(double hPa) => hPa * 0.015;
+
+double convertHpaToinHg(double hPa) => hPa * 0.0295;
+
+double convertKmHToMph(double speed) => speed * 0.62;
+
+double convertKmHToMps(double speed) => speed * 1000 / 3600;
 
 String formatTemperature(
     {double temperature, int positions = 0, round = true, String unit = ''}) {
@@ -294,10 +335,8 @@ String formatWind(double wind, String unit) {
   return "${wind.toStringAsFixed(1)} $unit";
 }
 
-String formatVisibility(double visibility) {
-  String unit = "km";
-  double newVisibility = visibility / 1000;
-  return "${newVisibility.toStringAsFixed(0)} $unit";
+String formatVisibility(double visibility,String unit) {
+  return "${visibility.toStringAsFixed(0)} $unit";
 }
 
 String getWindDirection(double degree) {
@@ -359,6 +398,5 @@ String getRiseAndSetTime(DateTime rise, DateTime set) {
 int convertTimezoneToNumber(String timezone) {
   String value = timezone.substring(0, timezone.indexOf(':'));
   int valueInt = (int.parse(value) - 7);
-
   return valueInt;
 }

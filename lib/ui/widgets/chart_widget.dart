@@ -27,6 +27,7 @@ const double _iconWeatherSize = 30;
 const double _marginLeftDateTimes = 18;
 const double _marginTopDateTimes = 80;
 const double _textSize = 12;
+const double _textTimeSize = 10;
 
 class ChartWidget extends StatefulWidget {
   final ChartData chartData;
@@ -58,8 +59,11 @@ class _ChartWidgetState extends State<ChartWidget> {
     super.initState();
     init();
     settingBloc.settingStream.listen((event) {
-      setState(() {
-      });
+      if (this.mounted) {
+        setState(() {
+          // Your state change code goes here
+        });
+      }
     });
   }
 
@@ -80,7 +84,6 @@ class _ChartWidgetState extends State<ChartWidget> {
     }
     return list;
   }
-
 
   Future<ImageInfo> getImageInfo(BuildContext context, String imagePath) async {
     AssetImage assetImage = AssetImage(imagePath);
@@ -150,9 +153,6 @@ class _ChartWidgetState extends State<ChartWidget> {
             textDirection: TextDirection.ltr,
             style: Theme.of(context).textTheme.headline1));
   }
-
-
-
 }
 
 class _ChartPainter extends CustomPainter {
@@ -192,12 +192,10 @@ class _ChartPainter extends CustomPainter {
           points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
       _drawLine(canvas, index);
       if (index == maxTempIndex) {
-        _drawTempText(canvas, textOffset, pointLabels[index],
-             true,
+        _drawTempText(canvas, textOffset, pointLabels[index], true,
             isMax: true);
       } else if (index == minTempIndex) {
-        _drawTempText(canvas, textOffset, pointLabels[index],
-             true,
+        _drawTempText(canvas, textOffset, pointLabels[index], true,
             isMin: true);
       } else {
         _drawTempText(canvas, textOffset, pointLabels[index], true);
@@ -206,23 +204,23 @@ class _ChartPainter extends CustomPainter {
     if (fraction > 0.999) {
       Offset textOffset = Offset(points[points.length - 1].x - marginLeftTemp,
           points[points.length - 1].y - marginBottomTemp);
-      _drawTempText(
-          canvas, textOffset, pointLabels[points.length - 1], true);
+      _drawTempText(canvas, textOffset, pointLabels[points.length - 1], true);
     }
     _drawAxes(canvas);
   }
 
-  _drawLine(Canvas canvas, int index){
+  _drawLine(Canvas canvas, int index) {
     Paint paint = _getLinePaint(Colors.blue, 2);
-    if(index<points.length-1){
+    if (index < points.length - 1) {
       canvas.drawLine(_getOffsetFromPoint(points[index]),
-          _getOffsetFromPoint(points[index+1]), paint);
+          _getOffsetFromPoint(points[index + 1]), paint);
     }
   }
 
   void _drawText(Canvas canvas, Offset offset, String text,
       double alphaFraction, bool textShadow) {
-    TextStyle textStyle = _getTextStyle(alphaFraction, textShadow);
+    TextStyle textStyle =
+        TextStyle(color: Colors.white, fontSize: _textSize, letterSpacing: 0);
     TextSpan textSpan = TextSpan(style: textStyle, text: text);
     TextPainter textPainter =
         TextPainter(text: textSpan, textDirection: TextDirection.ltr);
@@ -230,8 +228,7 @@ class _ChartPainter extends CustomPainter {
     textPainter.paint(canvas, offset);
   }
 
-  void _drawTempText(Canvas canvas, Offset offset, String text,
-       bool textShadow,
+  void _drawTempText(Canvas canvas, Offset offset, String text, bool textShadow,
       {bool isMax = false, bool isMin = false}) {
     _drawRectangle(canvas, offset, isMax: isMax, isMin: isMin);
     TextStyle textStyle =
@@ -327,8 +324,18 @@ class _ChartPainter extends CustomPainter {
       Offset offset =
           Offset(points[index].x - _marginLeftDateTimes, -_marginTopDateTimes);
       TextStyle textStyle = _getTextStyle(1, false);
-      TextSpan textSpan =
-          TextSpan(style: textStyle, text: dateTimeLabels[index]);
+      TextSpan textSpan = settingBloc.timeEnum == TimeEnum.twelve
+          ? TextSpan(
+              style: textStyle,
+              text: dateTimeLabels[index]
+                  .substring(0, dateTimeLabels[index].lastIndexOf(' ')),
+              children: [
+                  TextSpan(
+                      text: dateTimeLabels[index]
+                          .substring(dateTimeLabels[index].lastIndexOf(' ')),
+                      style: TextStyle(color: Colors.white70, fontSize: 8))
+                ])
+          : TextSpan(style: textStyle, text: dateTimeLabels[index]);
       TextPainter textPainter =
           TextPainter(text: textSpan, textDirection: TextDirection.ltr);
       textPainter.layout();
@@ -340,12 +347,12 @@ class _ChartPainter extends CustomPainter {
     if (textShadow) {
       return new TextStyle(
         color: Colors.white,
-        fontSize: _textSize,
+        fontSize: _textTimeSize,
         letterSpacing: 0,
       );
     } else {
       return new TextStyle(
-          color: Colors.white, fontSize: _textSize, letterSpacing: 0);
+          color: Colors.white, fontSize: _textTimeSize, letterSpacing: 0);
     }
   }
 

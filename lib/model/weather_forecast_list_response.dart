@@ -29,5 +29,12 @@ class WeatherForecastListResponse {
         list: list ?? this.list, city: city ?? this.city);
   }
 
+  WeatherForecastListResponse formatWithTimezone(
+      {List<WeatherForecastResponse> list, City city}) {
+    return WeatherForecastListResponse(
+        list: list ?? this.list, city: city ?? this.city);
+  }
+
+
   ApplicationError get errorCode => _errorCode;
 }

@@ -12,7 +12,7 @@ class CurrentDailyWeather {
   double dewPoint;
   double uvi;
   int clouds;
-  int visibility;
+  double visibility;
   double windSpeed;
   int windDeg;
   List<Weather> weather;
@@ -44,11 +44,11 @@ class CurrentDailyWeather {
     dewPoint = json['dew_point'].toDouble();
     uvi = json['uvi'].toDouble();
     clouds = json['clouds'];
-    visibility = json['visibility'];
+    visibility = json['visibility'].toDouble() /1000;
     windSpeed = json['wind_speed'];
     windDeg = json['wind_deg'];
     if (json['weather'] != null) {
-      weather = new List<Weather>();
+      weather = <Weather>[];
       json['weather'].forEach((v) {
         weather.add(new Weather.fromJson(v));
       });
@@ -106,7 +106,7 @@ class CurrentDailyWeather {
       double dewPoint,
       double uvi,
       int clouds,
-      int visibility,
+      double visibility,
       double windSpeed,
       int windDeg,
       List<Weather> weather}) {

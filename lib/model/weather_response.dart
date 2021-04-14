@@ -80,7 +80,7 @@ class WeatherResponse {
   }
 
   WeatherResponse copyWith(
-      {DateTime dt,
+      {int dt,
       Coordinates cord,
       List<Weather> overallWeatherData,
       MainWeatherData mainWeatherData,

@@ -153,7 +153,7 @@ class _SunPathPainter extends CustomPainter {
 
   Paint _getCirclePaint() {
     Paint circlePaint = Paint();
-    circlePaint..color = Colors.yellow;
+    circlePaint..color = Colors.yellow[700];
     return circlePaint;
   }
 

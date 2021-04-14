@@ -1,11 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:weather_app/model/point.dart';
-import 'package:weather_app/shared/dimensions.dart';
-import 'package:weather_app/shared/strings.dart';
-import 'package:weather_app/shared/weather_helper.dart';
-import 'package:weather_app/utils/utils.dart';
+import '../bloc/setting_bloc.dart';
+import 'point.dart';
+import '../shared/dimensions.dart';
+import '../shared/strings.dart';
+import '../shared/weather_helper.dart';
+import '../utils/utils.dart';
 
 import 'chart_line.dart';
 import 'weather_forecast_holder.dart';
@@ -135,7 +136,7 @@ class ChartData {
   List<DateTime> _getDateTimes(List<WeatherForecastResponse> forecastList) {
     List<DateTime> dateTimes = [];
     for (WeatherForecastResponse response in forecastList) {
-      dateTimes.add(response.dateTime);
+      dateTimes.add(DateTime.fromMillisecondsSinceEpoch(response.dt));
     }
     return dateTimes;
   }
@@ -143,7 +144,9 @@ class ChartData {
   List<String> _getListDateTimeString(List<DateTime> dateTimes) {
     List<String> list = [];
     for (DateTime dateTime in dateTimes) {
-      list.add(getTimeLabel(dateTime));
+      print('${dateTime}');
+
+      list.add(formatTime(dateTime,settingBloc.timeEnum));
     }
     return list;
   }

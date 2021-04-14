@@ -138,7 +138,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          "${getTimeLabel(weatherForecastResponse.dateTime)}",
+          "${formatTime(weatherForecastResponse.dateTime,settingBloc.timeEnum)}",
           style: textSecondaryWhite,
         ),
         _marginVertical(),

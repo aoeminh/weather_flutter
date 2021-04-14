@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'package:weather_app/shared/dimens.dart';
@@ -136,7 +137,7 @@ class DailyForecastScreen extends StatelessWidget {
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise))}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise),settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],
@@ -200,7 +201,7 @@ class DailyForecastScreen extends StatelessWidget {
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset))}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset),settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],
