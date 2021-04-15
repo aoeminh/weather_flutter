@@ -129,6 +129,11 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _listenChangeSetting() {
+    pageBloc.currentCitiesStream.listen((event) {
+      if (this.mounted) {
+        getData();
+      }
+    });
     settingBloc.settingStream.listen((event) {
       if (this.mounted) {
         setState(() {
@@ -449,8 +454,11 @@ class _WeatherScreenState extends State<WeatherScreen>
                       ListView.builder(
                           shrinkWrap: true,
                           padding: EdgeInsets.zero,
-                          itemCount: isShowMore
-                              ? defaultDisplayNumberLocation
+                          itemCount: snapshot.data.length >
+                                  defaultDisplayNumberLocation
+                              ? isShowMore
+                                  ? snapshot.data.length
+                                  : defaultDisplayNumberLocation
                               : snapshot.data.length,
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
@@ -489,10 +497,11 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _showMoreLocation(int locationLength) {
-    if (locationLength >= defaultDisplayNumberLocation) {
+    if (locationLength > defaultDisplayNumberLocation) {
       return InkWell(
         onTap: () => setState(() {
           isShowMore = !isShowMore;
+          print('isShowMore $isShowMore');
         }),
         child: Container(
           padding: EdgeInsets.only(top: padding),
@@ -506,15 +515,15 @@ class _WeatherScreenState extends State<WeatherScreen>
               const SizedBox(width: padding),
               Text(
                 isShowMore
-                    ? 'Show more ${locationLength - defaultDisplayNumberLocation}'
-                    : 'Collapse',
+                    ? 'Collapse'
+                    : 'Show more ${locationLength - defaultDisplayNumberLocation}',
                 style: textTitleWhite,
               ),
               Expanded(child: Container()),
               Icon(
                 isShowMore
-                    ? Icons.keyboard_arrow_down
-                    : Icons.keyboard_arrow_up,
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
                 color: Colors.white,
                 size: iconDrawerSize,
               )
@@ -1421,12 +1430,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   Future<void> refresh() async {
-    await bloc.fetchWeather(widget.lat, widget.lon);
-    await weatherForecastBloc.fetchWeatherForecastResponse(
-        widget.lat, widget.lon);
-    await weatherForecastBloc.fetchWeatherForecast7Day(
-        widget.lat, widget.lon, _exclude7DayForecast);
-    return;
+    getData();
   }
 }
 

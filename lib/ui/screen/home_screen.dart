@@ -22,7 +22,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -31,11 +30,13 @@ class _HomePageState extends State<HomePage> {
     });
     cityBloc.getListCity();
     cityBloc.getListTimezone();
-    pageBloc.addNewCity(City(coordinates: Coordinates(
-        widget.city.coordinates.latitude, widget.city.coordinates.longitude)));
+    pageBloc.addNewCity(City(
+        coordinates: Coordinates(widget.city.coordinates.latitude,
+            widget.city.coordinates.longitude)));
     pageBloc.currentPage.listen((event) {
       if (controller.hasClients) {
-        controller.jumpToPage(event);
+        int index = event;
+        controller.jumpToPage(index);
       }
     });
   }
@@ -43,29 +44,26 @@ class _HomePageState extends State<HomePage> {
   _showNotification() async {
     WeatherResponse weatherResponse = settingBloc.weatherResponse;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails('id', 'name', 'description',
-        importance: Importance.defaultImportance,
-        autoCancel: false,
-        color: Colors.blue,
-        enableVibration: false,
-        visibility: NotificationVisibility.public,
-        enableLights: true,
-        icon: 'ic_little_sun',
-        largeIcon: DrawableResourceAndroidBitmap('ic_little_sun'),
-        priority: Priority.defaultPriority,
-        ongoing: true,
-        ticker: 'ticker');
+        AndroidNotificationDetails('id', 'name', 'description',
+            importance: Importance.defaultImportance,
+            autoCancel: false,
+            color: Colors.blue,
+            enableVibration: false,
+            visibility: NotificationVisibility.public,
+            enableLights: true,
+            icon: 'ic_little_sun',
+            largeIcon: DrawableResourceAndroidBitmap('ic_little_sun'),
+            priority: Priority.defaultPriority,
+            ongoing: true,
+            ticker: 'ticker');
 
     const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
     String title =
-        '${weatherResponse.mainWeatherData.temp}$degreeC at ${weatherResponse
-        .name} ';
+        '${weatherResponse.mainWeatherData.temp}$degreeC at ${weatherResponse.name} ';
     String body =
-        'Feels like ${weatherResponse.mainWeatherData
-        .feelsLike}$degreeC . ${weatherResponse.overallWeatherData[0]
-        .description} ';
+        'Feels like ${weatherResponse.mainWeatherData.feelsLike}$degreeC . ${weatherResponse.overallWeatherData[0].description} ';
 
     await flutterLocalNotificationsPlugin
         .show(0, title, body, notificationDetails, payload: 'payload');
@@ -90,8 +88,9 @@ class _HomePageState extends State<HomePage> {
               controller: controller,
               scrollDirection: Axis.horizontal,
               children: snapshot.data
-                  .map((data) =>
-                  WeatherScreen(lat: data.coordinates.latitude, lon: data.coordinates.longitude))
+                  .map((data) => WeatherScreen(
+                      lat: data.coordinates.latitude,
+                      lon: data.coordinates.longitude))
                   .toList(),
               onPageChanged: (page) {},
             );

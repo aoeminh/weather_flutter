@@ -57,7 +57,9 @@ class _ChartWidgetState extends State<ChartWidget> {
   @override
   void initState() {
     super.initState();
-    init();
+    if (this.mounted) {
+      init();
+    }
     settingBloc.settingStream.listen((event) {
       if (this.mounted) {
         setState(() {
