@@ -72,7 +72,7 @@ class PageBloc extends BlocBase {
 
   Stream<int> get currentPage => _currentPage.stream;
 
-  List<City> get currentCity => _currentCities;
+  List<City> get currentCityList => _currentCities;
 
   @override
   void dispose() {

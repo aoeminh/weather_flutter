@@ -147,7 +147,41 @@ String getBgImagePath(String iconCode) {
     case mistN:
       return mBgHazy;
     default:
-      return mIconClears;
+      return mBgClear;
+  }
+}
+
+String getBgAppbarPath(String iconCode) {
+  switch (iconCode) {
+    case mClear:
+      return bgAppbarClear;
+    case mClearN:
+      return bgAppbarClearN;
+    case mFewClouds:
+    case mClouds:
+      return bgAppbarFewCloudy;
+    case mFewCloudsN:
+    case mCloudsN:
+      return bgAppbarFewCloudyN;
+    case mBrokenClouds:
+    case mBrokenCloudsN:
+      return bgAppbarCloudy;
+    case mShowerRain:
+    case mShowerRainN:
+    case mRain:
+    case mRainN:
+      return bgAppbarRain;
+    case mthunderstorm:
+    case mthunderstormN:
+      return bgAppbarStorm;
+    case mSnow:
+    case mSnowN:
+      return bgAppbarSnow;
+    case mist:
+    case mistN:
+      return bgAppbarHazy;
+    default:
+      return bgAppbarClear;
   }
 }
 

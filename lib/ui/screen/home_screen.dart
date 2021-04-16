@@ -89,6 +89,7 @@ class _HomePageState extends State<HomePage> {
               scrollDirection: Axis.horizontal,
               children: snapshot.data
                   .map((data) => WeatherScreen(
+                index: snapshot.data.indexOf(data),
                       lat: data.coordinates.latitude,
                       lon: data.coordinates.longitude))
                   .toList(),

@@ -155,3 +155,30 @@ const mIconEditingLocation = '$mImgPath'
 
 const mIconMoreHoriz = '$mImgPath'
     'ic_more_horiz.png';
+
+const bgAppbarCloudy = '$mImgPath'
+    'img_bg_app_bar_cloudy.png';
+
+const bgAppbarClear = '$mImgPath'
+    'img_bg_appbar_clear.png';
+
+const bgAppbarClearN = '$mImgPath'
+    'img_bg_appbar_clear_n.png';
+
+const bgAppbarFewCloudy = '$mImgPath'
+    'img_bg_appbar_few_cloudy.png';
+
+const bgAppbarFewCloudyN = '$mImgPath'
+    'img_bg_appbar_few_cloudy_n.png';
+
+const bgAppbarRain = '$mImgPath'
+    'img_bg_appbar_rain.png';
+
+const bgAppbarStorm = '$mImgPath'
+    'img_bg_appbar_storm.png';
+
+const bgAppbarSnow = '$mImgPath'
+    'img_bg_appbar_snow.png';
+
+const bgAppbarHazy = '$mImgPath'
+    'img_bg_appbar_hazy.png';

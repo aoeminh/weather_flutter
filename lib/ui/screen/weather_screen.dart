@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,22 +46,25 @@ const double _chartHeight = 30;
 const double _dailySectionHeight = 520;
 const String _exclude7DayForecast = 'minutely,hourly';
 
-const double bigIconSize = 16;
-const double smallIconSize = bigIconSize;
-const double iconWindPathSize = 50;
-const double iconWindPillarHeight = 60;
-const double iconWindPillarWidth = 50;
-const double iconWindPathSmallSize = 30;
-const double iconWindPillarSmallHeight = 40;
-const double iconWindPillarSmallWidth = 30;
-const double iconDrawerSize = 30;
-const int defaultDisplayNumberLocation = 4;
+const double _bigIconSize = 16;
+const double _smallIconSize = _bigIconSize;
+const double _iconWindPathSize = 50;
+const double _iconWindPillarHeight = 60;
+const double _iconWindPillarWidth = 50;
+const double _iconWindPathSmallSize = 30;
+const double _iconWindPillarSmallHeight = 40;
+const double _iconWindPillarSmallWidth = 30;
+const double _iconDrawerSize = 30;
+const int _defaultDisplayNumberLocation = 4;
+const double _ratioBlurBg = 1 / 150;
+const double _ratioBlurImageBg = 1 / 10;
 
 class WeatherScreen extends StatefulWidget {
   final double lat;
   final double lon;
+  final int index;
 
-  const WeatherScreen({Key key, this.lat, this.lon});
+  const WeatherScreen({Key key, this.lat, this.lon, this.index});
 
   @override
   _WeatherScreenState createState() => _WeatherScreenState();
@@ -78,8 +82,10 @@ class _WeatherScreenState extends State<WeatherScreen>
   WeatherData weatherData;
   BehaviorSubject<DateTime> timeSubject =
       BehaviorSubject.seeded(DateTime.now());
+  BehaviorSubject<double> _scrollSubject = BehaviorSubject.seeded(0);
   AnimationController _controller;
   AnimationController _controller2;
+  ScrollController _scrollController = ScrollController();
   int currentTime = 0;
   String timezone = '';
   int differentTime = 0;
@@ -93,6 +99,9 @@ class _WeatherScreenState extends State<WeatherScreen>
     getData();
     _initAnim();
     _listenChangeSetting();
+    _scrollController.addListener(() {
+      _scrollSubject.add(_scrollController.offset);
+    });
   }
 
   _createTime(DateTime dateTime) {
@@ -112,11 +121,12 @@ class _WeatherScreenState extends State<WeatherScreen>
         DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli));
   }
 
-  getData() {
+  getData({double lat, double lon}) {
     weatherForecastBloc.fetchWeatherForecast7Day(
-        widget.lat, widget.lon, _exclude7DayForecast);
-    bloc.fetchWeather(widget.lat, widget.lon);
-    weatherForecastBloc.fetchWeatherForecastResponse(widget.lat, widget.lon);
+        lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
+    bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
+    weatherForecastBloc.fetchWeatherForecastResponse(
+        lat ?? widget.lat, lon ?? widget.lon);
   }
 
   _initAnim() {
@@ -131,7 +141,9 @@ class _WeatherScreenState extends State<WeatherScreen>
   _listenChangeSetting() {
     pageBloc.currentCitiesStream.listen((event) {
       if (this.mounted) {
-        getData();
+        getData(
+            lat: pageBloc.currentCityList[widget.index].coordinates.latitude,
+            lon: pageBloc.currentCityList[widget.index].coordinates.longitude);
       }
     });
     settingBloc.settingStream.listen((event) {
@@ -149,6 +161,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     _controller2.dispose();
     super.dispose();
     timeSubject.close();
+    _scrollSubject.close();
   }
 
   @override
@@ -183,13 +196,33 @@ class _WeatherScreenState extends State<WeatherScreen>
         return weatherData != null
             ? Stack(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(getBgImagePath(weatherData
-                                .weatherResponse.overallWeatherData[0].icon)),
-                            fit: BoxFit.cover)),
-                  ),
+                  StreamBuilder<double>(
+                      stream: _scrollSubject.stream,
+                      builder: (context, snapshot) {
+                        return Stack(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              child: ImageFiltered(
+                                imageFilter: ImageFilter.blur(
+                                    sigmaY: (snapshot.data * _ratioBlurImageBg),
+                                    sigmaX:
+                                        (snapshot.data * _ratioBlurImageBg)),
+                                child: Image.asset(
+                                  getBgImagePath(weatherData.weatherResponse
+                                      .overallWeatherData[0].icon),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              color: Colors.black
+                                  .withOpacity(snapshot.data * _ratioBlurBg),
+                            )
+                          ],
+                        );
+                      }),
                   _body(weatherData)
                 ],
               )
@@ -300,13 +333,32 @@ class _WeatherScreenState extends State<WeatherScreen>
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NestedScrollView(
+        controller: _scrollController,
         headerSliverBuilder: (context, innerBoxScrolled) => [
           SliverAppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            elevation: 0.0,
             centerTitle: true,
+            elevation: 0,
             pinned: true,
+            flexibleSpace: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(getBgAppbarPath(weatherData
+                              .weatherResponse.overallWeatherData[0].icon)),
+                          fit: BoxFit.fill)),
+                ),
+                StreamBuilder<double>(
+                  stream: _scrollSubject.stream,
+                  builder: (context, snapshot) {
+                    return Container(
+                      color: Colors.black
+                          .withOpacity(snapshot.data * _ratioBlurBg),
+                    );
+                  }
+                )
+              ],
+            ),
             actions: [
               GestureDetector(
                   onTap: () => Navigator.push(context,
@@ -443,8 +495,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                           children: [
                             Image.asset(
                               mIconEditingLocation,
-                              width: iconDrawerSize,
-                              height: iconDrawerSize,
+                              width: _iconDrawerSize,
+                              height: _iconDrawerSize,
                             ),
                             const SizedBox(width: padding),
                             Text('Edit Location', style: textTitleWhite),
@@ -455,10 +507,10 @@ class _WeatherScreenState extends State<WeatherScreen>
                           shrinkWrap: true,
                           padding: EdgeInsets.zero,
                           itemCount: snapshot.data.length >
-                                  defaultDisplayNumberLocation
+                                  _defaultDisplayNumberLocation
                               ? isShowMore
                                   ? snapshot.data.length
-                                  : defaultDisplayNumberLocation
+                                  : _defaultDisplayNumberLocation
                               : snapshot.data.length,
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
@@ -485,8 +537,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           children: [
             Image.asset(
               mIconSettingLocation,
-              width: iconDrawerSize,
-              height: iconDrawerSize,
+              width: _iconDrawerSize,
+              height: _iconDrawerSize,
             ),
             const SizedBox(width: padding),
             Text('${city.name}', style: textTitleWhite),
@@ -497,7 +549,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _showMoreLocation(int locationLength) {
-    if (locationLength > defaultDisplayNumberLocation) {
+    if (locationLength > _defaultDisplayNumberLocation) {
       return InkWell(
         onTap: () => setState(() {
           isShowMore = !isShowMore;
@@ -509,14 +561,14 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               Image.asset(
                 mIconMoreHoriz,
-                width: iconDrawerSize,
-                height: iconDrawerSize,
+                width: _iconDrawerSize,
+                height: _iconDrawerSize,
               ),
               const SizedBox(width: padding),
               Text(
                 isShowMore
                     ? 'Collapse'
-                    : 'Show more ${locationLength - defaultDisplayNumberLocation}',
+                    : 'Show more ${locationLength - _defaultDisplayNumberLocation}',
                 style: textTitleWhite,
               ),
               Expanded(child: Container()),
@@ -525,7 +577,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                     ? Icons.keyboard_arrow_up
                     : Icons.keyboard_arrow_down,
                 color: Colors.white,
-                size: iconDrawerSize,
+                size: _iconDrawerSize,
               )
             ],
           ),
@@ -553,8 +605,8 @@ class _WeatherScreenState extends State<WeatherScreen>
             Image.asset(
               imagePath,
               color: Colors.white,
-              width: iconDrawerSize,
-              height: iconDrawerSize,
+              width: _iconDrawerSize,
+              height: _iconDrawerSize,
             ),
             const SizedBox(width: padding),
             Text(title, style: textTitleWhite),
@@ -578,8 +630,8 @@ class _WeatherScreenState extends State<WeatherScreen>
             Image.asset(
               imagePath,
               color: Colors.white,
-              width: iconDrawerSize,
-              height: iconDrawerSize,
+              width: _iconDrawerSize,
+              height: _iconDrawerSize,
             ),
             const SizedBox(width: padding),
             Text(title, style: textTitleWhite),
@@ -1062,8 +1114,8 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               Image.asset(
                 iconPath,
-                width: bigIconSize,
-                height: bigIconSize,
+                width: _bigIconSize,
+                height: _bigIconSize,
               ),
               SizedBox(
                 width: marginSmall,
@@ -1143,16 +1195,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 },
                                 child: Image.asset(
                                   mIconWindPath,
-                                  width: iconWindPathSize,
-                                  height: iconWindPathSize,
+                                  width: _iconWindPathSize,
+                                  height: _iconWindPathSize,
                                 )),
                             Container(
                                 margin:
-                                    EdgeInsets.only(top: iconWindPathSize / 2),
+                                    EdgeInsets.only(top: _iconWindPathSize / 2),
                                 child: Image.asset(
                                   mIconWindPillar,
-                                  width: iconWindPillarWidth,
-                                  height: iconWindPillarHeight,
+                                  width: _iconWindPillarWidth,
+                                  height: _iconWindPillarHeight,
                                 ))
                           ],
                         ),
@@ -1167,16 +1219,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 },
                                 child: Image.asset(
                                   mIconWindPath,
-                                  width: iconWindPathSmallSize,
-                                  height: iconWindPathSmallSize,
+                                  width: _iconWindPathSmallSize,
+                                  height: _iconWindPathSmallSize,
                                 )),
                             Container(
                                 margin: EdgeInsets.only(
-                                    top: iconWindPathSmallSize / 2),
+                                    top: _iconWindPathSmallSize / 2),
                                 child: Image.asset(
                                   mIconWindPillar,
-                                  width: iconWindPillarSmallWidth,
-                                  height: iconWindPillarSmallHeight,
+                                  width: _iconWindPillarSmallWidth,
+                                  height: _iconWindPillarSmallHeight,
                                 ))
                           ],
                         )
@@ -1194,8 +1246,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                         children: [
                           Image.asset(
                             mIconWind,
-                            width: bigIconSize,
-                            height: bigIconSize,
+                            width: _bigIconSize,
+                            height: _bigIconSize,
                           ),
                           const SizedBox(
                             width: marginSmall,
@@ -1225,14 +1277,14 @@ class _WeatherScreenState extends State<WeatherScreen>
                             children: [
                               Image.asset(
                                 mIconDownArrow,
-                                width: bigIconSize,
-                                height: bigIconSize,
+                                width: _bigIconSize,
+                                height: _bigIconSize,
                                 color: Colors.white,
                               ),
                               Image.asset(
                                 mIconDownArrow,
-                                width: bigIconSize,
-                                height: smallIconSize,
+                                width: _bigIconSize,
+                                height: _smallIconSize,
                                 color: Colors.white,
                               ),
                               Text(

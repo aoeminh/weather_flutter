@@ -22,9 +22,8 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _listTempCity = pageBloc.copyCurrentCityList(pageBloc.currentCity);
+    _listTempCity = pageBloc.copyCurrentCityList(pageBloc.currentCityList);
   }
 
   @override
