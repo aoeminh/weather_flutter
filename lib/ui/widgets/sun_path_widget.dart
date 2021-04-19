@@ -36,8 +36,7 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
   @override
   void initState() {
     super.initState();
-    animateTween(duration: 5000);
-    _fractions.add(_fraction);
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _init();
     });
@@ -50,35 +49,48 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
 
   @override
   Widget build(BuildContext context) {
+
     return StreamBuilder<ImageInfo>(
         stream: _behaviorSubject.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Stack(
-              children: [
-                Container(
-                    margin: EdgeInsets.only(top: margin),
-                    width: _width,
-                    height: _height,
-                    child: ClipPath(
-                      child: Container(
-                        color: Colors.yellow.withOpacity(0.6),
-                        width: _width,
-                        height: _height,
-                      ),
-                      clipper: _SunPathCliper(widget.sunrise, widget.sunset,
-                          _fraction, widget.differentTime),
-                    )),
-                Container(
-                    margin: EdgeInsets.only(top: margin),
-                    width: _width,
-                    height: _height,
-                    child: CustomPaint(
-                      painter: _SunPathPainter(widget.sunrise, widget.sunset,
-                          _fraction, snapshot.data, widget.differentTime),
-                    )),
-              ],
+        builder: (context, imageSnapshot) {
+          if (imageSnapshot.hasData) {
+            if(this.mounted){
+              animateTween(duration: 3000);
+            }
+            return StreamBuilder<double>(
+              stream: animatedStream,
+              builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  return Stack(
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(top: margin),
+                          width: _width,
+                          height: _height,
+                          child: ClipPath(
+                            child: Container(
+                              color: Colors.yellow.withOpacity(0.6),
+                              width: _width,
+                              height: _height,
+                            ),
+                            clipper: _SunPathCliper(widget.sunrise, widget.sunset,
+                                snapshot.data, widget.differentTime),
+                          )),
+                      Container(
+                          margin: EdgeInsets.only(top: margin),
+                          width: _width,
+                          height: _height,
+                          child: CustomPaint(
+                            painter: _SunPathPainter(widget.sunrise, widget.sunset,
+                                snapshot.data, imageSnapshot.data, widget.differentTime),
+                          )),
+                    ],
+                  );
+                }
+                return Container();
+              }
             );
+
           }
           return Container();
         });
@@ -101,12 +113,6 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
     _behaviorSubject.close();
   }
 
-  @override
-  void onAnimatedValue(double value) {
-    setState(() {
-      _fraction = value;
-    });
-  }
 }
 
 class _SunPathPainter extends CustomPainter {
@@ -149,12 +155,6 @@ class _SunPathPainter extends CustomPainter {
     paint..strokeWidth = 0.5;
     paint..style = PaintingStyle.stroke;
     return paint;
-  }
-
-  Paint _getCirclePaint() {
-    Paint circlePaint = Paint();
-    circlePaint..color = Colors.yellow[700];
-    return circlePaint;
   }
 
   Offset _getPosition(fraction) {
@@ -200,6 +200,7 @@ class _SunPathCliper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(_SunPathCliper oldClipper) {
+    print('shouldReclip ${oldClipper.fraction}  $fraction');
     return oldClipper.fraction != fraction;
   }
 
@@ -216,6 +217,7 @@ class _SunPathCliper extends CustomClipper<Path> {
   }
 
   Offset _getPosition(fraction) {
+    print('_getPosition');
     double difference = 0;
     difference = _getDifferent();
     var x = _width / 2 * cos((1 + difference * fraction) * pi) + _width / 2;

@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/ui/widgets/empty_animation.dart';
 abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     with TickerProviderStateMixin {
   AnimationController controller;
-  StreamController _streamController;
-  StreamSubscription subscription;
+  BehaviorSubject<double> _streamController;
 
   Widget build(BuildContext context);
 
@@ -15,9 +15,10 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
       double end = 1.0,
       int duration: 2000,
       Curve curve = Curves.easeInOut}) {
+    print('animateTween');
     controller = _getAnimationController(this, duration);
     Animation animation = _getCurvedAnimation(controller, curve);
-   _streamController = StreamController<double>();
+   _streamController = BehaviorSubject<double>();
 
     Animation<double> tween = _getTween(start, end, animation);
     var valueListener = () {
@@ -29,13 +30,9 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
       if (status == AnimationStatus.completed ||
           status == AnimationStatus.dismissed) {
         _streamController.close();
-        subscription.cancel();
       }
     });
-    subscription =
-        _streamController.stream.listen((value) {
-          onAnimatedValue(value as double);
-        });
+
     controller.forward();
   }
 
@@ -55,16 +52,15 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     return Tween(begin: start, end: end).animate(animation);
   }
 
-  void onAnimatedValue(double value);
 
   @override
   void dispose() {
     if (controller != null) {
       controller.dispose();
     }
-    if (subscription != null) {
-      subscription.cancel();
-    }
+    _streamController.close();
+
     super.dispose();
   }
+  Stream<double> get animatedStream => _streamController.stream;
 }

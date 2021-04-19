@@ -40,7 +40,7 @@ import 'package:weather_app/utils/utils.dart';
 
 import 'detail_daily_forecast.dart';
 
-const double _mainWeatherHeight = 220;
+const double _mainWeatherHeight = 240;
 const double _mainWeatherWidth = 2000;
 const double _chartHeight = 30;
 const double _dailySectionHeight = 520;
@@ -185,6 +185,8 @@ class _WeatherScreenState extends State<WeatherScreen>
       }),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+
+
           weatherData = snapshot.data;
           convertDataAndFormatTime();
           pageBloc.removeItemWhenFirstLoadApp(
@@ -199,29 +201,33 @@ class _WeatherScreenState extends State<WeatherScreen>
                   StreamBuilder<double>(
                       stream: _scrollSubject.stream,
                       builder: (context, snapshot) {
-                        return Stack(
-                          children: [
-                            Container(
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width,
-                              child: ImageFiltered(
-                                imageFilter: ImageFilter.blur(
-                                    sigmaY: (snapshot.data * _ratioBlurImageBg),
-                                    sigmaX:
-                                        (snapshot.data * _ratioBlurImageBg)),
-                                child: Image.asset(
-                                  getBgImagePath(weatherData.weatherResponse
-                                      .overallWeatherData[0].icon),
-                                  fit: BoxFit.fill,
+                        if(snapshot.hasData){
+                          return Stack(
+                            children: [
+                              Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: MediaQuery.of(context).size.width,
+                                child: ImageFiltered(
+                                  imageFilter: ImageFilter.blur(
+                                      sigmaY: (snapshot.data * _ratioBlurImageBg),
+                                      sigmaX:
+                                      (snapshot.data * _ratioBlurImageBg)),
+                                  child: Image.asset(
+                                    getBgImagePath(weatherData.weatherResponse
+                                        .overallWeatherData[0].icon),
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              color: Colors.black
-                                  .withOpacity(snapshot.data * _ratioBlurBg),
-                            )
-                          ],
-                        );
+                              Container(
+                                color: Colors.black
+                                    .withOpacity(snapshot.data * _ratioBlurBg),
+                              )
+                            ],
+                          );
+                        }
+                        return Container();
+
                       }),
                   _body(weatherData)
                 ],
@@ -330,6 +336,7 @@ class _WeatherScreenState extends State<WeatherScreen>
       timezone.substring(timezone.indexOf('/') + 1, timezone.length);
 
   _body(WeatherData weatherData) {
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NestedScrollView(
@@ -351,10 +358,13 @@ class _WeatherScreenState extends State<WeatherScreen>
                 StreamBuilder<double>(
                   stream: _scrollSubject.stream,
                   builder: (context, snapshot) {
-                    return Container(
-                      color: Colors.black
-                          .withOpacity(snapshot.data * _ratioBlurBg),
-                    );
+                    if(snapshot.hasData){
+                      return Container(
+                        color: Colors.black
+                            .withOpacity(snapshot.data * _ratioBlurBg),
+                      );
+                    }
+                   return Container();
                   }
                 )
               ],
@@ -670,6 +680,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   _currentWeather(WeatherResponse weatherResponse) {
     return Container(
         height: _mainWeatherHeight,
+        margin: EdgeInsets.symmetric(vertical: margin),
         child: weatherResponse != null
             ? _buildBodyCurrentWeather(weatherResponse)
             : Container());

@@ -3,14 +3,13 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+
 import '../../bloc/setting_bloc.dart';
 import '../../model/chart_data.dart';
 import '../../model/chart_line.dart';
 import '../../model/point.dart';
 import '../../shared/image.dart';
 import '../../utils/utils.dart';
-
-import 'animated_state.dart';
 
 const humidityIconWidth = 15;
 const humidityIconHeight = 15;
@@ -48,7 +47,6 @@ class _ChartWidgetState extends State<ChartWidget> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     humidityBehaviorSubject.close();
     weatherImageInfoSubject.close();
@@ -62,9 +60,7 @@ class _ChartWidgetState extends State<ChartWidget> {
     }
     settingBloc.settingStream.listen((event) {
       if (this.mounted) {
-        setState(() {
-          // Your state change code goes here
-        });
+        setState(() {});
       }
     });
   }
