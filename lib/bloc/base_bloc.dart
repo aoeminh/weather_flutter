@@ -4,9 +4,16 @@ import '../model/weather_forecast_list_response.dart';
 
 import 'package:weather_app/model/weather_response.dart';
 import 'package:weather_app/repository/weather_repository.dart';
+import 'package:connectivity/connectivity.dart';
 
 abstract class BlocBase {
   final WeatherRepository weatherRepository = WeatherRepository();
+
+  Future<bool> checkNetWork() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    return (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi);
+  }
 
   void dispose();
 }

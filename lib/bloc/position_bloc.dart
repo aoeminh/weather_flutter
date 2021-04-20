@@ -33,8 +33,6 @@ class PositionBloc extends BlocBase {
 
   Stream get positionStream => _behaviorSubject.stream;
 
-  Position get position => _position;
-
   @override
   void dispose() {
     _behaviorSubject.close();

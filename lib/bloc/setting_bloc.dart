@@ -1,13 +1,9 @@
 import 'package:rxdart/rxdart.dart';
-import '../model/daily.dart';
-import '../model/weather_forecast_response.dart';
-import '../utils/utils.dart';
-import 'base_bloc.dart';
-import '../model/weather_forecast_7_day.dart';
-import '../model/weather_forecast_list_response.dart';
+
 import '../model/weather_response.dart';
 import '../shared/strings.dart';
 import '../ui/screen/weather_screen.dart';
+import 'base_bloc.dart';
 
 enum TempEnum { C, F }
 enum WindEnum { kmh, mph, ms }

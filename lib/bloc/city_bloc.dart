@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/model/city.dart';
 import 'package:weather_app/model/timezone.dart';
@@ -36,7 +35,6 @@ class CityBloc extends BlocBase {
   List<City> get cities => _cities;
 
   List<Timezone> get timezones => _timezones;
-
 
 }
 

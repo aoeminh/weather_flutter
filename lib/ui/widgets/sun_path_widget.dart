@@ -28,8 +28,6 @@ class SunPathWidget extends StatefulWidget {
 }
 
 class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
-  double _fraction = 0.0;
-  List<double> _fractions = [];
   ImageInfo imageInfo;
   BehaviorSubject<ImageInfo> _behaviorSubject = BehaviorSubject();
 
@@ -200,7 +198,6 @@ class _SunPathCliper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(_SunPathCliper oldClipper) {
-    print('shouldReclip ${oldClipper.fraction}  $fraction');
     return oldClipper.fraction != fraction;
   }
 
@@ -217,7 +214,6 @@ class _SunPathCliper extends CustomClipper<Path> {
   }
 
   Offset _getPosition(fraction) {
-    print('_getPosition');
     double difference = 0;
     difference = _getDifferent();
     var x = _width / 2 * cos((1 + difference * fraction) * pi) + _width / 2;

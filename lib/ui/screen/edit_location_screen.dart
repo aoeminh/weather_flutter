@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/bloc/city_bloc.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
 import 'package:weather_app/model/city.dart';
-import 'package:weather_app/model/coordinates.dart';
 import 'package:weather_app/shared/text_style.dart';
 
 import '../../shared/colors.dart';

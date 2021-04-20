@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:weather_app/model/coordinates.dart';
-import '../../model/city.dart';
+import '../../shared/dimens.dart';
+import '../../model/application_error.dart';
+import '../../model/coordinates.dart';
+
 import '../../bloc/city_bloc.dart';
 import '../../bloc/page_bloc.dart';
+import '../../bloc/app_bloc.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../main.dart';
+import '../../model/city.dart';
 import '../../model/weather_response.dart';
 import '../../shared/strings.dart';
-
 import 'weather_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,11 +24,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isShowingDialog = false;
+
   @override
   void initState() {
     super.initState();
     settingBloc.notificationStream.listen((event) {
       event ? _showNotification() : _closeNotification();
+    });
+    appBloc.errorStream.listen((event) {
+      if (!isShowingDialog) _showErrorDialog(event);
     });
     cityBloc.getListCity();
     cityBloc.getListTimezone();
@@ -39,6 +46,37 @@ class _HomePageState extends State<HomePage> {
         controller.jumpToPage(index);
       }
     });
+  }
+
+  _showErrorDialog(ApplicationError error) {
+    isShowingDialog = true;
+    showDialog(
+      barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(radius)),
+            child: Container(
+              height: 150,
+              width: 300,
+              padding: EdgeInsets.all( padding),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Error'),
+                  const SizedBox(height: marginSmall,),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        isShowingDialog = false;
+                      },
+                      child: Text('OK'))
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   _showNotification() async {
@@ -89,7 +127,7 @@ class _HomePageState extends State<HomePage> {
               scrollDirection: Axis.horizontal,
               children: snapshot.data
                   .map((data) => WeatherScreen(
-                index: snapshot.data.indexOf(data),
+                      index: snapshot.data.indexOf(data),
                       lat: data.coordinates.latitude,
                       lon: data.coordinates.longitude))
                   .toList(),

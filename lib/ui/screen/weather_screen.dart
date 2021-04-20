@@ -7,12 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/bloc/api_service_bloc.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/city_bloc.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
-import 'package:weather_app/bloc/weather_bloc.dart';
-import 'package:weather_app/bloc/weather_forecast_bloc.dart';
 import 'package:weather_app/model/chart_data.dart';
 import 'package:weather_app/model/city.dart';
 import 'package:weather_app/model/current_daily_weather.dart';
@@ -72,8 +71,7 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen>
     with TickerProviderStateMixin {
-  final WeatherBloc bloc = WeatherBloc();
-  final WeatherForecastBloc weatherForecastBloc = WeatherForecastBloc();
+  final ApiServiceBloc bloc = ApiServiceBloc();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   WeatherResponse weatherResponse;
@@ -122,10 +120,10 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   getData({double lat, double lon}) {
-    weatherForecastBloc.fetchWeatherForecast7Day(
+    bloc.fetchWeatherForecast7Day(
         lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
-    weatherForecastBloc.fetchWeatherForecastResponse(
+    bloc.fetchWeatherForecastResponse(
         lat ?? widget.lat, lon ?? widget.lon);
   }
 
@@ -169,8 +167,8 @@ class _WeatherScreenState extends State<WeatherScreen>
     return StreamBuilder<WeatherData>(
       stream: Rx.combineLatest3(
           bloc.weatherStream,
-          weatherForecastBloc.weatherForecastStream,
-          weatherForecastBloc.weatherForecastDailyStream, (a, b, c) {
+          bloc.weatherForecastStream,
+          bloc.weatherForecastDailyStream, (a, b, c) {
         if (a is WeatherStateSuccess &&
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
@@ -185,8 +183,6 @@ class _WeatherScreenState extends State<WeatherScreen>
       }),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-
-
           weatherData = snapshot.data;
           convertDataAndFormatTime();
           pageBloc.removeItemWhenFirstLoadApp(
@@ -201,7 +197,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                   StreamBuilder<double>(
                       stream: _scrollSubject.stream,
                       builder: (context, snapshot) {
-                        if(snapshot.hasData){
+                        if (snapshot.hasData) {
                           return Stack(
                             children: [
                               Container(
@@ -209,9 +205,10 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 width: MediaQuery.of(context).size.width,
                                 child: ImageFiltered(
                                   imageFilter: ImageFilter.blur(
-                                      sigmaY: (snapshot.data * _ratioBlurImageBg),
+                                      sigmaY:
+                                          (snapshot.data * _ratioBlurImageBg),
                                       sigmaX:
-                                      (snapshot.data * _ratioBlurImageBg)),
+                                          (snapshot.data * _ratioBlurImageBg)),
                                   child: Image.asset(
                                     getBgImagePath(weatherData.weatherResponse
                                         .overallWeatherData[0].icon),
@@ -227,7 +224,6 @@ class _WeatherScreenState extends State<WeatherScreen>
                           );
                         }
                         return Container();
-
                       }),
                   _body(weatherData)
                 ],
@@ -336,7 +332,6 @@ class _WeatherScreenState extends State<WeatherScreen>
       timezone.substring(timezone.indexOf('/') + 1, timezone.length);
 
   _body(WeatherData weatherData) {
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NestedScrollView(
@@ -356,17 +351,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                           fit: BoxFit.fill)),
                 ),
                 StreamBuilder<double>(
-                  stream: _scrollSubject.stream,
-                  builder: (context, snapshot) {
-                    if(snapshot.hasData){
-                      return Container(
-                        color: Colors.black
-                            .withOpacity(snapshot.data * _ratioBlurBg),
-                      );
-                    }
-                   return Container();
-                  }
-                )
+                    stream: _scrollSubject.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Container(
+                          color: Colors.black
+                              .withOpacity(snapshot.data * _ratioBlurBg),
+                        );
+                      }
+                      return Container();
+                    })
               ],
             ),
             actions: [
@@ -673,6 +667,9 @@ class _WeatherScreenState extends State<WeatherScreen>
               }
               return Text('');
             }),
+        const SizedBox(
+          height: marginSmall,
+        ),
       ],
     );
   }

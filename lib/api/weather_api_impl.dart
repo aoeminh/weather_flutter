@@ -4,6 +4,7 @@ import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'weather_api.dart';
 import '../model/weather_forecast_list_response.dart';
 import '../model/weather_response.dart';
+import 'package:connectivity/connectivity.dart';
 
 class WeatherApiImpl extends WeatherApi {
   final Dio _dio = Dio();
@@ -13,6 +14,8 @@ class WeatherApiImpl extends WeatherApi {
   final String _apiWeatherForecastEndpoint = "/forecast";
   final String _apiWeatherForecast7Day = "/onecall";
   static final String apiKey = "980fd15d8985bd9e265eac0593d3c9bd";
+
+
 
   @override
   Future<WeatherResponse> fetchWeather(
@@ -46,7 +49,6 @@ class WeatherApiImpl extends WeatherApi {
       double lat, double lon, String units, String exclude) async {
     Uri uri =
         _buildUri(lat, lon, _apiWeatherForecast7Day, units, exclude: exclude);
-    print('uri $uri');
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       print('fetchWeatherForecast7Day Success: ${response.data}');
