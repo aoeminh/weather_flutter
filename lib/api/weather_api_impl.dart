@@ -20,6 +20,7 @@ class WeatherApiImpl extends WeatherApi {
   @override
   Future<WeatherResponse> fetchWeather(
       double lat, double lon, String units) async {
+    print('test');
     Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, units);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
