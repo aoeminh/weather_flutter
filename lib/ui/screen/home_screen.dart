@@ -1,34 +1,114 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:weather_app/bloc/city_bloc.dart';
-import 'package:weather_app/bloc/page_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../../shared/dimens.dart';
+import '../../model/application_error.dart';
+import '../../model/coordinates.dart';
+
+import '../../bloc/city_bloc.dart';
+import '../../bloc/page_bloc.dart';
+import '../../bloc/app_bloc.dart';
+import '../../bloc/setting_bloc.dart';
+import '../../main.dart';
+import '../../model/city.dart';
+import '../../model/weather_response.dart';
+import '../../shared/strings.dart';
 import 'weather_screen.dart';
 
 class HomePage extends StatefulWidget {
-  final Position position;
+  final City city;
 
-  const HomePage({Key key, this.position}) : super(key: key);
+  const HomePage({Key key, this.city}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Position> positions = [];
-  int currentPage = 0;
+  bool isShowingDialog = false;
 
   @override
   void initState() {
     super.initState();
+    settingBloc.notificationStream.listen((event) {
+      event ? _showNotification() : _closeNotification();
+    });
+    appBloc.errorStream.listen((event) {
+      if (!isShowingDialog) _showErrorDialog(event);
+    });
     cityBloc.getListCity();
     cityBloc.getListTimezone();
-    pageBloc.addPage(widget.position.latitude, widget.position.longitude);
+    pageBloc.addNewCity(City(
+        coordinates: Coordinates(widget.city.coordinates.latitude,
+            widget.city.coordinates.longitude)));
     pageBloc.currentPage.listen((event) {
       if (controller.hasClients) {
-        controller.jumpToPage(event);
-        setState(() {});
+        int index = event;
+        controller.jumpToPage(index);
       }
     });
+  }
+
+  _showErrorDialog(ApplicationError error) {
+    isShowingDialog = true;
+    showDialog(
+      barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(radius)),
+            child: Container(
+              height: 150,
+              width: 300,
+              padding: EdgeInsets.all( padding),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Error'),
+                  const SizedBox(height: marginSmall,),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        isShowingDialog = false;
+                      },
+                      child: Text('OK'))
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _showNotification() async {
+    WeatherResponse weatherResponse = settingBloc.weatherResponse;
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('id', 'name', 'description',
+            importance: Importance.defaultImportance,
+            autoCancel: false,
+            color: Colors.blue,
+            enableVibration: false,
+            visibility: NotificationVisibility.public,
+            enableLights: true,
+            icon: 'ic_little_sun',
+            largeIcon: DrawableResourceAndroidBitmap('ic_little_sun'),
+            priority: Priority.defaultPriority,
+            ongoing: true,
+            ticker: 'ticker');
+
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    String title =
+        '${weatherResponse.mainWeatherData.temp}$degreeC at ${weatherResponse.name} ';
+    String body =
+        'Feels like ${weatherResponse.mainWeatherData.feelsLike}$degreeC . ${weatherResponse.overallWeatherData[0].description} ';
+
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, notificationDetails, payload: 'payload');
+  }
+
+  _closeNotification() async {
+    await flutterLocalNotificationsPlugin.cancel(0);
   }
 
   final controller = PageController(
@@ -38,7 +118,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: StreamBuilder<List<Position>>(
+      child: StreamBuilder<List<City>>(
         stream: pageBloc.pageStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -46,13 +126,15 @@ class _HomePageState extends State<HomePage> {
               controller: controller,
               scrollDirection: Axis.horizontal,
               children: snapshot.data
-                  .map((data) =>
-                      WeatherScreen(lat: data.latitude, lon: data.longitude))
+                  .map((data) => WeatherScreen(
+                      index: snapshot.data.indexOf(data),
+                      lat: data.coordinates.latitude,
+                      lon: data.coordinates.longitude))
                   .toList(),
               onPageChanged: (page) {},
             );
           }
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );

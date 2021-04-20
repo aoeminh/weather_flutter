@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:weather_app/model/daily.dart';
-import 'package:weather_app/model/weather_forecast_7_day.dart';
-import 'package:weather_app/shared/dimens.dart';
-import 'package:weather_app/shared/image.dart';
-import 'package:weather_app/shared/strings.dart';
-import 'package:weather_app/shared/text_style.dart';
-import 'package:weather_app/utils/utils.dart';
+import '../../bloc/setting_bloc.dart';
+import '../../model/daily.dart';
+import '../../model/weather_forecast_7_day.dart';
+import '../../shared/colors.dart';
+import '../../shared/dimens.dart';
+import '../../shared/image.dart';
+import '../../shared/strings.dart';
+import '../../shared/text_style.dart';
+import '../../utils/utils.dart';
 
 import 'detail_daily_forecast.dart';
 
@@ -43,7 +45,7 @@ class DailyForecastScreen extends StatelessWidget {
 
   _buildBody() {
     return Container(
-      color: Colors.black87,
+      color: backgroundColor,
       child: ListView.separated(
           padding: EdgeInsets.zero,
           itemBuilder: (context, index) {
@@ -83,9 +85,10 @@ class DailyForecastScreen extends StatelessWidget {
 
   _dateRow(DateTime dateTime) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '${formatDate(dateTime)}',
+          '${formatDateAndMonth(dateTime,settingBloc.dateEnum)}',
           style: textSecondaryWhiteBold,
         ),
         const SizedBox(
@@ -93,7 +96,7 @@ class DailyForecastScreen extends StatelessWidget {
         ),
         Text(
           '${formatWeekday(dateTime)}',
-          style: textSecondaryGrey,
+          style: textSmallWhite70,
         ),
       ],
     );
@@ -131,12 +134,13 @@ class DailyForecastScreen extends StatelessWidget {
                     width: iconDetailSize,
                     height: iconDetailSize,
                   ),
+                  const SizedBox(width: marginSmall,),
                   Text(
-                    'Sunrise:',
+                    'Sunrise: ',
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise))}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise),settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],
@@ -195,12 +199,13 @@ class DailyForecastScreen extends StatelessWidget {
                     width: iconDetailSize,
                     height: iconDetailSize,
                   ),
+                  const SizedBox(width: marginSmall,),
                   Text(
-                    'Sunset:',
+                    'Sunset: ',
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset))}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset),settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],

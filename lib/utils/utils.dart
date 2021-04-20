@@ -2,7 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/system.dart';
+import 'package:weather_app/model/temp.dart';
 import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
@@ -145,7 +147,41 @@ String getBgImagePath(String iconCode) {
     case mistN:
       return mBgHazy;
     default:
-      return mIconClears;
+      return mBgClear;
+  }
+}
+
+String getBgAppbarPath(String iconCode) {
+  switch (iconCode) {
+    case mClear:
+      return bgAppbarClear;
+    case mClearN:
+      return bgAppbarClearN;
+    case mFewClouds:
+    case mClouds:
+      return bgAppbarFewCloudy;
+    case mFewCloudsN:
+    case mCloudsN:
+      return bgAppbarFewCloudyN;
+    case mBrokenClouds:
+    case mBrokenCloudsN:
+      return bgAppbarCloudy;
+    case mShowerRain:
+    case mShowerRainN:
+    case mRain:
+    case mRainN:
+      return bgAppbarRain;
+    case mthunderstorm:
+    case mthunderstormN:
+      return bgAppbarStorm;
+    case mSnow:
+    case mSnowN:
+      return bgAppbarSnow;
+    case mist:
+    case mistN:
+      return bgAppbarHazy;
+    default:
+      return bgAppbarClear;
   }
 }
 
@@ -160,26 +196,70 @@ String getTimeLabel(DateTime dateTime) {
   return "${hourText.toString()}:00";
 }
 
-String formatDateAndWeekDay(DateTime dateTime) {
-  final df = new DateFormat('EEE MM/dd');
+String formatDateAndWeekDay(DateTime dateTime,DateEnum dateEnum) {
+  DateFormat df;
+
+  switch(dateEnum){
+    case DateEnum.ddMMyyyyy:
+      df = new DateFormat('EEE dd/M');
+      break;
+    case DateEnum.mmddyyyyy:
+      df = new DateFormat('EEE M/dd');
+      break;
+    case DateEnum.yyyymmdd:
+      df = new DateFormat('EEE M/dd');
+      break;
+    default:
+      df = new DateFormat('EEE dd/M');
+  }
   String date = df.format(dateTime);
   return date;
 }
 
-String formatDate(DateTime dateTime) {
-  final df = new DateFormat('M/dd');
+String formatDateAndMonth(DateTime dateTime,DateEnum dateEnum) {
+  DateFormat df;
+  switch(dateEnum){
+    case DateEnum.ddMMyyyyy:
+      df = new DateFormat('dd/M');
+      break;
+    case DateEnum.mmddyyyyy:
+      df = new DateFormat('M/dd');
+      break;
+    case DateEnum.yyyymmdd:
+      df = new DateFormat('M/dd');
+      break;
+    default:
+      df = new DateFormat('dd/M');
+  }
   String date = df.format(dateTime);
   return date;
 }
 
-String formatWeekDayAndTime(DateTime dateTime) {
-  final df = new DateFormat('EEE HH:mm');
+String formatWeekDayAndTime(DateTime dateTime, TimeEnum timeEnum) {
+  DateFormat df = new DateFormat('EEE HH:mm');
+  switch (timeEnum) {
+    case TimeEnum.twelve:
+      df = new DateFormat('EEE HH:mm a');
+      break;
+    case TimeEnum.twentyFour:
+      df = new DateFormat('EEE HH:mm');
+      break;
+  }
+
   String date = df.format(dateTime);
   return date;
 }
 
-String formatTime(DateTime dateTime) {
-  final df = new DateFormat('HH:mm');
+String formatTime(DateTime dateTime, TimeEnum timeEnum) {
+  DateFormat df;
+  switch (timeEnum) {
+    case TimeEnum.twelve:
+      df = new DateFormat('h:mm a');
+      break;
+    case TimeEnum.twentyFour:
+      df = new DateFormat('HH:mm');
+      break;
+  }
   String date = df.format(dateTime);
   return date;
 }
@@ -208,19 +288,75 @@ String _getDayKey(DateTime dateTime) {
   return "${dateTime.day.toString()}-${dateTime.month.toString()}-${dateTime.year.toString()}";
 }
 
-String formatTemperature(
-    {double temperature, int positions = 0, round = true, metricUnits = true}) {
-  var unit = "°C";
-
-  if (!metricUnits) {
-    unit = "°F";
+double convertTemp(double temp, TempEnum tempEnum) {
+  if (tempEnum == TempEnum.F) {
+    return convertCelsiusToFahrenheit(temp);
   }
+  return temp;
+}
 
+double convertWindSpeed(double speed, WindEnum windEnum) {
+  switch (windEnum) {
+    case WindEnum.kmh:
+      return speed;
+    case WindEnum.mph:
+      return convertKmHToMph(speed);
+    case WindEnum.ms:
+      return convertKmHToMps(speed);
+    default:
+      return speed;
+  }
+}
+
+double convertPressure(double pressure, PressureEnum pressureEnum) {
+  switch (pressureEnum) {
+    case PressureEnum.mBar:
+      return pressure;
+    case PressureEnum.bar:
+      return convertHpaToBar(pressure);
+    case PressureEnum.mmHg:
+      return convertHpaTommHg(pressure);
+    case PressureEnum.psi:
+      return convertHpaToPsi(pressure);
+    case PressureEnum.inHg:
+      return convertHpaToinHg(pressure);
+    default:
+      return pressure;
+  }
+}
+
+double convertVisibility(double visibility, VisibilityEnum visibilityEnum) {
+  switch (visibilityEnum) {
+    case VisibilityEnum.km:
+      return visibility;
+    case VisibilityEnum.mile:
+      return convertKmToMiles(visibility);
+    default:
+      return visibility;
+  }
+}
+
+double convertKmToMiles(double km) => km * 0.62137;
+
+double convertHpaToBar(double hPa) => hPa / 1000;
+
+double convertHpaTommHg(double hPa) => hPa * 0.75;
+
+double convertHpaToPsi(double hPa) => hPa * 0.015;
+
+double convertHpaToinHg(double hPa) => hPa * 0.0295;
+
+double convertKmHToMph(double speed) => speed * 0.62;
+
+double convertKmHToMps(double speed) => speed * 1000 / 3600;
+
+String formatTemperature(
+    {double temperature, int positions = 0, round = true, String unit = ''}) {
   if (round) {
     temperature = temperature.floor().toDouble();
   }
 
-  return "${temperature.toStringAsFixed(positions)} $unit";
+  return "${temperature.toStringAsFixed(positions)}$degree$unit";
 }
 
 double convertCelsiusToFahrenheit(double temperature) {
@@ -247,11 +383,7 @@ double convertFahrenheitToCelsius(double temperature) {
   return (temperature - 32) * 0.55;
 }
 
-String formatPressure(double pressure) {
-  String unit = "hPa";
-
-  unit = "mbar";
-
+String formatPressure(double pressure, String unit) {
   return "${pressure.toStringAsFixed(0)} $unit";
 }
 
@@ -259,16 +391,12 @@ String formatRain(double rain) {
   return "${rain.toStringAsFixed(2)} mm/h";
 }
 
-String formatWind(double wind) {
-  String unit = "km/h";
-  double newWind = wind * 3.6;
-  return "${newWind.toStringAsFixed(1)} $unit";
+String formatWind(double wind, String unit) {
+  return "${wind.toStringAsFixed(1)} $unit";
 }
 
-String formatVisibility(double visibility) {
-  String unit = "km";
-  double newVisibility = visibility / 1000;
-  return "${newVisibility.toStringAsFixed(0)} $unit";
+String formatVisibility(double visibility, String unit) {
+  return "${visibility.toStringAsFixed(0)} $unit";
 }
 
 String getWindDirection(double degree) {
@@ -330,7 +458,5 @@ String getRiseAndSetTime(DateTime rise, DateTime set) {
 int convertTimezoneToNumber(String timezone) {
   String value = timezone.substring(0, timezone.indexOf(':'));
   int valueInt = (int.parse(value) - 7);
-  print('convertTimezoneToNumber $valueInt');
-
   return valueInt;
 }

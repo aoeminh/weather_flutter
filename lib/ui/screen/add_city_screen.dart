@@ -100,8 +100,8 @@ class _AddCityScreenState extends State<AddCityScreen> {
   }
 
   _onItemSubmit(City city) {
-    print('${city.name}');
-    pageBloc.addPage(city.coordinates.latitude, city.coordinates.longitude);
+    pageBloc.addNewCity(city);
+
     Navigator.pop(context);
   }
 

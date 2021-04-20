@@ -9,6 +9,8 @@ class CityBloc extends BlocBase {
   List<City> _cities;
   List<Timezone> _timezones;
 
+
+
   getListCity() async {
     String cityStr = await rootBundle.loadString("assets/city/cities.json");
 
@@ -23,12 +25,17 @@ class CityBloc extends BlocBase {
     _timezones = list.map((e) => Timezone.fromJson(e)).toList();
   }
 
+
+
   @override
-  void dispose() {}
+  void dispose() {
+
+  }
 
   List<City> get cities => _cities;
 
   List<Timezone> get timezones => _timezones;
+
 }
 
 final cityBloc = CityBloc();

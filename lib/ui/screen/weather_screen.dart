@@ -1,30 +1,36 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/bloc/api_service_bloc.dart';
 import 'package:weather_app/bloc/base_bloc.dart';
 import 'package:weather_app/bloc/city_bloc.dart';
-import 'package:weather_app/bloc/weather_bloc.dart';
-import 'package:weather_app/bloc/weather_forecast_bloc.dart';
+import 'package:weather_app/bloc/page_bloc.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/chart_data.dart';
+import 'package:weather_app/model/city.dart';
 import 'package:weather_app/model/current_daily_weather.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/timezone.dart';
 import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'package:weather_app/model/weather_forecast_holder.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
+import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/model/weather_response.dart';
 import 'package:weather_app/shared/colors.dart';
+import 'package:weather_app/shared/constant.dart';
 import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/text_style.dart';
 import 'package:weather_app/ui/screen/add_city_screen.dart';
 import 'package:weather_app/ui/screen/daily_forecast_screen.dart';
+import 'package:weather_app/ui/screen/edit_location_screen.dart';
 import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
 import 'package:weather_app/ui/widgets/chart_widget.dart';
 import 'package:weather_app/ui/widgets/smarr_refresher.dart';
@@ -33,26 +39,31 @@ import 'package:weather_app/utils/utils.dart';
 
 import 'detail_daily_forecast.dart';
 
-const double _mainWeatherHeight = 220;
+const double _mainWeatherHeight = 240;
 const double _mainWeatherWidth = 2000;
 const double _chartHeight = 30;
 const double _dailySectionHeight = 520;
 const String _exclude7DayForecast = 'minutely,hourly';
 
-const double bigIconSize = 16;
-const double smallIconSize = bigIconSize;
-const double iconWindPathSize = 50;
-const double iconWindPillarHeight = 60;
-const double iconWindPillarWidth = 50;
-const double iconWindPathSmallSize = 30;
-const double iconWindPillarSmallHeight = 40;
-const double iconWindPillarSmallWidth = 30;
+const double _bigIconSize = 16;
+const double _smallIconSize = _bigIconSize;
+const double _iconWindPathSize = 50;
+const double _iconWindPillarHeight = 60;
+const double _iconWindPillarWidth = 50;
+const double _iconWindPathSmallSize = 30;
+const double _iconWindPillarSmallHeight = 40;
+const double _iconWindPillarSmallWidth = 30;
+const double _iconDrawerSize = 30;
+const int _defaultDisplayNumberLocation = 4;
+const double _ratioBlurBg = 1 / 150;
+const double _ratioBlurImageBg = 1 / 10;
 
 class WeatherScreen extends StatefulWidget {
   final double lat;
   final double lon;
+  final int index;
 
-  const WeatherScreen({Key key, this.lat, this.lon});
+  const WeatherScreen({Key key, this.lat, this.lon, this.index});
 
   @override
   _WeatherScreenState createState() => _WeatherScreenState();
@@ -60,8 +71,7 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen>
     with TickerProviderStateMixin {
-  final WeatherBloc bloc = WeatherBloc();
-  final WeatherForecastBloc weatherForecastBloc = WeatherForecastBloc();
+  final ApiServiceBloc bloc = ApiServiceBloc();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   WeatherResponse weatherResponse;
@@ -70,17 +80,26 @@ class _WeatherScreenState extends State<WeatherScreen>
   WeatherData weatherData;
   BehaviorSubject<DateTime> timeSubject =
       BehaviorSubject.seeded(DateTime.now());
+  BehaviorSubject<double> _scrollSubject = BehaviorSubject.seeded(0);
   AnimationController _controller;
   AnimationController _controller2;
+  ScrollController _scrollController = ScrollController();
   int currentTime = 0;
   String timezone = '';
   int differentTime = 0;
+  bool isOnNotification = false;
+  int listLocationLength = 0;
+  bool isShowMore = false;
 
   @override
   void initState() {
     super.initState();
     getData();
     _initAnim();
+    _listenChangeSetting();
+    _scrollController.addListener(() {
+      _scrollSubject.add(_scrollController.offset);
+    });
   }
 
   _createTime(DateTime dateTime) {
@@ -96,14 +115,16 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _addTime() {
     currentTime += 1000;
-    timeSubject.add(DateTime.fromMillisecondsSinceEpoch(currentTime));
+    timeSubject.add(DateTime.fromMillisecondsSinceEpoch(
+        DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli));
   }
 
-  getData() {
-    weatherForecastBloc.fetchWeatherForecast7Day(
-        widget.lat, widget.lon, _exclude7DayForecast);
-    bloc.fetchWeather(widget.lat, widget.lon);
-    weatherForecastBloc.fetchWeatherForecastResponse(widget.lat, widget.lon);
+  getData({double lat, double lon}) {
+    bloc.fetchWeatherForecast7Day(
+        lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
+    bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
+    bloc.fetchWeatherForecastResponse(
+        lat ?? widget.lat, lon ?? widget.lon);
   }
 
   _initAnim() {
@@ -115,12 +136,30 @@ class _WeatherScreenState extends State<WeatherScreen>
           ..repeat();
   }
 
+  _listenChangeSetting() {
+    pageBloc.currentCitiesStream.listen((event) {
+      if (this.mounted) {
+        getData(
+            lat: pageBloc.currentCityList[widget.index].coordinates.latitude,
+            lon: pageBloc.currentCityList[widget.index].coordinates.longitude);
+      }
+    });
+    settingBloc.settingStream.listen((event) {
+      if (this.mounted) {
+        setState(() {
+          convertDataAndFormatTime();
+        });
+      }
+    });
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     _controller2.dispose();
     super.dispose();
     timeSubject.close();
+    _scrollSubject.close();
   }
 
   @override
@@ -128,16 +167,14 @@ class _WeatherScreenState extends State<WeatherScreen>
     return StreamBuilder<WeatherData>(
       stream: Rx.combineLatest3(
           bloc.weatherStream,
-          weatherForecastBloc.weatherForecastStream,
-          weatherForecastBloc.weatherForecastDailyStream, (a, b, c) {
+          bloc.weatherForecastStream,
+          bloc.weatherForecastDailyStream, (a, b, c) {
         if (a is WeatherStateSuccess &&
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
           differentTime = _getDifferentTime(c.weatherResponse.timezone);
-
           return WeatherData(
-              weatherResponse: WeatherResponse.formatWithTimezone(
-                  a.weatherResponse, differentTime),
+              weatherResponse: a.weatherResponse,
               weatherForecastListResponse: b.weatherResponse,
               weatherForecastDaily: WeatherForecastDaily.withTimezone(
                   c.weatherResponse, differentTime));
@@ -147,6 +184,9 @@ class _WeatherScreenState extends State<WeatherScreen>
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           weatherData = snapshot.data;
+          convertDataAndFormatTime();
+          pageBloc.removeItemWhenFirstLoadApp(
+              weatherData.weatherForecastListResponse.city);
           _createTime(DateTime.fromMillisecondsSinceEpoch(
               weatherData.weatherForecastDaily.current.dt));
         }
@@ -154,13 +194,37 @@ class _WeatherScreenState extends State<WeatherScreen>
         return weatherData != null
             ? Stack(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(getBgImagePath(weatherData
-                                .weatherResponse.overallWeatherData[0].icon)),
-                            fit: BoxFit.cover)),
-                  ),
+                  StreamBuilder<double>(
+                      stream: _scrollSubject.stream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Stack(
+                            children: [
+                              Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: MediaQuery.of(context).size.width,
+                                child: ImageFiltered(
+                                  imageFilter: ImageFilter.blur(
+                                      sigmaY:
+                                          (snapshot.data * _ratioBlurImageBg),
+                                      sigmaX:
+                                          (snapshot.data * _ratioBlurImageBg)),
+                                  child: Image.asset(
+                                    getBgImagePath(weatherData.weatherResponse
+                                        .overallWeatherData[0].icon),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                color: Colors.black
+                                    .withOpacity(snapshot.data * _ratioBlurBg),
+                              )
+                            ],
+                          );
+                        }
+                        return Container();
+                      }),
                   _body(weatherData)
                 ],
               )
@@ -176,8 +240,85 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
+  convertDataAndFormatTime() {
+    WeatherResponse weatherResponse = weatherData.weatherResponse;
+    WeatherForecastListResponse weatherForecastListResponse =
+        weatherData.weatherForecastListResponse;
+    WeatherForecastDaily weatherForecastDaily =
+        weatherData.weatherForecastDaily;
+    weatherData = weatherData.copyWith(
+        weatherResponse: weatherResponse.copyWith(
+            dt: weatherResponse.dt + differentTime * oneHourMilli,
+            wind: weatherResponse.wind.copyWith(
+                speed: convertWindSpeed(
+                    weatherResponse.wind.speed, settingBloc.windEnum)),
+            mainWeatherData: weatherResponse.mainWeatherData.copyWith(
+                pressure: convertPressure(
+                    weatherResponse.mainWeatherData.pressure,
+                    settingBloc.pressureEnum),
+                temp: convertTemp(
+                    weatherResponse.mainWeatherData.temp, settingBloc.tempEnum),
+                tempMin: convertTemp(weatherResponse.mainWeatherData.tempMin,
+                    settingBloc.tempEnum),
+                tempMax: convertTemp(weatherResponse.mainWeatherData.tempMax,
+                    settingBloc.tempEnum),
+                feelsLike: convertTemp(
+                    weatherResponse.mainWeatherData.feelsLike,
+                    settingBloc.tempEnum))),
+        weatherForecastListResponse: weatherForecastListResponse.copyWith(
+            list: _convertForecastListResponse(weatherForecastListResponse)),
+        weatherForecastDaily: weatherForecastDaily.copyWith(
+            daily: _convertListDaily(weatherForecastDaily.daily),
+            current: weatherForecastDaily.current.copyWith(
+                visibility: convertVisibility(weatherForecastDaily.current.visibility, settingBloc.visibilityEnum),
+                feelsLike: convertTemp(weatherForecastDaily.current.feelsLike, settingBloc.tempEnum),
+                temp: convertTemp(weatherForecastDaily.current.temp, settingBloc.tempEnum))));
+  }
+
+  List<WeatherForecastResponse> _convertForecastListResponse(
+      WeatherForecastListResponse weatherForecastListResponse) {
+    List<WeatherForecastResponse> list =
+        weatherForecastListResponse.list.map((e) {
+      return e.copyWith(
+          dt: e.dt + differentTime * oneHourMilli,
+          wind: e.wind.copyWith(
+              speed: convertWindSpeed(e.wind.speed, settingBloc.windEnum)),
+          mainWeatherData: e.mainWeatherData.copyWith(
+              pressure: convertPressure(
+                  e.mainWeatherData.pressure, settingBloc.pressureEnum),
+              temp: convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum),
+              feelsLike: convertTemp(
+                  e.mainWeatherData.feelsLike, settingBloc.tempEnum),
+              tempMax:
+                  convertTemp(e.mainWeatherData.tempMax, settingBloc.tempEnum),
+              tempMin: convertTemp(
+                  e.mainWeatherData.tempMin, settingBloc.tempEnum)));
+    }).toList();
+    return list;
+  }
+
+  _convertListDaily(List<Daily> dailies) {
+    return dailies
+        .map((e) => e.copyWith(
+            windSpeed: convertWindSpeed(e.windSpeed, settingBloc.windEnum),
+            dewPoint: convertTemp(e.temp.day, settingBloc.tempEnum),
+            pressure: convertPressure(e.pressure, settingBloc.pressureEnum),
+            temp: e.temp.copyWith(
+                day: convertTemp(e.temp.day, settingBloc.tempEnum),
+                eve: convertTemp(e.temp.eve, settingBloc.tempEnum),
+                max: convertTemp(e.temp.max, settingBloc.tempEnum),
+                min: convertTemp(e.temp.min, settingBloc.tempEnum),
+                morn: convertTemp(e.temp.morn, settingBloc.tempEnum),
+                night: convertTemp(e.temp.night, settingBloc.tempEnum)),
+            feelsLike: e.feelsLike.copyWith(
+                day: convertTemp(e.temp.day, settingBloc.tempEnum),
+                eve: convertTemp(e.feelsLike.eve, settingBloc.tempEnum),
+                morn: convertTemp(e.feelsLike.morn, settingBloc.tempEnum),
+                night: convertTemp(e.feelsLike.night, settingBloc.tempEnum))))
+        .toList();
+  }
+
   int _getDifferentTime(String timezone) {
-    print('_getDifferentTime $timezone');
     String value = '';
     for (Timezone time in cityBloc.timezones) {
       if (time.value.contains(getTimezone(timezone))) {
@@ -194,13 +335,34 @@ class _WeatherScreenState extends State<WeatherScreen>
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NestedScrollView(
+        controller: _scrollController,
         headerSliverBuilder: (context, innerBoxScrolled) => [
           SliverAppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            elevation: 0.0,
             centerTitle: true,
+            elevation: 0,
             pinned: true,
+            flexibleSpace: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(getBgAppbarPath(weatherData
+                              .weatherResponse.overallWeatherData[0].icon)),
+                          fit: BoxFit.fill)),
+                ),
+                StreamBuilder<double>(
+                    stream: _scrollSubject.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Container(
+                          color: Colors.black
+                              .withOpacity(snapshot.data * _ratioBlurBg),
+                        );
+                      }
+                      return Container();
+                    })
+              ],
+            ),
             actions: [
               GestureDetector(
                   onTap: () => Navigator.push(context,
@@ -223,13 +385,264 @@ class _WeatherScreenState extends State<WeatherScreen>
                 _buildDailyForecast(weatherData.weatherForecastDaily),
                 _buildDetail(weatherData.weatherForecastDaily),
                 _buildWindAndPressure(weatherData.weatherResponse),
-                _buildSunTime(weatherData.weatherResponse,weatherData.weatherForecastDaily.timezone)
+                _buildSunTime(weatherData.weatherResponse,
+                    weatherData.weatherForecastDaily.timezone)
               ],
             ),
           ),
           onRefresh: refresh,
         ),
         // _body(),
+      ),
+      drawer: _drawer(),
+    );
+  }
+
+  _drawer() => Drawer(
+        child: Container(
+          color: Colors.black,
+          child: Stack(
+            children: [_drawerBody(), _drawerHeader()],
+          ),
+        ),
+      );
+
+  _drawerHeader() => Column(
+        children: [
+          Container(
+            color: Colors.black,
+            padding: EdgeInsets.all(padding),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.cloud_outlined,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: margin),
+                Text('Weather', style: textTitleH2White),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: Colors.white70),
+        ],
+      );
+
+  _drawerBody() => SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 60),
+            _listLocation(),
+            Divider(height: 1, color: Colors.grey),
+            _buildItemDrawer(
+                mIconSettingNotify,
+                'Notification',
+                Switch(
+                  value: settingBloc.isOnNotification,
+                  onChanged: (isOn) {
+                    isOnNotification = isOn;
+                    _showNotification(
+                        isOnNotification, weatherData.weatherResponse);
+                  },
+                ), () {
+              isOnNotification = !isOnNotification;
+              _showNotification(isOnNotification, weatherData.weatherResponse);
+            }),
+            _buildItemUnit(
+                mIconSettingTemp,
+                'Temp Unit',
+                settingBloc.tempEnum.value,
+                () => showSettingDialog(SettingEnum.TempEnum)),
+            _buildItemUnit(mIconWind, 'Wind Unit', settingBloc.windEnum.value,
+                () => showSettingDialog(SettingEnum.WindEnum)),
+            _buildItemUnit(
+                mIconSettingPressure,
+                'Pressure Unit',
+                settingBloc.pressureEnum.value,
+                () => showSettingDialog(SettingEnum.PressureEnum)),
+            _buildItemUnit(mIconSettingVisibility, 'Visibility Unit', 'km',
+                () => showSettingDialog(SettingEnum.VisibilityEnum)),
+            _buildItemUnit(
+                mIconSettingTemp,
+                'Time Format',
+                settingBloc.timeEnum.value,
+                () => showSettingDialog(SettingEnum.TimeEnum)),
+            _buildItemUnit(
+                mIconSettingTemp,
+                'Date Format',
+                settingBloc.dateEnum.value,
+                () => showSettingDialog(SettingEnum.DateEnum)),
+          ],
+        ),
+      );
+
+  _listLocation() {
+    return StreamBuilder<List<City>>(
+        stream: pageBloc.currentCitiesStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(
+                      left: padding, right: paddingSmall, bottom: padding),
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditLocationScreen()));
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              mIconEditingLocation,
+                              width: _iconDrawerSize,
+                              height: _iconDrawerSize,
+                            ),
+                            const SizedBox(width: padding),
+                            Text('Edit Location', style: textTitleWhite),
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: snapshot.data.length >
+                                  _defaultDisplayNumberLocation
+                              ? isShowMore
+                                  ? snapshot.data.length
+                                  : _defaultDisplayNumberLocation
+                              : snapshot.data.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return _itemLocation(snapshot.data[index], index);
+                          }),
+                      _showMoreLocation(snapshot.data.length)
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return Container();
+        });
+  }
+
+  _itemLocation(City city, int index) {
+    return InkWell(
+      onTap: () => pageBloc.jumpToPage(index),
+      child: Container(
+        padding: EdgeInsets.only(top: padding),
+        child: Row(
+          children: [
+            Image.asset(
+              mIconSettingLocation,
+              width: _iconDrawerSize,
+              height: _iconDrawerSize,
+            ),
+            const SizedBox(width: padding),
+            Text('${city.name}', style: textTitleWhite),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _showMoreLocation(int locationLength) {
+    if (locationLength > _defaultDisplayNumberLocation) {
+      return InkWell(
+        onTap: () => setState(() {
+          isShowMore = !isShowMore;
+          print('isShowMore $isShowMore');
+        }),
+        child: Container(
+          padding: EdgeInsets.only(top: padding),
+          child: Row(
+            children: [
+              Image.asset(
+                mIconMoreHoriz,
+                width: _iconDrawerSize,
+                height: _iconDrawerSize,
+              ),
+              const SizedBox(width: padding),
+              Text(
+                isShowMore
+                    ? 'Collapse'
+                    : 'Show more ${locationLength - _defaultDisplayNumberLocation}',
+                style: textTitleWhite,
+              ),
+              Expanded(child: Container()),
+              Icon(
+                isShowMore
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
+                color: Colors.white,
+                size: _iconDrawerSize,
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  _showNotification(bool isOn, WeatherResponse response) {
+    settingBloc.onOffNotification(isOn, response);
+    setState(() {});
+  }
+
+  _buildItemDrawer(
+      String imagePath, String title, Widget widget, VoidCallback callback) {
+    return InkWell(
+      onTap: callback,
+      child: Container(
+        padding:
+            EdgeInsets.only(left: padding, right: paddingSmall, top: padding),
+        child: Row(
+          children: [
+            Image.asset(
+              imagePath,
+              color: Colors.white,
+              width: _iconDrawerSize,
+              height: _iconDrawerSize,
+            ),
+            const SizedBox(width: padding),
+            Text(title, style: textTitleWhite),
+            Expanded(child: Container()),
+            widget
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildItemUnit(
+      String imagePath, String title, String unit, VoidCallback callback) {
+    return GestureDetector(
+      onTap: callback,
+      child: Container(
+        padding: EdgeInsets.only(
+            left: padding, right: paddingSmall, bottom: padding),
+        child: Row(
+          children: [
+            Image.asset(
+              imagePath,
+              color: Colors.white,
+              width: _iconDrawerSize,
+              height: _iconDrawerSize,
+            ),
+            const SizedBox(width: padding),
+            Text(title, style: textTitleWhite),
+            Expanded(child: Container()),
+            Text(unit, style: textSecondaryUnderlineBlue)
+          ],
+        ),
       ),
     );
   }
@@ -248,11 +661,15 @@ class _WeatherScreenState extends State<WeatherScreen>
             stream: timeSubject.stream,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text('${formatWeekDayAndTime(snapshot.data)}',
+                return Text(
+                    '${formatWeekDayAndTime(snapshot.data, settingBloc.timeEnum)}',
                     style: textSecondaryWhite70);
               }
               return Text('');
             }),
+        const SizedBox(
+          height: marginSmall,
+        ),
       ],
     );
   }
@@ -260,6 +677,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   _currentWeather(WeatherResponse weatherResponse) {
     return Container(
         height: _mainWeatherHeight,
+        margin: EdgeInsets.symmetric(vertical: margin),
         child: weatherResponse != null
             ? _buildBodyCurrentWeather(weatherResponse)
             : Container());
@@ -274,30 +692,31 @@ class _WeatherScreenState extends State<WeatherScreen>
           '${weatherResponse.overallWeatherData[0].main}',
           style: textTitleH1White,
         ),
-        SizedBox(
+        const SizedBox(
           height: marginLarge,
         ),
-        _buildTempRow(weatherResponse.mainWeatherData.temp.toInt()),
+        _buildTempRow(weatherResponse.mainWeatherData.temp),
+        const SizedBox(height: margin),
         _buildFeelsLike(weatherResponse.mainWeatherData.feelsLike,
             weatherResponse.mainWeatherData.humidity),
-        SizedBox(height: margin),
-        _buildMaxMinTemp(weatherResponse.mainWeatherData.tempMax.toInt(),
-            weatherResponse.mainWeatherData.tempMin.toInt())
+        const SizedBox(height: margin),
+        _buildMaxMinTemp(weatherResponse.mainWeatherData.tempMax,
+            weatherResponse.mainWeatherData.tempMin)
       ],
     );
   }
 
-  _buildTempRow(int temp) {
+  _buildTempRow(double temp) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '$temp',
+          formatTemperature(temperature: temp),
           style: textMainTemp,
         ),
         Text(
-          '°C',
+          settingBloc.tempEnum.value.substring(1),
           style: textTitleH1White,
         )
       ],
@@ -313,7 +732,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           style: textTitleH1White,
         ),
         Text(
-          '${temp.toInt()}°',
+          formatTemperature(temperature: temp),
           style: textTitleH1White,
         ),
         SizedBox(
@@ -332,7 +751,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildMaxMinTemp(int maxTemp, int minTemp) => Row(
+  _buildMaxMinTemp(double maxTemp, double minTemp) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
@@ -342,7 +761,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           const SizedBox(
             width: marginSmall,
           ),
-          Text('$maxTemp°', style: textTitleH1White),
+          Text(formatTemperature(temperature: maxTemp),
+              style: textTitleH1White),
           const SizedBox(
             width: marginLarge,
           ),
@@ -353,7 +773,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           const SizedBox(
             width: marginSmall,
           ),
-          Text('$minTemp°', style: textTitleH1White),
+          Text(formatTemperature(temperature: minTemp),
+              style: textTitleH1White),
         ],
       );
 
@@ -606,13 +1027,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                             )))
                 : () {}),
         GestureDetector(
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DetailDailyForecast(
-                        currentIndex: 0,
-                        weatherForecastDaily: weatherForecastDaily,
-                      ))),
+          onTap: weatherData != null
+              ? () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailDailyForecast(
+                            currentIndex: 0,
+                            weatherForecastDaily:
+                                weatherData.weatherForecastDaily,
+                          )))
+              : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -657,14 +1081,14 @@ class _WeatherScreenState extends State<WeatherScreen>
                       child: _buildItemDetail(
                           'Visibility',
                           mIconVisibility,
-                          formatVisibility(
-                              currentDailyWeather.visibility.toDouble())),
+                          formatVisibility(currentDailyWeather.visibility,
+                              settingBloc.visibilityEnum.value)),
                     ),
                     _verticalDivider(),
                     Expanded(
                       flex: 1,
                       child: _buildItemDetail('Dew Point', mIconDewPoint,
-                          '${daily.dewPoint.toStringAsFixed(0)}$degree'),
+                          formatTemperature(temperature: daily.dewPoint)),
                     ),
                     _verticalDivider(),
                     Expanded(
@@ -698,8 +1122,8 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               Image.asset(
                 iconPath,
-                width: bigIconSize,
-                height: bigIconSize,
+                width: _bigIconSize,
+                height: _bigIconSize,
               ),
               SizedBox(
                 width: marginSmall,
@@ -732,23 +1156,27 @@ class _WeatherScreenState extends State<WeatherScreen>
         _buildRowTitle(
             'Wind & Pressure',
             'More',
-            weatherForecastDaily != null
+            weatherData != null
                 ? () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => DetailDailyForecast(
                               currentIndex: 0,
-                              weatherForecastDaily: weatherForecastDaily,
+                              weatherForecastDaily:
+                                  weatherData.weatherForecastDaily,
                             )))
                 : () {}),
         GestureDetector(
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DetailDailyForecast(
-                        currentIndex: 0,
-                        weatherForecastDaily: weatherForecastDaily,
-                      ))),
+          onTap: weatherData != null
+              ? () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailDailyForecast(
+                            currentIndex: 0,
+                            weatherForecastDaily:
+                                weatherData.weatherForecastDaily,
+                          )))
+              : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -775,16 +1203,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 },
                                 child: Image.asset(
                                   mIconWindPath,
-                                  width: iconWindPathSize,
-                                  height: iconWindPathSize,
+                                  width: _iconWindPathSize,
+                                  height: _iconWindPathSize,
                                 )),
                             Container(
                                 margin:
-                                    EdgeInsets.only(top: iconWindPathSize / 2),
+                                    EdgeInsets.only(top: _iconWindPathSize / 2),
                                 child: Image.asset(
                                   mIconWindPillar,
-                                  width: iconWindPillarWidth,
-                                  height: iconWindPillarHeight,
+                                  width: _iconWindPillarWidth,
+                                  height: _iconWindPillarHeight,
                                 ))
                           ],
                         ),
@@ -799,16 +1227,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 },
                                 child: Image.asset(
                                   mIconWindPath,
-                                  width: iconWindPathSmallSize,
-                                  height: iconWindPathSmallSize,
+                                  width: _iconWindPathSmallSize,
+                                  height: _iconWindPathSmallSize,
                                 )),
                             Container(
                                 margin: EdgeInsets.only(
-                                    top: iconWindPathSmallSize / 2),
+                                    top: _iconWindPathSmallSize / 2),
                                 child: Image.asset(
                                   mIconWindPillar,
-                                  width: iconWindPillarSmallWidth,
-                                  height: iconWindPillarSmallHeight,
+                                  width: _iconWindPillarSmallWidth,
+                                  height: _iconWindPillarSmallHeight,
                                 ))
                           ],
                         )
@@ -826,8 +1254,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                         children: [
                           Image.asset(
                             mIconWind,
-                            width: bigIconSize,
-                            height: bigIconSize,
+                            width: _bigIconSize,
+                            height: _bigIconSize,
                           ),
                           const SizedBox(
                             width: marginSmall,
@@ -839,7 +1267,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         ],
                       ),
                       Text(
-                        '${formatWind(weatherResponse.wind.speed)} ${getWindDirection(weatherResponse.wind.deg)}',
+                        '${formatWind(weatherResponse.wind.speed, settingBloc.windEnum.value)} ${getWindDirection(weatherResponse.wind.deg)}',
                         style: textTitleWhite,
                       ),
                       Container(
@@ -857,14 +1285,14 @@ class _WeatherScreenState extends State<WeatherScreen>
                             children: [
                               Image.asset(
                                 mIconDownArrow,
-                                width: bigIconSize,
-                                height: bigIconSize,
+                                width: _bigIconSize,
+                                height: _bigIconSize,
                                 color: Colors.white,
                               ),
                               Image.asset(
                                 mIconDownArrow,
-                                width: bigIconSize,
-                                height: smallIconSize,
+                                width: _bigIconSize,
+                                height: _smallIconSize,
                                 color: Colors.white,
                               ),
                               Text(
@@ -874,7 +1302,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                             ],
                           ),
                           Text(
-                            '${formatPressure(weatherResponse.mainWeatherData.pressure)}',
+                            '${formatPressure(weatherResponse.mainWeatherData.pressure, settingBloc.pressureEnum.value)}',
                             style: textTitleWhite,
                           )
                         ],
@@ -890,15 +1318,13 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildSunTime(WeatherResponse weatherResponse,String timezone) {
+  _buildSunTime(WeatherResponse weatherResponse, String timezone) {
     return weatherResponse != null
-        ? _buildSunTimeBody(weatherResponse,timezone)
+        ? _buildSunTimeBody(weatherResponse, timezone)
         : Container();
   }
 
-  _buildSunTimeBody(WeatherResponse weatherResponse,String timezone) {
-    print('_createTime ${weatherResponse.system.sunrise}  ${weatherResponse.system.sunset} ${weatherResponse.dt}');
-
+  _buildSunTimeBody(WeatherResponse weatherResponse, String timezone) {
     return Column(
       children: [
         _buildRowTitle(
@@ -945,12 +1371,12 @@ class _WeatherScreenState extends State<WeatherScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunrise))}',
-                      style: textTitleWhite,
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunrise), settingBloc.timeEnum)}',
+                      style: textSecondaryWhite70,
                     ),
                     Text(
-                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunset))}',
-                      style: textTitleWhite,
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunset), settingBloc.timeEnum)}',
+                      style: textSecondaryWhite70,
                     ),
                   ],
                 ),
@@ -962,13 +1388,109 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
+  showSettingDialog(SettingEnum settingEnum) {
+    List<String> settings = [];
+    String groupValue = '';
+    String title = '';
+    switch (settingEnum) {
+      case SettingEnum.TempEnum:
+        TempEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Temp Unit';
+        groupValue = settingBloc.tempEnum.value;
+        break;
+      case SettingEnum.WindEnum:
+        WindEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Wind speed Unit';
+        groupValue = settingBloc.windEnum.value;
+        break;
+      case SettingEnum.PressureEnum:
+        PressureEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Wind speed Unit';
+        groupValue = settingBloc.pressureEnum.value;
+        break;
+      case SettingEnum.VisibilityEnum:
+        VisibilityEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Visibility Unit';
+        groupValue = settingBloc.visibilityEnum.value;
+        break;
+      case SettingEnum.TimeEnum:
+        TimeEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Time Format';
+        groupValue = settingBloc.timeEnum.value;
+        break;
+      case SettingEnum.DateEnum:
+        DateEnum.values.forEach((element) {
+          settings.add(element.value);
+        });
+        title = 'Date Format';
+        groupValue = settingBloc.dateEnum.value;
+        break;
+    }
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(radius)),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: padding),
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.symmetric(vertical: padding),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          title,
+                          style: textTitleBold,
+                        )),
+                    ...settings.map((e) {
+                      return Container(
+                          padding: EdgeInsets.symmetric(vertical: padding),
+                          child: InkWell(
+                            onTap: () {
+                              _changeSetting(e, settingEnum);
+                            },
+                            child: ListTile(
+                              title: Text(e),
+                              leading: Radio<String>(
+                                value: e,
+                                groupValue: groupValue,
+                                onChanged: (String value) {
+                                  _changeSetting(value, settingEnum);
+                                },
+                              ),
+                            ),
+                          ));
+                    })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  _changeSetting(String value, SettingEnum settingEnum) {
+    settingBloc.changeSetting(value, settingEnum);
+    Navigator.pop(context);
+  }
+
   Future<void> refresh() async {
-    await bloc.fetchWeather(widget.lat, widget.lon);
-    await weatherForecastBloc.fetchWeatherForecastResponse(
-        widget.lat, widget.lon);
-    await weatherForecastBloc.fetchWeatherForecast7Day(
-        widget.lat, widget.lon, _exclude7DayForecast);
-    return;
+    getData();
   }
 }
 
@@ -983,4 +1505,17 @@ class WeatherData {
       this.weatherForecastListResponse,
       this.weatherForecastDaily,
       this.error});
+
+  WeatherData copyWith(
+      {WeatherResponse weatherResponse,
+      WeatherForecastListResponse weatherForecastListResponse,
+      WeatherForecastDaily weatherForecastDaily,
+      WeatherStateError error}) {
+    return WeatherData(
+        weatherResponse: weatherResponse ?? this.weatherResponse,
+        weatherForecastListResponse:
+            weatherForecastListResponse ?? this.weatherForecastListResponse,
+        weatherForecastDaily: weatherForecastDaily ?? this.weatherForecastDaily,
+        error: error ?? this.error);
+  }
 }

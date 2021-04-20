@@ -1,6 +1,4 @@
 
-import 'package:flutter/material.dart';
-import 'package:weather_app/model/system.dart';
 
 import 'chart_data.dart';
 import 'city.dart';
@@ -65,7 +63,7 @@ class WeatherForecastHolder {
   }
 
   List<double> _getTemperaturesList() {
-    List<double> temperatures = new List();
+    List<double> temperatures = [];
     for (WeatherForecastResponse response in forecastList) {
       temperatures.add(response.mainWeatherData.temp.toDouble());
     }
@@ -73,7 +71,7 @@ class WeatherForecastHolder {
   }
 
   List<double> _getPopsList() {
-    List<double> pops = new List();
+    List<double> pops = [];
     for (WeatherForecastResponse response in forecastList) {
       pops.add(response.pop);
     }
@@ -82,7 +80,7 @@ class WeatherForecastHolder {
 
 
   List<double> _getWindList() {
-    List<double> winds = new List();
+    List<double> winds = [];
     for (WeatherForecastResponse response in forecastList) {
       var speed = response.wind.speed;
       winds.add(speed);
@@ -160,7 +158,7 @@ class WeatherForecastHolder {
   }
 
   List<String> getWindDirectionList() {
-    List<String> windDirections = new List();
+    List<String> windDirections = [];
     for (WeatherForecastResponse response in forecastList) {
       windDirections.add(response.wind.getDegCode());
     }
@@ -168,7 +166,7 @@ class WeatherForecastHolder {
   }
 
   List<double> _getRainList() {
-    List<double> rainList = new List();
+    List<double> rainList = [];
     for (WeatherForecastResponse response in forecastList) {
       double rainSum = 0;
       if (response.rain != null && response.rain.amount != null) {
@@ -183,7 +181,7 @@ class WeatherForecastHolder {
   }
 
   List<double> _getPressureList() {
-    List<double> pressureList = new List();
+    List<double> pressureList = [];
     for (WeatherForecastResponse response in forecastList) {
       pressureList.add(response.mainWeatherData.pressure);
     }

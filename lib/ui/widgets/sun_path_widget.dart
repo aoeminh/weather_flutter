@@ -28,16 +28,13 @@ class SunPathWidget extends StatefulWidget {
 }
 
 class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
-  double _fraction = 0.0;
-  List<double> _fractions = [];
   ImageInfo imageInfo;
   BehaviorSubject<ImageInfo> _behaviorSubject = BehaviorSubject();
 
   @override
   void initState() {
     super.initState();
-    animateTween(duration: 5000);
-    _fractions.add(_fraction);
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _init();
     });
@@ -50,35 +47,48 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
 
   @override
   Widget build(BuildContext context) {
+
     return StreamBuilder<ImageInfo>(
         stream: _behaviorSubject.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Stack(
-              children: [
-                Container(
-                    margin: EdgeInsets.only(top: margin),
-                    width: _width,
-                    height: _height,
-                    child: ClipPath(
-                      child: Container(
-                        color: Colors.yellow.withOpacity(0.6),
-                        width: _width,
-                        height: _height,
-                      ),
-                      clipper: _SunPathCliper(widget.sunrise, widget.sunset,
-                          _fraction, widget.differentTime),
-                    )),
-                Container(
-                    margin: EdgeInsets.only(top: margin),
-                    width: _width,
-                    height: _height,
-                    child: CustomPaint(
-                      painter: _SunPathPainter(widget.sunrise, widget.sunset,
-                          _fraction, snapshot.data, widget.differentTime),
-                    )),
-              ],
+        builder: (context, imageSnapshot) {
+          if (imageSnapshot.hasData) {
+            if(this.mounted){
+              animateTween(duration: 3000);
+            }
+            return StreamBuilder<double>(
+              stream: animatedStream,
+              builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  return Stack(
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(top: margin),
+                          width: _width,
+                          height: _height,
+                          child: ClipPath(
+                            child: Container(
+                              color: Colors.yellow.withOpacity(0.6),
+                              width: _width,
+                              height: _height,
+                            ),
+                            clipper: _SunPathCliper(widget.sunrise, widget.sunset,
+                                snapshot.data, widget.differentTime),
+                          )),
+                      Container(
+                          margin: EdgeInsets.only(top: margin),
+                          width: _width,
+                          height: _height,
+                          child: CustomPaint(
+                            painter: _SunPathPainter(widget.sunrise, widget.sunset,
+                                snapshot.data, imageSnapshot.data, widget.differentTime),
+                          )),
+                    ],
+                  );
+                }
+                return Container();
+              }
             );
+
           }
           return Container();
         });
@@ -101,12 +111,6 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
     _behaviorSubject.close();
   }
 
-  @override
-  void onAnimatedValue(double value) {
-    setState(() {
-      _fraction = value;
-    });
-  }
 }
 
 class _SunPathPainter extends CustomPainter {
@@ -149,12 +153,6 @@ class _SunPathPainter extends CustomPainter {
     paint..strokeWidth = 0.5;
     paint..style = PaintingStyle.stroke;
     return paint;
-  }
-
-  Paint _getCirclePaint() {
-    Paint circlePaint = Paint();
-    circlePaint..color = Colors.yellow;
-    return circlePaint;
   }
 
   Offset _getPosition(fraction) {

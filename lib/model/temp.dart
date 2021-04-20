@@ -27,4 +27,18 @@ class Temp {
     data['morn'] = this.morn;
     return data;
   }
+
+  Temp copyWith({double day,
+    double min,
+    double max,
+    double night,
+    double eve,
+    double morn}) {
+    return Temp(day: day ?? this.day,
+        min: min ?? this.min,
+        max: max ?? this.max,
+        night: night ?? this.night,
+        eve: eve ?? this.eve,
+        morn: morn ?? this.morn);
+  }
 }

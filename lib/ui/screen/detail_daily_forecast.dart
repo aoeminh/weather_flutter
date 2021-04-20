@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/weather_forecast_7_day.dart';
 import 'package:weather_app/shared/dimens.dart';
@@ -68,7 +69,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                                 style: textTitleWhite70,
                               ),
                               Text(
-                                '${formatDate(DateTime.fromMillisecondsSinceEpoch(daily.dt))}',
+                                '${formatDateAndMonth(DateTime.fromMillisecondsSinceEpoch(daily.dt),settingBloc.dateEnum)}',
                                 style: textTitleWhite70,
                               ),
                             ]),
@@ -175,7 +176,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
           ),
           _buildRowDetail(mIconSettingTemp, 'Feels like(max)', feelslike),
           _divider(),
-          _buildRowDetail(mIconWind, 'Wind', "${formatWind(daily.windSpeed)}"),
+          _buildRowDetail(mIconWind, 'Wind', "${formatWind(daily.windSpeed,settingBloc.windEnum.value)}"),
           _divider(),
           isDay
               ? _buildRowDetail(
@@ -276,7 +277,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise))}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise),settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],
@@ -293,7 +294,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset))}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset),settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],

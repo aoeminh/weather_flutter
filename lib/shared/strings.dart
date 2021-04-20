@@ -1,5 +1,22 @@
 const String degree ='°';
+const String degreeC ='°C';
+const String degreeF ='°F';
 const String percent ='%';
+const String kmh ='km/h';
+const String mph ='mph';
+const String ms ='m/s';
+const String km ='km';
+const String mile ='mile';
+const String mBar ='mBar';
+const String bar ='bar';
+const String mmHg ='mmHg';
+const String psi ='psi';
+const String inHg ='inHg';
+const String twelveClock ='12-hour-clock';
+const String twentyFourClock ='24-hour-clock';
+const String ddMMYY ='dd/MM/yyyy';
+const String mmDDYY ='mm/DD/yyyy';
+const String yyMMDD ='yyyy/MM/dd';
 
 // icon list
 const String mClear ='01d';

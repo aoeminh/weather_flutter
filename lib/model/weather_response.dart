@@ -6,7 +6,7 @@ import 'clouds.dart';
 import 'coordinates.dart';
 import 'main_weather_data.dart';
 import 'overall_weather_data.dart';
-import 'package:weather_app/shared/constant.dart';
+import '../shared/constant.dart';
 
 class WeatherResponse {
   final int dt;
@@ -76,6 +76,33 @@ class WeatherResponse {
       name: weatherResponse.name,
       cod: weatherResponse.cod,
       station: weatherResponse.station,
+    );
+  }
+
+  WeatherResponse copyWith(
+      {int dt,
+      Coordinates cord,
+      List<Weather> overallWeatherData,
+      MainWeatherData mainWeatherData,
+      Wind wind,
+      Clouds clouds,
+      System system,
+      int id,
+      String name,
+      int cod,
+      String station}) {
+    return WeatherResponse(
+      dt: dt ?? this.dt,
+      cord: cord ?? this.cord,
+      overallWeatherData: overallWeatherData ?? this.overallWeatherData,
+      mainWeatherData: mainWeatherData ?? this.mainWeatherData,
+      wind: wind ?? this.wind,
+      clouds: clouds ?? this.clouds,
+      system: system ?? this.system,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      cod: cod ?? this.cod,
+      station: station ?? this.station,
     );
   }
 

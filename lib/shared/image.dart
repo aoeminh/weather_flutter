@@ -140,3 +140,45 @@ const mIconLittleSun= '$mImgPath'
 
 const mIconSettingLocation= '$mImgPath'
     'icon_setting_location.png';
+
+const mIconSettingNotify= '$mImgPath'
+    'icon_setting_notifications.png';
+
+const mIconSettingPressure= '$mImgPath'
+    'ic_setting_pressure.png';
+
+const mIconSettingVisibility= '$mImgPath'
+    'ic_setting_visibility.png';
+
+const mIconEditingLocation = '$mImgPath'
+    'icon_setting_editlocation.png';
+
+const mIconMoreHoriz = '$mImgPath'
+    'ic_more_horiz.png';
+
+const bgAppbarCloudy = '$mImgPath'
+    'img_bg_app_bar_cloudy.png';
+
+const bgAppbarClear = '$mImgPath'
+    'img_bg_appbar_clear.png';
+
+const bgAppbarClearN = '$mImgPath'
+    'img_bg_appbar_clear_n.png';
+
+const bgAppbarFewCloudy = '$mImgPath'
+    'img_bg_appbar_few_cloudy.png';
+
+const bgAppbarFewCloudyN = '$mImgPath'
+    'img_bg_appbar_few_cloudy_n.png';
+
+const bgAppbarRain = '$mImgPath'
+    'img_bg_appbar_rain.png';
+
+const bgAppbarStorm = '$mImgPath'
+    'img_bg_appbar_storm.png';
+
+const bgAppbarSnow = '$mImgPath'
+    'img_bg_appbar_snow.png';
+
+const bgAppbarHazy = '$mImgPath'
+    'img_bg_appbar_hazy.png';

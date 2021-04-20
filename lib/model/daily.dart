@@ -12,7 +12,7 @@ class Daily {
   final int sunset;
   final Temp temp;
   final FeelsLike feelsLike;
-  final int pressure;
+  final double pressure;
   final int humidity;
   final double dewPoint;
   final double windSpeed;
@@ -46,7 +46,7 @@ class Daily {
         feelsLike = json['feels_like'] != null
             ? new FeelsLike.fromJson(json['feels_like'])
             : null,
-        pressure = json['pressure'],
+        pressure = json['pressure'].toDouble(),
         humidity = json['humidity'],
         dewPoint = json['dew_point'].toDouble(),
         windSpeed = json['wind_speed'].toDouble(),
@@ -73,5 +73,37 @@ class Daily {
         weather: daily.weather,
         windDeg: daily.windDeg,
         windSpeed: daily.windSpeed);
+  }
+
+  Daily copyWith(
+      {int dt,
+      int sunrise,
+      int sunset,
+      Temp temp,
+      FeelsLike feelsLike,
+      double pressure,
+      int humidity,
+      double dewPoint,
+      double windSpeed,
+      int windDeg,
+      List<Weather> weather,
+      int clouds,
+      double pop,
+      double uvi}) {
+    return Daily(
+        dt: dt ?? this.dt,
+        clouds: clouds ?? this.clouds,
+        dewPoint: dewPoint ?? this.dewPoint,
+        feelsLike: feelsLike ?? this.feelsLike,
+        humidity: humidity ?? this.humidity,
+        pop: pop ?? this.pop,
+        pressure: pressure ?? this.pressure,
+        sunrise: sunrise ?? this.sunrise,
+        sunset: sunset ?? this.sunset,
+        temp: temp ?? this.temp,
+        uvi: uvi ?? this.uvi,
+        weather: weather ?? this.weather,
+        windDeg: windDeg ?? this.windDeg,
+        windSpeed: windSpeed ?? this.windSpeed);
   }
 }
