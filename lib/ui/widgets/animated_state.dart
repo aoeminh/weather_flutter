@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
+
 abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     with TickerProviderStateMixin {
   AnimationController controller;
@@ -14,20 +15,18 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
       double end = 1.0,
       int duration: 2000,
       Curve curve = Curves.easeInOut}) {
-    controller = _getAnimationController(this, duration);
+    if (this.mounted) controller = _getAnimationController(this, duration);
     Animation animation = _getCurvedAnimation(controller, curve);
-   _streamController = BehaviorSubject<double>();
+    _streamController = BehaviorSubject<double>();
 
     Animation<double> tween = _getTween(start, end, animation);
     var valueListener = () {
-      _streamController.sink.add(tween.value);
-
+      if (!_streamController.isClosed) _streamController.sink.add(tween.value);
     };
     tween..addListener(valueListener);
 
     controller.forward();
   }
-
 
   AnimationController _getAnimationController(
       TickerProviderStateMixin object, int duration) {
@@ -44,15 +43,13 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     return Tween(begin: start, end: end).animate(animation);
   }
 
-
   @override
   void dispose() {
-    if (controller != null) {
-      controller.dispose();
-    }
+    print('dispose');
+    controller.dispose();
     _streamController.close();
-
     super.dispose();
   }
+
   Stream<double> get animatedStream => _streamController.stream;
 }

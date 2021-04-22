@@ -31,10 +31,10 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
   ImageInfo imageInfo;
   BehaviorSubject<ImageInfo> _behaviorSubject = BehaviorSubject();
 
+
   @override
   void initState() {
     super.initState();
-
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _init();
     });
@@ -47,12 +47,12 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder<ImageInfo>(
         stream: _behaviorSubject.stream,
         builder: (context, imageSnapshot) {
           if (imageSnapshot.hasData) {
             if(this.mounted){
+              print('animateTween');
               animateTween(duration: 3000);
             }
             return StreamBuilder<double>(
@@ -107,8 +107,8 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
 
   @override
   void dispose() {
-    super.dispose();
     _behaviorSubject.close();
+    super.dispose();
   }
 
 }

@@ -94,6 +94,8 @@ class _WeatherScreenState extends State<WeatherScreen>
   @override
   void initState() {
     super.initState();
+
+    print('initState ${widget.index}');
     getData();
     _initAnim();
     _listenChangeSetting();
@@ -154,11 +156,17 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   @override
   void dispose() {
+    print('dispose weather screen ${widget.index}');
     _controller.dispose();
     _controller2.dispose();
-    super.dispose();
     timeSubject.close();
     _scrollSubject.close();
+    super.dispose();
+  }
+  @override
+  void deactivate() {
+    print('deactivate weather screen');
+    super.deactivate();
   }
 
   @override
@@ -189,50 +197,55 @@ class _WeatherScreenState extends State<WeatherScreen>
         }
         // keep old data when request fail
         return weatherData != null
-            ? Stack(
-                children: [
-                  StreamBuilder<double>(
-                      stream: _scrollSubject.stream,
-                      builder: (context, snapshot) {
-                        print('_scrollSubject.stream, ${snapshot.data}');
-                        if (snapshot.hasData) {
-                          return Stack(
-                            children: [
-                              Container(
-                                height: MediaQuery.of(context).size.height,
-                                width: MediaQuery.of(context).size.width,
-                                child: ImageFiltered(
-                                  imageFilter: ImageFilter.blur(
-                                      sigmaY:
-                                          (snapshot.data * _ratioBlurImageBg),
-                                      sigmaX:
-                                          (snapshot.data * _ratioBlurImageBg)),
-                                  child: Image.asset(
-                                    getBgImagePath(weatherData.weatherResponse
-                                        .overallWeatherData[0].icon),
-                                    fit: BoxFit.fill,
+            ? Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage(bgSplash), fit: BoxFit.fill)),
+                    ),
+                    StreamBuilder<double>(
+                        stream: _scrollSubject.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Stack(
+                              children: [
+                                Container(
+                                  height: MediaQuery.of(context).size.height,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ImageFiltered(
+                                    imageFilter: ImageFilter.blur(
+                                        sigmaY:
+                                            (snapshot.data * _ratioBlurImageBg),
+                                        sigmaX: (snapshot.data *
+                                            _ratioBlurImageBg)),
+                                    child: Image.asset(
+                                      getBgImagePath(weatherData.weatherResponse
+                                          .overallWeatherData[0].icon),
+                                      fit: BoxFit.fill,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                color: Colors.black
-                                    .withOpacity(snapshot.data * _ratioBlurBg),
-                              ),
-                            ],
-                          );
-                        }
-                        return Container();
-                      }),
-                  // _body(weatherData)
-                ],
-              )
-            : Scaffold(
-                body: Container(
-                  color: Colors.white.withOpacity(0.8),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                                Container(
+                                  color: Colors.black.withOpacity(
+                                      snapshot.data * _ratioBlurBg),
+                                ),
+                              ],
+                            );
+                          }
+                          return Container();
+                        }),
+                    _body(weatherData)
+                  ],
                 ),
+                drawer: _drawer(),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(bgSplash), fit: BoxFit.fill)),
               );
       },
     );
@@ -330,72 +343,66 @@ class _WeatherScreenState extends State<WeatherScreen>
       timezone.substring(timezone.indexOf('/') + 1, timezone.length);
 
   _body(WeatherData weatherData) {
-    print('_body');
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: NestedScrollView(
-        // controller: _scrollController,
-        headerSliverBuilder: (context, innerBoxScrolled) => [
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            centerTitle: true,
-            elevation: 0,
-            pinned: true,
-            flexibleSpace: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(getBgAppbarPath(weatherData
-                              .weatherResponse.overallWeatherData[0].icon)),
-                          fit: BoxFit.fill)),
-                ),
-                StreamBuilder<double>(
-                    stream: _scrollSubject.stream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Container(
-                          color: Colors.black
-                              .withOpacity(snapshot.data * _ratioBlurBg),
-                        );
-                      }
-                      return Container();
-                    })
-              ],
-            ),
-            actions: [
-              GestureDetector(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddCityScreen())),
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ))
+    return NestedScrollView(
+      controller: _scrollController,
+      headerSliverBuilder: (context, innerBoxScrolled) => [
+        SliverAppBar(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          centerTitle: true,
+          elevation: 0,
+          pinned: true,
+          flexibleSpace: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(getBgAppbarPath(weatherData
+                            .weatherResponse.overallWeatherData[0].icon)),
+                        fit: BoxFit.fill)),
+              ),
+              StreamBuilder<double>(
+                  stream: _scrollSubject.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        color: Colors.black
+                            .withOpacity(snapshot.data * _ratioBlurBg),
+                      );
+                    }
+                    return Container();
+                  })
             ],
-            title: _titleAppbar(weatherData.weatherResponse),
           ),
-        ],
-        body: SmartRefresher(
-          refreshIndicatorKey: _refreshIndicatorKey,
-          children: Container(
-            child: Column(
-              children: [
-                _currentWeather(weatherData.weatherResponse),
-                _buildHourlyForecast(weatherData.weatherForecastListResponse),
-                _buildDailyForecast(weatherData.weatherForecastDaily),
-                _buildDetail(weatherData.weatherForecastDaily),
-                _buildWindAndPressure(weatherData.weatherResponse),
-                _buildSunTime(weatherData.weatherResponse,
-                    weatherData.weatherForecastDaily.timezone)
-              ],
-            ),
-          ),
-          onRefresh: refresh,
+          actions: [
+            GestureDetector(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddCityScreen())),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ))
+          ],
+          title: _titleAppbar(weatherData.weatherResponse),
         ),
-        // _body(),
+      ],
+      body: SmartRefresher(
+        refreshIndicatorKey: _refreshIndicatorKey,
+        children: Container(
+          child: Column(
+            children: [
+              _currentWeather(weatherData.weatherResponse),
+              _buildHourlyForecast(weatherData.weatherForecastListResponse),
+              _buildDailyForecast(weatherData.weatherForecastDaily),
+              _buildDetail(weatherData.weatherForecastDaily),
+              _buildWindAndPressure(weatherData.weatherResponse),
+              _buildSunTime(weatherData.weatherResponse,
+                  weatherData.weatherForecastDaily.timezone)
+            ],
+          ),
+        ),
+        onRefresh: refresh,
       ),
-      drawer: _drawer(),
     );
   }
 
