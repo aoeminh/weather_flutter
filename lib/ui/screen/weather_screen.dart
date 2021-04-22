@@ -7,35 +7,35 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:weather_app/bloc/api_service_bloc.dart';
-import 'package:weather_app/bloc/base_bloc.dart';
-import 'package:weather_app/bloc/city_bloc.dart';
-import 'package:weather_app/bloc/page_bloc.dart';
-import 'package:weather_app/bloc/setting_bloc.dart';
-import 'package:weather_app/model/chart_data.dart';
-import 'package:weather_app/model/city.dart';
-import 'package:weather_app/model/current_daily_weather.dart';
-import 'package:weather_app/model/daily.dart';
-import 'package:weather_app/model/timezone.dart';
-import 'package:weather_app/model/weather_forecast_7_day.dart';
-import 'package:weather_app/model/weather_forecast_holder.dart';
-import 'package:weather_app/model/weather_forecast_list_response.dart';
-import 'package:weather_app/model/weather_forecast_response.dart';
-import 'package:weather_app/model/weather_response.dart';
-import 'package:weather_app/shared/colors.dart';
-import 'package:weather_app/shared/constant.dart';
-import 'package:weather_app/shared/dimens.dart';
-import 'package:weather_app/shared/image.dart';
-import 'package:weather_app/shared/strings.dart';
-import 'package:weather_app/shared/text_style.dart';
-import 'package:weather_app/ui/screen/add_city_screen.dart';
-import 'package:weather_app/ui/screen/daily_forecast_screen.dart';
-import 'package:weather_app/ui/screen/edit_location_screen.dart';
-import 'package:weather_app/ui/screen/hourly_forecast_screen.dart';
-import 'package:weather_app/ui/widgets/chart_widget.dart';
-import 'package:weather_app/ui/widgets/smarr_refresher.dart';
-import 'package:weather_app/ui/widgets/sun_path_widget.dart';
-import 'package:weather_app/utils/utils.dart';
+import '../../bloc/api_service_bloc.dart';
+import '../../bloc/app_bloc.dart';
+import '../../bloc/base_bloc.dart';
+import '../../bloc/page_bloc.dart';
+import '../../bloc/setting_bloc.dart';
+import '../../model/chart_data.dart';
+import '../../model/city.dart';
+import '../../model/current_daily_weather.dart';
+import '../../model/daily.dart';
+import '../../model/timezone.dart';
+import '../../model/weather_forecast_7_day.dart';
+import '../../model/weather_forecast_holder.dart';
+import '../../model/weather_forecast_list_response.dart';
+import '../../model/weather_forecast_response.dart';
+import '../../model/weather_response.dart';
+import '../../shared/colors.dart';
+import '../../shared/constant.dart';
+import '../../shared/dimens.dart';
+import '../../shared/image.dart';
+import '../../shared/strings.dart';
+import '../../shared/text_style.dart';
+import '../../ui/screen/add_city_screen.dart';
+import '../../ui/screen/daily_forecast_screen.dart';
+import '../../ui/screen/edit_location_screen.dart';
+import '../../ui/screen/hourly_forecast_screen.dart';
+import '../../ui/widgets/chart_widget.dart';
+import '../../ui/widgets/smarr_refresher.dart';
+import '../../ui/widgets/sun_path_widget.dart';
+import '../../utils/utils.dart';
 
 import 'detail_daily_forecast.dart';
 
@@ -123,8 +123,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     bloc.fetchWeatherForecast7Day(
         lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
-    bloc.fetchWeatherForecastResponse(
-        lat ?? widget.lat, lon ?? widget.lon);
+    bloc.fetchWeatherForecastResponse(lat ?? widget.lat, lon ?? widget.lon);
   }
 
   _initAnim() {
@@ -165,9 +164,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<WeatherData>(
-      stream: Rx.combineLatest3(
-          bloc.weatherStream,
-          bloc.weatherForecastStream,
+      stream: Rx.combineLatest3(bloc.weatherStream, bloc.weatherForecastStream,
           bloc.weatherForecastDailyStream, (a, b, c) {
         if (a is WeatherStateSuccess &&
             b is WeatherForecastStateSuccess &&
@@ -197,6 +194,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                   StreamBuilder<double>(
                       stream: _scrollSubject.stream,
                       builder: (context, snapshot) {
+                        print('_scrollSubject.stream, ${snapshot.data}');
                         if (snapshot.hasData) {
                           return Stack(
                             children: [
@@ -219,13 +217,13 @@ class _WeatherScreenState extends State<WeatherScreen>
                               Container(
                                 color: Colors.black
                                     .withOpacity(snapshot.data * _ratioBlurBg),
-                              )
+                              ),
                             ],
                           );
                         }
                         return Container();
                       }),
-                  _body(weatherData)
+                  // _body(weatherData)
                 ],
               )
             : Scaffold(
@@ -320,7 +318,7 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   int _getDifferentTime(String timezone) {
     String value = '';
-    for (Timezone time in cityBloc.timezones) {
+    for (Timezone time in appBloc.timezones) {
       if (time.value.contains(getTimezone(timezone))) {
         value = getTimezone(time.name);
       }
@@ -332,12 +330,15 @@ class _WeatherScreenState extends State<WeatherScreen>
       timezone.substring(timezone.indexOf('/') + 1, timezone.length);
 
   _body(WeatherData weatherData) {
+    print('_body');
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NestedScrollView(
-        controller: _scrollController,
+        // controller: _scrollController,
         headerSliverBuilder: (context, innerBoxScrolled) => [
           SliverAppBar(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
             centerTitle: true,
             elevation: 0,
             pinned: true,

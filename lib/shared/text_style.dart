@@ -79,3 +79,6 @@ const textBigTemp = TextStyle(
 
 const textTitleBold = TextStyle(
      fontSize: _fontTitleSize, fontWeight: FontWeight.bold);
+
+const textTitleOrange = TextStyle(
+    color: Colors.orange, fontSize: _fontTitleSize, fontWeight: FontWeight.normal);

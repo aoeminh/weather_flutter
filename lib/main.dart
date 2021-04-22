@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:geolocator/geolocator.dart';
-
-import 'bloc/position_bloc.dart';
-import 'model/city.dart';
-import 'ui/screen/home_screen.dart';
+import 'package:weather_app/ui/screen/splash_screen.dart';
 
 void main() async {
   runApp(MyApp());
@@ -47,36 +43,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: {},
-      home: MyHomePage(),
+      home: SplashScreen(),
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  void initState() {
-    super.initState();
-    positionBloc.determinePosition();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: StreamBuilder<City>(
-            stream: positionBloc.positionStream,
-            builder: (context, AsyncSnapshot<City> snapshot) {
-              if (snapshot.hasData) {
-                return HomePage(city: snapshot.data);
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
   }
 }

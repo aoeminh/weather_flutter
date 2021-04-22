@@ -1,5 +1,6 @@
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/bloc/city_bloc.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
 import 'package:weather_app/model/city.dart';
@@ -22,7 +23,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
   @override
   void initState() {
     super.initState();
-    listCity = cityBloc.cities;
+    listCity = appBloc.cities;
     for (City city in listCity) {
       if (city.country == 'VN') {
         listSimilarCity.add(city);

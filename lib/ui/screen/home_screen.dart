@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../../shared/dimens.dart';
-import '../../model/application_error.dart';
-import '../../model/coordinates.dart';
+import 'package:weather_app/shared/image.dart';
 
-import '../../bloc/city_bloc.dart';
-import '../../bloc/page_bloc.dart';
 import '../../bloc/app_bloc.dart';
+import '../../bloc/page_bloc.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../main.dart';
+import '../../model/application_error.dart';
 import '../../model/city.dart';
+import '../../model/coordinates.dart';
 import '../../model/weather_response.dart';
+import '../../shared/colors.dart';
+import '../../shared/dimens.dart';
 import '../../shared/strings.dart';
+import '../../shared/text_style.dart';
 import 'weather_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,14 +31,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    appBloc.getListCity();
+    appBloc.getListTimezone();
     settingBloc.notificationStream.listen((event) {
       event ? _showNotification() : _closeNotification();
     });
     appBloc.errorStream.listen((event) {
       if (!isShowingDialog) _showErrorDialog(event);
     });
-    cityBloc.getListCity();
-    cityBloc.getListTimezone();
     pageBloc.addNewCity(City(
         coordinates: Coordinates(widget.city.coordinates.latitude,
             widget.city.coordinates.longitude)));
@@ -51,7 +53,7 @@ class _HomePageState extends State<HomePage> {
   _showErrorDialog(ApplicationError error) {
     isShowingDialog = true;
     showDialog(
-      barrierDismissible: false,
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return Dialog(
@@ -60,18 +62,27 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               height: 150,
               width: 300,
-              padding: EdgeInsets.all( padding),
+              color: backgroundColor,
+              padding: EdgeInsets.all(padding),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Error'),
-                  const SizedBox(height: marginSmall,),
+                  Text(
+                    'Error',
+                    style: textTitleWhite,
+                  ),
+                  const SizedBox(
+                    height: marginSmall,
+                  ),
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                         isShowingDialog = false;
                       },
-                      child: Text('OK'))
+                      child: Text(
+                        'OK',
+                        style: textTitleOrange,
+                      ))
                 ],
               ),
             ),
@@ -134,7 +145,11 @@ class _HomePageState extends State<HomePage> {
               onPageChanged: (page) {},
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return Container(
+            decoration: BoxDecoration(
+                image:
+                DecorationImage(image: AssetImage(bgSplash), fit: BoxFit.fill)),
+          );
         },
       ),
     );

@@ -42,7 +42,7 @@ class ApiServiceBloc extends BlocBase {
           _forecastBehaviorSubject
               .add(WeatherStateError(weatherForecastListResponse.errorCode));
         } else {
-          print('fetchWeatherForecastResponse');
+
           _forecastBehaviorSubject
               .add(WeatherForecastStateSuccess(weatherForecastListResponse));
         }

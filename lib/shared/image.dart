@@ -78,7 +78,7 @@ const mIconFewCloudsDay = '$mImgPath'
 const mIconFewCloudsNight = '$mImgPath'
     'icon_fewclouds_night.png';
 
-const mIconHazy= '$mImgPath'
+const mIconHazy = '$mImgPath'
     'icon_hazy.png';
 
 const mIconRainy = '$mImgPath'
@@ -105,10 +105,10 @@ const mIconSunset = '$mImgPath'
 const mIconSettingTemp = '$mImgPath'
     'ic_setting_temp.png';
 
-const mIconWind= '$mImgPath'
+const mIconWind = '$mImgPath'
     'ic_wind.png';
 
-const mIconUVIndex= '$mImgPath'
+const mIconUVIndex = '$mImgPath'
     'ic_uv_index.png';
 
 const mIconMoon = '$mImgPath'
@@ -123,31 +123,31 @@ const mIconHumidity = '$mImgPath'
 const mIconVisibility = '$mImgPath'
     'ic_visibility.png';
 
-const mIconDewPoint= '$mImgPath'
+const mIconDewPoint = '$mImgPath'
     'ic_dew_point.png';
 
-const mIconDownArrow= '$mImgPath'
+const mIconDownArrow = '$mImgPath'
     'down_arrow.png';
 
-const mIconWindPillar= '$mImgPath'
+const mIconWindPillar = '$mImgPath'
     'wind_pillar.png';
 
-const mIconWindPath= '$mImgPath'
+const mIconWindPath = '$mImgPath'
     'wind_path.png';
 
-const mIconLittleSun= '$mImgPath'
+const mIconLittleSun = '$mImgPath'
     'ic_little_sun.png';
 
-const mIconSettingLocation= '$mImgPath'
+const mIconSettingLocation = '$mImgPath'
     'icon_setting_location.png';
 
-const mIconSettingNotify= '$mImgPath'
+const mIconSettingNotify = '$mImgPath'
     'icon_setting_notifications.png';
 
-const mIconSettingPressure= '$mImgPath'
+const mIconSettingPressure = '$mImgPath'
     'ic_setting_pressure.png';
 
-const mIconSettingVisibility= '$mImgPath'
+const mIconSettingVisibility = '$mImgPath'
     'ic_setting_visibility.png';
 
 const mIconEditingLocation = '$mImgPath'
@@ -182,3 +182,9 @@ const bgAppbarSnow = '$mImgPath'
 
 const bgAppbarHazy = '$mImgPath'
     'img_bg_appbar_hazy.png';
+
+const bgSplash = '$mImgPath'
+    'bg_splash.png';
+
+const bgSplashBlur = '$mImgPath'
+    'bg_splash_blur.png';
