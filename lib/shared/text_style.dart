@@ -34,6 +34,9 @@ const textSecondaryGrey = TextStyle(
 const textTitleWhite = TextStyle(
     color: mWhite, fontSize: _fontTitleSize, fontWeight: FontWeight.normal);
 
+const textTitleWhiteBold = TextStyle(
+    color: mWhite, fontSize: _fontTitleSize, fontWeight: FontWeight.bold);
+
 const textTitleWhite70 = TextStyle(
     color: Colors.white70,
     fontSize: _fontTitleSize,

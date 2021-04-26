@@ -11,6 +11,7 @@ abstract class BlocBase {
 
   Future<bool> checkNetWork() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
+
     return (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi);
   }

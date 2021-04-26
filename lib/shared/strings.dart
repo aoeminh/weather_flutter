@@ -43,3 +43,5 @@ const String mSnowN ='13n';
 
 const String mist ='50d';
 const String mistN ='50n';
+
+const networkErrorMessage = 'No connect internet';

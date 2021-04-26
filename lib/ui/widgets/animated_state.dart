@@ -15,6 +15,7 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
       double end = 1.0,
       int duration: 2000,
       Curve curve = Curves.easeInOut}) {
+    if (controller != null) controller.dispose();
     if (this.mounted) controller = _getAnimationController(this, duration);
     Animation animation = _getCurvedAnimation(controller, curve);
     _streamController = BehaviorSubject<double>();
@@ -45,7 +46,6 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
 
   @override
   void dispose() {
-    print('dispose');
     controller.dispose();
     _streamController.close();
     super.dispose();

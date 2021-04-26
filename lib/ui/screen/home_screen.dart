@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:system_settings/system_settings.dart';
 import 'package:weather_app/shared/image.dart';
 
 import '../../bloc/app_bloc.dart';
@@ -27,21 +31,62 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isShowingDialog = false;
+  StreamSubscription subscription;
 
   @override
   void initState() {
     super.initState();
     appBloc.getListCity();
     appBloc.getListTimezone();
-    settingBloc.notificationStream.listen((event) {
-      event ? _showNotification() : _closeNotification();
+    _listenConnectNetWork();
+    _listenNotification();
+    _checkNetWork();
+    _listenAppError();
+    _listenCurrentPage();
+  }
+
+  _checkNetWork() {
+    appBloc.checkNetWork().then((isNetWorkAvailable) {
+      if (isNetWorkAvailable) {
+        pageBloc.addNewCity(City(
+            coordinates: Coordinates(widget.city.coordinates.latitude,
+                widget.city.coordinates.longitude)));
+      } else {
+        appBloc.addError(ApplicationError.connectionError);
+      }
     });
+  }
+
+
+
+  _listenAppError() {
     appBloc.errorStream.listen((event) {
-      if (!isShowingDialog) _showErrorDialog(event);
+      if (!isShowingDialog) {
+        switch (event) {
+          case ApplicationError.apiError:
+            // TODO: Handle this case.
+            break;
+          case ApplicationError.connectionError:
+            _showNetWorkErrorDialog();
+            break;
+          case ApplicationError.locationNotSelectedError:
+            // TODO: Handle this case.
+            break;
+        }
+      }
     });
-    pageBloc.addNewCity(City(
-        coordinates: Coordinates(widget.city.coordinates.latitude,
-            widget.city.coordinates.longitude)));
+  }
+
+  _showNetWorkErrorDialog(){
+    _showErrorDialog(
+        content: networkErrorMessage,
+        callback: () {
+          SystemSettings.wifi();
+          Navigator.pop(context);
+        });
+  }
+
+  _listenCurrentPage() {
     pageBloc.currentPage.listen((event) {
       if (controller.hasClients) {
         int index = event;
@@ -50,7 +95,25 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  _showErrorDialog(ApplicationError error) {
+  _listenConnectNetWork() {
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+          if(result == ConnectivityResult.wifi || result ==ConnectivityResult.mobile){
+            //TODO refresh data
+          }else{
+            _showNetWorkErrorDialog();
+          }
+    });
+  }
+
+  _listenNotification() {
+    settingBloc.notificationStream.listen((event) {
+      event ? _showNotification() : _closeNotification();
+    });
+  }
+
+  _showErrorDialog({ String content, VoidCallback callback}) {
     isShowingDialog = true;
     showDialog(
         barrierDismissible: false,
@@ -67,22 +130,22 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Error',
-                    style: textTitleWhite,
-                  ),
+                      Text(
+                        content,
+                        style: textSecondaryWhite70,
+                      ),
                   const SizedBox(
                     height: marginSmall,
                   ),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        isShowingDialog = false;
-                      },
-                      child: Text(
-                        'OK',
-                        style: textTitleOrange,
-                      ))
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                        onPressed: callback,
+                        child: Text(
+                          'OK',
+                          style: textTitleOrange,
+                        )),
+                  )
                 ],
               ),
             ),
@@ -147,11 +210,17 @@ class _HomePageState extends State<HomePage> {
           }
           return Container(
             decoration: BoxDecoration(
-                image:
-                DecorationImage(image: AssetImage(bgSplash), fit: BoxFit.fill)),
+                image: DecorationImage(
+                    image: AssetImage(bgSplash), fit: BoxFit.fill)),
           );
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription.cancel();
   }
 }
