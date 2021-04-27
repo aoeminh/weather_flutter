@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
 
-import '../../bloc/city_bloc.dart';
 import '../../shared/image.dart';
 import 'home_screen.dart';
 
@@ -21,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     appBloc.determinePosition().then((city) {
       if (city != null) {
         Navigator.pushAndRemoveUntil(

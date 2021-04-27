@@ -21,5 +21,11 @@ class City {
         country = json['country'],
         isHome = false;
 
-  Map<String, dynamic> toJson() => {"id": id, "name": name};
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        'coord': coordinates.toJson(),
+        'country': country,
+        'isHome': isHome
+      };
 }

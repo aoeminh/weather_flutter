@@ -161,6 +161,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     _controller2.dispose();
     timeSubject.close();
     _scrollSubject.close();
+    bloc.dispose();
     super.dispose();
   }
   @override

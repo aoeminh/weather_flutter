@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/model/city.dart';
 import '../model/coordinates.dart';
 
@@ -45,7 +48,7 @@ class PageBloc extends BlocBase {
     _behaviorSubjectCity.add(_currentCities);
   }
 
-  deleteCity(City city){
+  deleteCity(City city) {
     _currentCities.remove(city);
     _behaviorSubjectCity.add(_currentCities);
   }
@@ -66,6 +69,28 @@ class PageBloc extends BlocBase {
     _currentPage.add(index);
   }
 
+  String _encodeListCity(List<City> cities) {
+    return jsonEncode(cities.map((e) => e.toJson()).toList());
+  }
+
+  List<City> decodeListCity(String cities) {
+    return (jsonDecode(cities) as List<dynamic>)
+        .map((e) => City.fromJson(e))
+        .toList();
+  }
+
+  saveListCity() async {
+    if(_currentCities.isNotEmpty){
+      final SharedPreferences preferences = await SharedPreferences.getInstance();
+      await preferences.setString('s', _encodeListCity(_currentCities));
+    }
+  }
+
+  Future<List<City>> getListCity() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return decodeListCity(preferences.getString('s'));
+  }
+
   Stream get pageStream => _behaviorSubjectCity.stream;
 
   Stream get currentCitiesStream => _behaviorSubjectCity.stream;
@@ -75,7 +100,7 @@ class PageBloc extends BlocBase {
   List<City> get currentCityList => _currentCities;
 
   @override
-  void dispose() {
+  void dispose() async {
     _currentPage.close();
     _behaviorSubjectCity.close();
   }

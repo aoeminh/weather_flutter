@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -29,13 +30,17 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool isShowingDialog = false;
   StreamSubscription subscription;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    pageBloc.getListCity().then((value) {
+      print(value.length);
+    });
     appBloc.getListCity();
     appBloc.getListTimezone();
     _listenConnectNetWork();
@@ -57,14 +62,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
-
   _listenAppError() {
     appBloc.errorStream.listen((event) {
       if (!isShowingDialog) {
         switch (event) {
           case ApplicationError.apiError:
-            // TODO: Handle this case.
             break;
           case ApplicationError.connectionError:
             _showNetWorkErrorDialog();
@@ -77,7 +79,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  _showNetWorkErrorDialog(){
+  _showNetWorkErrorDialog() {
     _showErrorDialog(
         content: networkErrorMessage,
         callback: () {
@@ -99,11 +101,11 @@ class _HomePageState extends State<HomePage> {
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-          if(result == ConnectivityResult.wifi || result ==ConnectivityResult.mobile){
-            //TODO refresh data
-          }else{
-            _showNetWorkErrorDialog();
-          }
+      if (result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile) {
+      } else {
+        _showNetWorkErrorDialog();
+      }
     });
   }
 
@@ -113,7 +115,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  _showErrorDialog({ String content, VoidCallback callback}) {
+  _showErrorDialog({String content, VoidCallback callback}) {
     isShowingDialog = true;
     showDialog(
         barrierDismissible: false,
@@ -130,10 +132,10 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                      Text(
-                        content,
-                        style: textSecondaryWhite70,
-                      ),
+                  Text(
+                    content,
+                    style: textSecondaryWhite70,
+                  ),
                   const SizedBox(
                     height: marginSmall,
                   ),
@@ -219,8 +221,40 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print('resumed');
+        break;
+      case AppLifecycleState.inactive:
+        print('inactive');
+        break;
+      case AppLifecycleState.paused:
+        print('paused');
+        await pageBloc.saveListCity();
+        break;
+      case AppLifecycleState.detached:
+        print('detached');
+
+        break;
+    }
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    print('deactivate');
+  }
+
+  @override
   void dispose() {
     super.dispose();
+    print('dispose');
+    WidgetsBinding.instance.removeObserver(this);
+    appBloc.dispose();
+    pageBloc.dispose();
+    settingBloc.dispose();
     subscription.cancel();
   }
 }

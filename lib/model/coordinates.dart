@@ -12,8 +12,8 @@ class Coordinates {
         latitude = TypesHelper.toDouble(json["lat"]);
 
   Map<String,dynamic> toJson() => {
-    "longitude":longitude,
-    "latitude":latitude
+    "lon":longitude,
+    "lat":latitude
   };
 
 }

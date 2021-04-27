@@ -1,7 +1,6 @@
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
-import 'package:weather_app/bloc/city_bloc.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
 import 'package:weather_app/model/city.dart';
 import 'package:weather_app/shared/dimens.dart';
