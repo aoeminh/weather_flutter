@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../model/coordinates.dart';
 import 'base_bloc.dart';
 import '../model/application_error.dart';
 import '../model/city.dart';
 import '../model/timezone.dart';
+import '../utils/share_preferences.dart';
 
 class AppBloc extends BlocBase {
   List<City> _cities;
@@ -37,7 +39,7 @@ class AppBloc extends BlocBase {
     }
     var position = await Geolocator.getCurrentPosition();
     return City(
-        coordinates: Coordinates(position.latitude, position.longitude));
+        coordinates: Coordinates(position.longitude, position.latitude));
     // add the first city
   }
 
@@ -53,6 +55,20 @@ class AppBloc extends BlocBase {
         await rootBundle.loadString("assets/city/timezone.json");
     List<dynamic> list = jsonDecode(timezoneStr);
     _timezones = list.map((e) => Timezone.fromJson(e)).toList();
+  }
+
+  List<City> decodeListCity(String cities) {
+    return (jsonDecode(cities) as List<dynamic>)
+        .map((e) => City.fromJson(e))
+        .toList();
+  }
+
+  saveListCity(List<City> cities) async {
+    await Preferences.saveListCity(cities);
+  }
+
+  Future<List<City>> getListCityFromCache() async {
+    return Preferences.getListCityFromCache();
   }
 
   Stream<ApplicationError> get errorStream => _errorBehavior.stream;

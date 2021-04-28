@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import '../../bloc/setting_bloc.dart';
 import '../../main.dart';
 import '../../model/application_error.dart';
 import '../../model/city.dart';
-import '../../model/coordinates.dart';
 import '../../model/weather_response.dart';
 import '../../shared/colors.dart';
 import '../../shared/dimens.dart';
@@ -22,9 +20,9 @@ import '../../shared/text_style.dart';
 import 'weather_screen.dart';
 
 class HomePage extends StatefulWidget {
-  final City city;
+  final List<City> listCity;
 
-  const HomePage({Key key, this.city}) : super(key: key);
+  const HomePage({Key key, this.listCity}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -38,9 +36,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    pageBloc.getListCity().then((value) {
-      print(value.length);
-    });
     appBloc.getListCity();
     appBloc.getListTimezone();
     _listenConnectNetWork();
@@ -53,9 +48,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   _checkNetWork() {
     appBloc.checkNetWork().then((isNetWorkAvailable) {
       if (isNetWorkAvailable) {
-        pageBloc.addNewCity(City(
-            coordinates: Coordinates(widget.city.coordinates.latitude,
-                widget.city.coordinates.longitude)));
+        pageBloc.addListCity(widget.listCity);
       } else {
         appBloc.addError(ApplicationError.connectionError);
       }
@@ -232,11 +225,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.paused:
         print('paused');
-        await pageBloc.saveListCity();
+        await appBloc.saveListCity(pageBloc.currentCityList);
+        await settingBloc.saveSetting();
         break;
       case AppLifecycleState.detached:
-        print('detached');
-
         break;
     }
   }
@@ -244,13 +236,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void deactivate() {
     super.deactivate();
-    print('deactivate');
   }
 
   @override
   void dispose() {
     super.dispose();
-    print('dispose');
     WidgetsBinding.instance.removeObserver(this);
     appBloc.dispose();
     pageBloc.dispose();

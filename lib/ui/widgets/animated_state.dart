@@ -46,7 +46,7 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
 
   @override
   void dispose() {
-    controller.dispose();
+    if (controller != null) controller.dispose();
     _streamController.close();
     super.dispose();
   }

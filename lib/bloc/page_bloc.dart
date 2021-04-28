@@ -13,6 +13,11 @@ class PageBloc extends BlocBase {
   BehaviorSubject<int> _currentPage = BehaviorSubject();
   BehaviorSubject<List<City>> _behaviorSubjectCity = BehaviorSubject();
 
+  addListCity(List<City> listCity) {
+    _currentCities.addAll(listCity);
+    _behaviorSubjectCity.add(_currentCities);
+  }
+
   addNewCity(City city) {
     int index = _currentCities.indexWhere((element) =>
         (city.coordinates.latitude == element.coordinates.latitude &&
@@ -69,30 +74,9 @@ class PageBloc extends BlocBase {
     _currentPage.add(index);
   }
 
-  String _encodeListCity(List<City> cities) {
-    return jsonEncode(cities.map((e) => e.toJson()).toList());
-  }
-
-  List<City> decodeListCity(String cities) {
-    return (jsonDecode(cities) as List<dynamic>)
-        .map((e) => City.fromJson(e))
-        .toList();
-  }
-
-  saveListCity() async {
-    if(_currentCities.isNotEmpty){
-      final SharedPreferences preferences = await SharedPreferences.getInstance();
-      await preferences.setString('s', _encodeListCity(_currentCities));
-    }
-  }
-
-  Future<List<City>> getListCity() async {
-    final SharedPreferences preferences = await SharedPreferences.getInstance();
-    return decodeListCity(preferences.getString('s'));
-  }
-
   Stream get pageStream => _behaviorSubjectCity.stream;
 
+  ///use when change position of cities in current city list
   Stream get currentCitiesStream => _behaviorSubjectCity.stream;
 
   Stream<int> get currentPage => _currentPage.stream;

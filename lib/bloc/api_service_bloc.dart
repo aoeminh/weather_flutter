@@ -14,7 +14,6 @@ class ApiServiceBloc extends BlocBase {
   fetchWeather(double lat, double lon, {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
-        // print('isNetWorkAvailable');
         _weatherBehaviorSubject.add(WeatherStateLoading());
         WeatherResponse weatherResponse =
             await weatherRepository.fetchWeather(lat, lon, units);

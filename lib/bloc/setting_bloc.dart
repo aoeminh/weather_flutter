@@ -3,6 +3,7 @@ import 'package:rxdart/rxdart.dart';
 import '../model/weather_response.dart';
 import '../shared/strings.dart';
 import '../ui/screen/weather_screen.dart';
+import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
 
 enum TempEnum { C, F }
@@ -198,7 +199,7 @@ class SettingBloc extends BlocBase {
   DateEnum _dateEnum = DateEnum.mmddyyyyy;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
-  BehaviorSubject<SettingEnum> _settingBehavior = BehaviorSubject();
+  PublishSubject<SettingEnum> _settingBehavior = PublishSubject();
 
   onOffNotification(bool isOn, WeatherResponse weatherResponse) {
     _isOnNotify = isOn;
@@ -228,6 +229,25 @@ class SettingBloc extends BlocBase {
         break;
     }
     _settingBehavior.add(settingEnum);
+  }
+
+  saveSetting()async {
+    await Preferences.saveTempSetting(_tempEnum.value);
+    await Preferences.saveWindSetting(_windEnum.value);
+    await Preferences.savePressureSetting(_pressureEnum.value);
+    await Preferences.saveVisibilitySetting(_visibilityEnum.value);
+    await Preferences.saveDateSetting(_dateEnum.value);
+    await Preferences.saveTimeSetting(_timeEnum.value);
+  }
+
+  getSetting() async {
+    _tempEnum = _tempEnum.setValue(await Preferences.getTempSetting());
+    _windEnum = _windEnum.setValue(await Preferences.getWindSetting());
+    _pressureEnum =
+        _pressureEnum.setValue(await Preferences.getPressureSetting());
+    _windEnum = _windEnum.setValue(await Preferences.getWindSetting());
+    _dateEnum = _dateEnum.setValue(await Preferences.getDateSetting());
+    _timeEnum = _timeEnum.setValue(await Preferences.getTimeSetting());
   }
 
   @override

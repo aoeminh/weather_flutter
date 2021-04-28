@@ -3,7 +3,7 @@ import 'coordinates.dart';
 class City {
   final double id;
   final String name;
-  final Coordinates coordinates;
+   Coordinates coordinates;
   final String country;
   bool isHome;
 
@@ -19,7 +19,7 @@ class City {
         name = json["name"],
         coordinates = Coordinates.fromJson(json['coord']),
         country = json['country'],
-        isHome = false;
+        isHome = json['isHome']?? false;
 
   Map<String, dynamic> toJson() => {
         "id": id,

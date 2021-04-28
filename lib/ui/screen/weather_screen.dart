@@ -94,11 +94,10 @@ class _WeatherScreenState extends State<WeatherScreen>
   @override
   void initState() {
     super.initState();
-
     print('initState ${widget.index}');
-    getData();
-    _initAnim();
+    _listenListCityChange();
     _listenChangeSetting();
+    _initAnim();
     _scrollController.addListener(() {
       _scrollSubject.add(_scrollController.offset);
     });
@@ -122,6 +121,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   getData({double lat, double lon}) {
+    print('getdata');
     bloc.fetchWeatherForecast7Day(
         lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
@@ -137,14 +137,17 @@ class _WeatherScreenState extends State<WeatherScreen>
           ..repeat();
   }
 
-  _listenChangeSetting() {
+  _listenListCityChange() {
     pageBloc.currentCitiesStream.listen((event) {
       if (this.mounted) {
         getData(
-            lat: pageBloc.currentCityList[widget.index].coordinates.latitude,
-            lon: pageBloc.currentCityList[widget.index].coordinates.longitude);
+            lat: event[widget.index].coordinates.latitude,
+            lon: event[widget.index].coordinates.longitude);
       }
     });
+  }
+
+  _listenChangeSetting(){
     settingBloc.settingStream.listen((event) {
       if (this.mounted) {
         setState(() {
@@ -153,10 +156,9 @@ class _WeatherScreenState extends State<WeatherScreen>
       }
     });
   }
-
   @override
   void dispose() {
-    print('dispose weather screen ${widget.index}');
+    print('dispose ${widget.index}');
     _controller.dispose();
     _controller2.dispose();
     timeSubject.close();
@@ -164,14 +166,15 @@ class _WeatherScreenState extends State<WeatherScreen>
     bloc.dispose();
     super.dispose();
   }
+
   @override
   void deactivate() {
-    print('deactivate weather screen');
     super.deactivate();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('build');
     return StreamBuilder<WeatherData>(
       stream: Rx.combineLatest3(bloc.weatherStream, bloc.weatherForecastStream,
           bloc.weatherForecastDailyStream, (a, b, c) {
@@ -1494,6 +1497,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _changeSetting(String value, SettingEnum settingEnum) {
+    print('_changeSetting');
     settingBloc.changeSetting(value, settingEnum);
     Navigator.pop(context);
   }
