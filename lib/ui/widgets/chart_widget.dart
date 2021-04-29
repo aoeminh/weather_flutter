@@ -44,12 +44,14 @@ class _ChartWidgetState extends State<ChartWidget> {
   List<ImageInfo> weatherImagesInfo;
   BehaviorSubject<ImageInfo> humidityBehaviorSubject = BehaviorSubject();
   BehaviorSubject<List<ImageInfo>> weatherImageInfoSubject = BehaviorSubject();
+  StreamSubscription streamSubscription;
 
   @override
   void dispose() {
-    super.dispose();
     humidityBehaviorSubject.close();
     weatherImageInfoSubject.close();
+    streamSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -58,7 +60,7 @@ class _ChartWidgetState extends State<ChartWidget> {
     if (this.mounted) {
       init();
     }
-    settingBloc.settingStream.listen((event) {
+    streamSubscription = settingBloc.settingStream.listen((event) {
       if (this.mounted) {
         setState(() {});
       }
@@ -67,11 +69,14 @@ class _ChartWidgetState extends State<ChartWidget> {
 
   Future<Null> init() async {
     await Future.delayed(Duration(seconds: 1));
-    imageInfo = await getImageInfo(context, mIcPrecipitationWhite);
-    humidityBehaviorSubject.add(imageInfo);
+    if (!humidityBehaviorSubject.isClosed &&
+        !weatherImageInfoSubject.isClosed) {
+      imageInfo = await getImageInfo(context, mIcPrecipitationWhite);
+      humidityBehaviorSubject.add(imageInfo);
 
-    weatherImagesInfo = await getListIcon(widget.chartData.iconCode);
-    weatherImageInfoSubject.add(weatherImagesInfo);
+      weatherImagesInfo = await getListIcon(widget.chartData.iconCode);
+      weatherImageInfoSubject.add(weatherImagesInfo);
+    }
   }
 
   Future<List<ImageInfo>> getListIcon(List<String> iconCode) async {

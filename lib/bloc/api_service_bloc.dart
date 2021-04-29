@@ -14,14 +14,15 @@ class ApiServiceBloc extends BlocBase {
   fetchWeather(double lat, double lon, {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
-        _weatherBehaviorSubject.add(WeatherStateLoading());
         WeatherResponse weatherResponse =
             await weatherRepository.fetchWeather(lat, lon, units);
-        if (weatherResponse.errorCode != null) {
-          _weatherBehaviorSubject
-              .add(WeatherStateError(weatherResponse.errorCode));
-        } else {
-          _weatherBehaviorSubject.add(WeatherStateSuccess(weatherResponse));
+        if (!_weatherBehaviorSubject.isClosed) {
+          if (weatherResponse.errorCode != null) {
+            _weatherBehaviorSubject
+                ?.add(WeatherStateError(weatherResponse.errorCode));
+          } else {
+            _weatherBehaviorSubject?.add(WeatherStateSuccess(weatherResponse));
+          }
         }
       } else {
         appBloc.addError(ApplicationError.connectionError);
@@ -33,17 +34,16 @@ class ApiServiceBloc extends BlocBase {
       {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
-        _forecastBehaviorSubject.add(WeatherStateLoading());
-
         WeatherForecastListResponse weatherForecastListResponse =
             await weatherRepository.fetchWeatherForecast(lat, lon, units);
-        if (weatherForecastListResponse.errorCode != null) {
-          _forecastBehaviorSubject
-              .add(WeatherStateError(weatherForecastListResponse.errorCode));
-        } else {
-
-          _forecastBehaviorSubject
-              .add(WeatherForecastStateSuccess(weatherForecastListResponse));
+        if (!_forecastBehaviorSubject.isClosed) {
+          if (weatherForecastListResponse.errorCode != null) {
+            _forecastBehaviorSubject
+                .add(WeatherStateError(weatherForecastListResponse.errorCode));
+          } else {
+            _forecastBehaviorSubject
+                .add(WeatherForecastStateSuccess(weatherForecastListResponse));
+          }
         }
       } else {
         appBloc.addError(ApplicationError.connectionError);
@@ -55,16 +55,16 @@ class ApiServiceBloc extends BlocBase {
       {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
-        _behaviorSubjectForDailyDay.add(WeatherStateLoading());
         WeatherForecastDaily weatherForecast7Day = await weatherRepository
             .fetchWeatherForecast7Day(lat, lon, units, exclude);
-        if (weatherForecast7Day.errorCode != null) {
-          _behaviorSubjectForDailyDay
-              .add(WeatherStateError(weatherForecast7Day.errorCode));
-        } else {
-          print('fetchWeatherForecast7Day');
-          _behaviorSubjectForDailyDay
-              .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
+        if (!_behaviorSubjectForDailyDay.isClosed) {
+          if (weatherForecast7Day.errorCode != null) {
+            _behaviorSubjectForDailyDay
+                .add(WeatherStateError(weatherForecast7Day.errorCode));
+          } else {
+            _behaviorSubjectForDailyDay
+                .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
+          }
         }
       } else {
         appBloc.addError(ApplicationError.connectionError);

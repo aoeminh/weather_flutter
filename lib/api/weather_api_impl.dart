@@ -22,10 +22,8 @@ class WeatherApiImpl extends WeatherApi {
       double lat, double lon, String units) async {
 
     Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, units);
-    print('test $uri');
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
-      print('fetchWeather Success: ${response.data}');
       return WeatherResponse.fromJson(response.data);
     } else {
       return WeatherResponse.withErrorCode(ApplicationError.apiError);
@@ -38,7 +36,6 @@ class WeatherApiImpl extends WeatherApi {
     Uri uri = _buildUri(lat, lon, _apiWeatherForecastEndpoint, units);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
-      print('fetchWeatherForecast Success: ${response.data}');
       return WeatherForecastListResponse.fromJson(response.data);
     } else {
       return WeatherForecastListResponse.withErrorCode(
@@ -53,7 +50,6 @@ class WeatherApiImpl extends WeatherApi {
         _buildUri(lat, lon, _apiWeatherForecast7Day, units, exclude: exclude);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
-      print('fetchWeatherForecast7Day Success: ${response.data}');
       return WeatherForecastDaily.fromJson(response.data);
     } else {
       return WeatherForecastDaily.withErrorCode(ApplicationError.apiError);

@@ -175,12 +175,8 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
             ? !city.isHome
                 ? InkWell(
                     onTap: () {
-
-                      _listTempCity.remove(city);
-                      pageBloc.editCurrentCityList(pageBloc.copyCurrentCityList(_listTempCity));
-                      setState(() {
-
-                      });
+                      pageBloc.deleteCity(city);
+                      setState(() {});
                     },
                     child: Icon(
                       Icons.close,

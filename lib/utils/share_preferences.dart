@@ -17,12 +17,13 @@ class Preferences {
       final SharedPreferences preferences =
           await SharedPreferences.getInstance();
       await preferences.setString(
-          's', jsonEncode(cities.map((e) => e.toJson()).toList()));
+          _LIST_CITY_KEY, jsonEncode(cities.map((e) => e.toJson()).toList()));
     }
   }
 
   static Future<List<City>> getListCityFromCache() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
+    print('${preferences.getString(_LIST_CITY_KEY) }');
     return preferences.getString(_LIST_CITY_KEY) != null
         ? (jsonDecode(preferences.getString(_LIST_CITY_KEY)) as List<dynamic>)
             .map((e) => City.fromJson(e))

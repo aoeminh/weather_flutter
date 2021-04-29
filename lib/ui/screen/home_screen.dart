@@ -24,6 +24,9 @@ class HomePage extends StatefulWidget {
 
   const HomePage({Key key, this.listCity}) : super(key: key);
 
+  static _HomePageState of(BuildContext context) =>
+      context.findAncestorStateOfType<_HomePageState>();
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -31,10 +34,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool isShowingDialog = false;
   StreamSubscription subscription;
+  int currentPage;
 
   @override
   void initState() {
     super.initState();
+    currentPage = 0;
     WidgetsBinding.instance.addObserver(this);
     appBloc.getListCity();
     appBloc.getListTimezone();
@@ -180,9 +185,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     await flutterLocalNotificationsPlugin.cancel(0);
   }
 
-  final controller = PageController(
-    initialPage: 0,
-  );
+  final controller = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +194,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         stream: pageBloc.pageStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            print('snapshot.hasData');
             return PageView(
               controller: controller,
               scrollDirection: Axis.horizontal,
@@ -200,7 +204,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       lat: data.coordinates.latitude,
                       lon: data.coordinates.longitude))
                   .toList(),
-              onPageChanged: (page) {},
+              onPageChanged: (page) {
+                currentPage = page;
+              },
             );
           }
           return Container(

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/ui/screen/home_screen.dart';
 import '../../bloc/api_service_bloc.dart';
 import '../../bloc/app_bloc.dart';
 import '../../bloc/base_bloc.dart';
@@ -94,13 +95,15 @@ class _WeatherScreenState extends State<WeatherScreen>
   @override
   void initState() {
     super.initState();
-    print('initState ${widget.index}');
-    _listenListCityChange();
-    _listenChangeSetting();
-    _initAnim();
-    _scrollController.addListener(() {
-      _scrollSubject.add(_scrollController.offset);
-    });
+    if(this.mounted ){
+      print('index ${widget.index}');
+      _listenListCityChange();
+      _listenChangeSetting();
+      _initAnim();
+      _scrollController.addListener(() {
+        _scrollSubject.add(_scrollController.offset);
+      });
+    }
   }
 
   _createTime(DateTime dateTime) {
@@ -139,11 +142,9 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _listenListCityChange() {
     pageBloc.currentCitiesStream.listen((event) {
-      if (this.mounted) {
         getData(
             lat: event[widget.index].coordinates.latitude,
             lon: event[widget.index].coordinates.longitude);
-      }
     });
   }
 
@@ -159,11 +160,11 @@ class _WeatherScreenState extends State<WeatherScreen>
   @override
   void dispose() {
     print('dispose ${widget.index}');
-    _controller.dispose();
-    _controller2.dispose();
-    timeSubject.close();
-    _scrollSubject.close();
     bloc.dispose();
+    _controller?.dispose();
+    _controller2?.dispose();
+    timeSubject?.close();
+    _scrollSubject?.close();
     super.dispose();
   }
 

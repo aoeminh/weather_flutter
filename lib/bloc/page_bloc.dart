@@ -25,7 +25,7 @@ class PageBloc extends BlocBase {
     if (index == -1) {
       _currentCities.add(city);
       _behaviorSubjectCity.add(_currentCities);
-      jumpToPage(_currentCities.length);
+      // jumpToPage(_currentCities.length);
     } else {
       jumpToPage(index);
     }
