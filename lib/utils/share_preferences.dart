@@ -23,7 +23,6 @@ class Preferences {
 
   static Future<List<City>> getListCityFromCache() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    print('${preferences.getString(_LIST_CITY_KEY) }');
     return preferences.getString(_LIST_CITY_KEY) != null
         ? (jsonDecode(preferences.getString(_LIST_CITY_KEY)) as List<dynamic>)
             .map((e) => City.fromJson(e))

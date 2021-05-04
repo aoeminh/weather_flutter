@@ -6,6 +6,7 @@ import '../../bloc/app_bloc.dart';
 import '../../model/city.dart';
 import '../../shared/image.dart';
 import 'home_screen.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -52,6 +53,8 @@ class _SplashScreenState extends State<SplashScreen> {
       var listCity = value[1] as List<City>;
       var city = value[0] as City;
       if (listCity.isNotEmpty) {
+        print('list city ${listCity.length}');
+
         var index = listCity.indexWhere((element) {
           return element.isHome;
         });
@@ -59,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         listCity.add(city);
       }
-
+      print('list city ${listCity.length}');
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -81,6 +84,12 @@ class _SplashScreenState extends State<SplashScreen> {
       decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage(bgSplashBlur), fit: BoxFit.fill)),
+      child: Center(
+        child: SpinKitWave(
+          color: Colors.white,
+          size: 50.0,
+        ),
+      ),
     );
   }
 }

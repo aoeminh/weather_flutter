@@ -95,8 +95,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   @override
   void initState() {
     super.initState();
-    if(this.mounted ){
-      print('index ${widget.index}');
+    if (this.mounted) {
       _listenListCityChange();
       _listenChangeSetting();
       _initAnim();
@@ -124,7 +123,6 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   getData({double lat, double lon}) {
-    print('getdata');
     bloc.fetchWeatherForecast7Day(
         lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
@@ -142,24 +140,25 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _listenListCityChange() {
     pageBloc.currentCitiesStream.listen((event) {
-        getData(
-            lat: event[widget.index].coordinates.latitude,
-            lon: event[widget.index].coordinates.longitude);
+      getData(
+          lat: event[widget.index].coordinates.latitude,
+          lon: event[widget.index].coordinates.longitude);
     });
   }
 
-  _listenChangeSetting(){
+  _listenChangeSetting() {
     settingBloc.settingStream.listen((event) {
       if (this.mounted) {
         setState(() {
           convertDataAndFormatTime();
         });
+        settingBloc.saveSetting();
       }
     });
   }
+
   @override
   void dispose() {
-    print('dispose ${widget.index}');
     bloc.dispose();
     _controller?.dispose();
     _controller2?.dispose();
@@ -175,7 +174,6 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   @override
   Widget build(BuildContext context) {
-    print('build');
     return StreamBuilder<WeatherData>(
       stream: Rx.combineLatest3(bloc.weatherStream, bloc.weatherForecastStream,
           bloc.weatherForecastDailyStream, (a, b, c) {
@@ -570,7 +568,6 @@ class _WeatherScreenState extends State<WeatherScreen>
       return InkWell(
         onTap: () => setState(() {
           isShowMore = !isShowMore;
-          print('isShowMore $isShowMore');
         }),
         child: Container(
           padding: EdgeInsets.only(top: padding),
@@ -1373,10 +1370,12 @@ class _WeatherScreenState extends State<WeatherScreen>
                                         weatherData.weatherForecastDaily,
                                   )))
                       : () {},
-                  child: SunPathWidget(
-                    sunrise: weatherResponse.system.sunrise,
-                    sunset: weatherResponse.system.sunset,
-                    differentTime: _getDifferentTime(timezone),
+                  child: RepaintBoundary(
+                    child: SunPathWidget(
+                      sunrise: weatherResponse.system.sunrise,
+                      sunset: weatherResponse.system.sunset,
+                      differentTime: _getDifferentTime(timezone),
+                    ),
                   )),
               Container(
                 margin: EdgeInsets.symmetric(vertical: margin),
@@ -1498,7 +1497,6 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _changeSetting(String value, SettingEnum settingEnum) {
-    print('_changeSetting');
     settingBloc.changeSetting(value, settingEnum);
     Navigator.pop(context);
   }

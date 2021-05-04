@@ -194,7 +194,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         stream: pageBloc.pageStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print('snapshot.hasData');
             return PageView(
               controller: controller,
               scrollDirection: Axis.horizontal,

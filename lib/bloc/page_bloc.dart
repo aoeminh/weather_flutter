@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/model/city.dart';
 import '../model/coordinates.dart';
 
+import 'app_bloc.dart';
 import 'base_bloc.dart';
 
 class PageBloc extends BlocBase {
@@ -25,10 +26,11 @@ class PageBloc extends BlocBase {
     if (index == -1) {
       _currentCities.add(city);
       _behaviorSubjectCity.add(_currentCities);
-      // jumpToPage(_currentCities.length);
+      jumpToPage(_currentCities.length);
     } else {
       jumpToPage(index);
     }
+    appBloc.saveListCity(_currentCities);
   }
 
   /// App depend on [_currentCities] to manage current cites
@@ -37,24 +39,30 @@ class PageBloc extends BlocBase {
   /// set [city] is your city that not deleted
   removeItemWhenFirstLoadApp(City city) {
     if (isFirstLoad) {
-      _currentCities.removeWhere((element) => element.name == null);
-      _currentCities.add(City(
-          coordinates: city.coordinates,
-          id: city.id,
-          country: city.country,
-          name: city.name,
-          isHome: true));
+      int index = _currentCities.indexWhere((element) => element.name == null);
+      if(index != -1){
+        _currentCities.removeAt(index);
+        _currentCities.add(City(
+            coordinates: city.coordinates,
+            id: city.id,
+            country: city.country,
+            name: city.name,
+            isHome: true));
+      }
+      appBloc.saveListCity(_currentCities);
       isFirstLoad = false;
     }
   }
 
   editCurrentCityList(List<City> list) {
     _currentCities = list;
+    appBloc.saveListCity(_currentCities);
     _behaviorSubjectCity.add(_currentCities);
   }
 
   deleteCity(City city) {
     _currentCities.remove(city);
+    appBloc.saveListCity(_currentCities);
     _behaviorSubjectCity.add(_currentCities);
   }
 

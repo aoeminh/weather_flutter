@@ -52,7 +52,6 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
         builder: (context, imageSnapshot) {
           if (imageSnapshot.hasData) {
             if(this.mounted){
-              print('animateTween');
               animateTween(duration: 3000);
             }
             return StreamBuilder<double>(
