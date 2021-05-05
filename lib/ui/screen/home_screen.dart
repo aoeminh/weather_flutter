@@ -194,6 +194,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         stream: pageBloc.pageStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+
+            print('pageview ${snapshot.data.length}');
             return PageView(
               controller: controller,
               scrollDirection: Axis.horizontal,
@@ -223,13 +225,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
-        print('resumed');
         break;
       case AppLifecycleState.inactive:
-        print('inactive');
         break;
-      case AppLifecycleState.paused:
-        print('paused');
+      case AppLifecycleState.paused:;
         await appBloc.saveListCity(pageBloc.currentCityList);
         await settingBloc.saveSetting();
         break;

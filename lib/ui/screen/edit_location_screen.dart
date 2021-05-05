@@ -110,7 +110,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
         child: Column(
           children: [
             InkWell(
-              onTap: () => Navigator.push(context,
+              onTap: () => Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => AddCityScreen())),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -175,7 +175,8 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
             ? !city.isHome
                 ? InkWell(
                     onTap: () {
-                      pageBloc.deleteCity(city);
+                      _listTempCity.remove(city);
+                      pageBloc.editCurrentCityList(_listTempCity);
                       setState(() {});
                     },
                     child: Icon(

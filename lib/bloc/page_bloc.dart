@@ -60,10 +60,11 @@ class PageBloc extends BlocBase {
     _behaviorSubjectCity.add(_currentCities);
   }
 
-  deleteCity(City city) {
-    _currentCities.remove(city);
+  deleteCity(List<City> list) {
+    _currentCities = list;
     appBloc.saveListCity(_currentCities);
     _behaviorSubjectCity.add(_currentCities);
+    jumpToPage(0);
   }
 
   List<City> copyCurrentCityList(List<City> list) {

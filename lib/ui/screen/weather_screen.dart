@@ -140,9 +140,12 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _listenListCityChange() {
     pageBloc.currentCitiesStream.listen((event) {
-      getData(
-          lat: event[widget.index].coordinates.latitude,
-          lon: event[widget.index].coordinates.longitude);
+      if(this.mounted){
+        getData(
+            lat: event[widget.index].coordinates.latitude,
+            lon: event[widget.index].coordinates.longitude);
+      }
+
     });
   }
 
