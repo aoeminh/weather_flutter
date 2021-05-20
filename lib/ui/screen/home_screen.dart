@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     currentPage = 0;
     WidgetsBinding.instance.addObserver(this);
     appBloc.getListCity();
+    appBloc.getListSuggestCity();
     appBloc.getListTimezone();
     _listenConnectNetWork();
     _listenNotification();
@@ -163,8 +164,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             enableVibration: false,
             visibility: NotificationVisibility.public,
             enableLights: true,
-            icon: 'ic_little_sun',
-            largeIcon: DrawableResourceAndroidBitmap('ic_little_sun'),
+            icon: 'ic_launcher',
             priority: Priority.defaultPriority,
             ongoing: true,
             ticker: 'ticker');
@@ -194,8 +194,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         stream: pageBloc.pageStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-
-            print('pageview ${snapshot.data.length}');
             return PageView(
               controller: controller,
               scrollDirection: Axis.horizontal,
@@ -228,7 +226,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.inactive:
         break;
-      case AppLifecycleState.paused:;
+      case AppLifecycleState.paused:
         await appBloc.saveListCity(pageBloc.currentCityList);
         await settingBloc.saveSetting();
         break;

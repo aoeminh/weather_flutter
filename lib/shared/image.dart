@@ -188,3 +188,9 @@ const bgSplash = '$mImgPath'
 
 const bgSplashBlur = '$mImgPath'
     'bg_splash_blur.png';
+
+const imSettingDate = '$mImgPath'
+    'ic_setting_date.png';
+
+const imSettingTime = '$mImgPath'
+    'ic_setting_time.png';

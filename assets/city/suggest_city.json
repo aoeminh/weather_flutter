@@ -1,0 +1,162 @@
+[
+  {
+    "id": 5128581,
+    "name": "New York",
+    "state": "NY",
+    "country": "US",
+    "coord": {
+      "lon": -74.005966,
+      "lat": 40.714272
+    }
+  },
+  {
+    "id": 1705545,
+    "name": "Los Angeles",
+    "state": "",
+    "country": "PH",
+    "coord": {
+      "lon": -118.243683,
+      "lat": 34.052235
+    }
+  },
+  {
+    "id": 6942553,
+    "name": "Paris",
+    "state": "",
+    "country": "CA",
+    "coord": {
+      "lon": 2.352222,
+      "lat": 48.856613
+    }
+  },
+  {
+    "id": 2950159,
+    "name": "Berlin",
+    "state": "",
+    "country": "DE",
+    "coord": {
+      "lon": 13.41053,
+      "lat": 52.524368
+    }
+  },
+  {
+    "id": 2643743,
+    "name": "London",
+    "state": "",
+    "country": "GB",
+    "coord": {
+      "lon": -0.12574,
+      "lat": 51.50853
+    }
+  },
+  {
+    "id": 3169070,
+    "name": "Rome",
+    "state": "",
+    "country": "IT",
+    "coord": {
+      "lon": 12.4839,
+      "lat": 41.894741
+    }
+  },
+  {
+    "id": 1273294,
+    "name": "Delhi",
+    "state": "",
+    "country": "IN",
+    "coord": {
+      "lon": 77.216667,
+      "lat": 28.666668
+    }
+  },
+  {
+    "id": 3117735,
+    "name": "Madrid",
+    "state": "",
+    "country": "ES",
+    "coord": {
+      "lon": -3.70256,
+      "lat": 40.4165
+    }
+  },
+  {
+    "id": 5368361,
+    "name": "Los Angeles",
+    "state": "CA",
+    "country": "US",
+    "coord": {
+      "lon": -118.243683,
+      "lat": 34.052231
+    }
+  },
+  {
+    "id": 360630,
+    "name": "Cairo",
+    "state": "",
+    "country": "EG",
+    "coord": {
+      "lon": 31.24967,
+      "lat": 30.06263
+    }
+  },
+  {
+    "id": 1816670,
+    "name": "Beijing",
+    "state": "",
+    "country": "CN",
+    "coord": {
+      "lon": 116.397232,
+      "lat": 39.907501
+    }
+  },
+  {
+    "id": 1880252,
+    "name": "Singapore",
+    "state": "",
+    "country": "SG",
+    "coord": {
+      "lon": 103.850067,
+      "lat": 1.28967
+    }
+  },
+  {
+    "id": 2147714,
+    "name": "Sydney",
+    "state": "",
+    "country": "AU",
+    "coord": {
+      "lon": 151.207321,
+      "lat": -33.867851
+    }
+  },
+  {
+    "id": 1850147,
+    "name": "Tokyo",
+    "state": "",
+    "country": "JP",
+    "coord": {
+      "lon": 139.691711,
+      "lat": 35.689499
+    }
+  },
+  {
+    "id": 112931,
+    "name": "Tehran",
+    "state": "",
+    "country": "IR",
+    "coord": {
+      "lon": 51.421509,
+      "lat": 35.694389
+    }
+  },
+  {
+    "id": 2673722,
+    "name": "Stockholm",
+    "state": "",
+    "country": "SE",
+    "coord": {
+      "lon": 18.0,
+      "lat": 59.5
+    }
+  }
+]

@@ -17,17 +17,11 @@ class AddCityScreen extends StatefulWidget {
 class _AddCityScreenState extends State<AddCityScreen> {
   GlobalKey key = new GlobalKey<AutoCompleteTextFieldState<City>>();
   List<City> listCity = [];
-  List<City> listSimilarCity = [];
 
   @override
   void initState() {
     super.initState();
     listCity = appBloc.cities;
-    for (City city in listCity) {
-      if (city.country == 'VN') {
-        listSimilarCity.add(city);
-      }
-    }
   }
 
   @override
@@ -101,7 +95,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
 
   _onItemSubmit(City city) {
     pageBloc.addNewCity(city);
-
+print('_onItemSubmit ${city.name} ${city.coordinates.latitude}');
     Navigator.pop(context);
   }
 
@@ -140,13 +134,13 @@ class _AddCityScreenState extends State<AddCityScreen> {
     return ListView.separated(
         padding: EdgeInsets.zero,
         itemBuilder: (context, index) {
-          return _itemSimilar(listSimilarCity[index]);
+          return _itemSimilar(appBloc.suggestCities[index]);
         },
         separatorBuilder: (context, index) => Divider(
               height: 1,
               color: Colors.white24,
             ),
-        itemCount: listSimilarCity.length);
+        itemCount: appBloc.suggestCities.length);
   }
 
   _itemSimilar(City city) => InkWell(

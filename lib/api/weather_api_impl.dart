@@ -48,6 +48,8 @@ class WeatherApiImpl extends WeatherApi {
       double lat, double lon, String units, String exclude) async {
     Uri uri =
         _buildUri(lat, lon, _apiWeatherForecast7Day, units, exclude: exclude);
+    print('${uri.toString()}');
+
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       return WeatherForecastDaily.fromJson(response.data);

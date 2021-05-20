@@ -24,8 +24,8 @@
     "name":"-09:00"
   },
   {
-    "value":"America/Los_Angeles",
-    "name":"-08:00"
+    "value":"Los_Angeles",
+    "name":"-07:00"
   },
   {
     "value":"Pacific Time (US & Canada)",
@@ -96,8 +96,8 @@
     "name":"-05:00"
   },
   {
-    "value":"America/New_York",
-    "name":"-05:00"
+    "value":"New_York",
+    "name":"-04:00"
   },
   {
     "value":"America/Detroit",
@@ -225,7 +225,7 @@
   },
   {
     "value":"Berlin",
-    "name":"+01:00"
+    "name":"+02:00"
   },
   {
     "value":"Bern",
@@ -249,7 +249,7 @@
   },
   {
     "value":"Europe/Berlin",
-    "name":"+01:00"
+    "name":"+02:00"
   },
   {
     "value":"Ljubljana",

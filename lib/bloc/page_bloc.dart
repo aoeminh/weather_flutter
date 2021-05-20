@@ -1,10 +1,8 @@
-import 'dart:convert';
 
 import 'package:rxdart/rxdart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/model/city.dart';
-import '../model/coordinates.dart';
 
+import '../model/coordinates.dart';
 import 'app_bloc.dart';
 import 'base_bloc.dart';
 
@@ -55,6 +53,7 @@ class PageBloc extends BlocBase {
   }
 
   editCurrentCityList(List<City> list) {
+    list.forEach((element) {print('latitude ${element.coordinates.latitude} longitude ${element.coordinates.longitude}');});
     _currentCities = list;
     appBloc.saveListCity(_currentCities);
     _behaviorSubjectCity.add(_currentCities);
@@ -75,7 +74,7 @@ class PageBloc extends BlocBase {
             country: e.country,
             id: e.id,
             coordinates:
-                Coordinates(e.coordinates.latitude, e.coordinates.longitude)))
+                Coordinates(e.coordinates.longitude,e.coordinates.latitude)))
         .toList();
   }
 

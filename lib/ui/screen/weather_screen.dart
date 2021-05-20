@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:weather_app/ui/screen/home_screen.dart';
+
 import '../../bloc/api_service_bloc.dart';
 import '../../bloc/app_bloc.dart';
 import '../../bloc/base_bloc.dart';
@@ -37,7 +37,6 @@ import '../../ui/widgets/chart_widget.dart';
 import '../../ui/widgets/smarr_refresher.dart';
 import '../../ui/widgets/sun_path_widget.dart';
 import '../../utils/utils.dart';
-
 import 'detail_daily_forecast.dart';
 
 const double _mainWeatherHeight = 240;
@@ -336,17 +335,21 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   int _getDifferentTime(String timezone) {
+    print('value $timezone');
     String value = '';
     for (Timezone time in appBloc.timezones) {
-      if (time.value.contains(getTimezone(timezone))) {
+      if (time.value.toLowerCase().contains(getTimezone(timezone))) {
         value = getTimezone(time.name);
       }
     }
+
     return value == '' ? 0 : convertTimezoneToNumber(value);
   }
 
-  String getTimezone(String timezone) =>
-      timezone.substring(timezone.indexOf('/') + 1, timezone.length);
+  String getTimezone(String timezone) {
+    print('${timezone.substring(timezone.indexOf('/') + 1, timezone.length).toLowerCase()}');
+    return timezone.substring(timezone.indexOf('/') + 1, timezone.length).toLowerCase();
+  }
 
   _body(WeatherData weatherData) {
     return NestedScrollView(
@@ -476,12 +479,12 @@ class _WeatherScreenState extends State<WeatherScreen>
             _buildItemUnit(mIconSettingVisibility, 'Visibility Unit', 'km',
                 () => showSettingDialog(SettingEnum.VisibilityEnum)),
             _buildItemUnit(
-                mIconSettingTemp,
+                imSettingTime,
                 'Time Format',
                 settingBloc.timeEnum.value,
                 () => showSettingDialog(SettingEnum.TimeEnum)),
             _buildItemUnit(
-                mIconSettingTemp,
+                imSettingDate,
                 'Date Format',
                 settingBloc.dateEnum.value,
                 () => showSettingDialog(SettingEnum.DateEnum)),
