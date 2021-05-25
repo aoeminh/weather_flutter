@@ -11,7 +11,7 @@ class ApiServiceBloc extends BlocBase {
   BehaviorSubject<WeatherState> _forecastBehaviorSubject = BehaviorSubject();
   BehaviorSubject<WeatherState> _behaviorSubjectForDailyDay = BehaviorSubject();
 
-  fetchWeather(double lat, double lon, {String units = 'metric'}) async {
+  fetchWeather(double? lat, double? lon, {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
         WeatherResponse weatherResponse =
@@ -19,9 +19,9 @@ class ApiServiceBloc extends BlocBase {
         if (!_weatherBehaviorSubject.isClosed) {
           if (weatherResponse.errorCode != null) {
             _weatherBehaviorSubject
-                ?.add(WeatherStateError(weatherResponse.errorCode));
+                .add(WeatherStateError(weatherResponse.errorCode));
           } else {
-            _weatherBehaviorSubject?.add(WeatherStateSuccess(weatherResponse));
+            _weatherBehaviorSubject.add(WeatherStateSuccess(weatherResponse));
           }
         }
       } else {
@@ -30,7 +30,7 @@ class ApiServiceBloc extends BlocBase {
     });
   }
 
-  fetchWeatherForecastResponse(double lat, double lon,
+  fetchWeatherForecastResponse(double? lat, double? lon,
       {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
@@ -51,7 +51,7 @@ class ApiServiceBloc extends BlocBase {
     });
   }
 
-  fetchWeatherForecast7Day(double lat, double lon, String exclude,
+  fetchWeatherForecast7Day(double? lat, double? lon, String exclude,
       {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {

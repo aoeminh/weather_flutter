@@ -4,10 +4,10 @@ import 'application_error.dart';
 import 'daily.dart';
 
 class WeatherForecastDaily {
-  final String timezone;
-  final List<Daily> daily;
-  final CurrentDailyWeather current;
-  ApplicationError _errorCode;
+  final String? timezone;
+  final List<Daily>? daily;
+  final CurrentDailyWeather? current;
+  ApplicationError? _errorCode;
 
   WeatherForecastDaily({
     this.daily,
@@ -23,16 +23,16 @@ class WeatherForecastDaily {
   static WeatherForecastDaily withTimezone(
       WeatherForecastDaily weatherForecastDaily, int differentTime) {
     return WeatherForecastDaily(
-        daily: weatherForecastDaily.daily
+        daily: weatherForecastDaily.daily!
             .map((e) => Daily.withTimeZone(e, differentTime))
             .toList(),
         current: CurrentDailyWeather.withTimezone(
-            weatherForecastDaily.current, differentTime),
+            weatherForecastDaily.current!, differentTime),
         timezone: weatherForecastDaily.timezone);
   }
 
   WeatherForecastDaily copyWith(
-      {String timezone, List<Daily> daily, CurrentDailyWeather current}) {
+      {String? timezone, List<Daily>? daily, CurrentDailyWeather? current}) {
     return WeatherForecastDaily(
         timezone: timezone ?? this.timezone,
         current: current ?? this.current,
@@ -45,5 +45,5 @@ class WeatherForecastDaily {
     return response;
   }
 
-  ApplicationError get errorCode => _errorCode;
+  ApplicationError? get errorCode => _errorCode;
 }

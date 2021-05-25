@@ -19,7 +19,7 @@ class WeatherApiImpl extends WeatherApi {
 
   @override
   Future<WeatherResponse> fetchWeather(
-      double lat, double lon, String units) async {
+      double? lat, double? lon, String units) async {
 
     Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, units);
     Response response = await _dio.get(uri.toString());
@@ -32,7 +32,7 @@ class WeatherApiImpl extends WeatherApi {
 
   @override
   Future<WeatherForecastListResponse> fetchWeatherForecast(
-      double lat, double lon, String units) async {
+      double? lat, double? lon, String units) async {
     Uri uri = _buildUri(lat, lon, _apiWeatherForecastEndpoint, units);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
@@ -45,7 +45,7 @@ class WeatherApiImpl extends WeatherApi {
 
   @override
   Future<WeatherForecastDaily> fetchWeatherForecast7Day(
-      double lat, double lon, String units, String exclude) async {
+      double? lat, double? lon, String units, String exclude) async {
     Uri uri =
         _buildUri(lat, lon, _apiWeatherForecast7Day, units, exclude: exclude);
     print('${uri.toString()}');
@@ -58,8 +58,8 @@ class WeatherApiImpl extends WeatherApi {
     }
   }
 
-  _buildUri(double lat, double lon, String endpoint, String unit,
-      {String exclude}) {
+  _buildUri(double? lat, double? lon, String endpoint, String unit,
+      {String? exclude}) {
     Map<String, dynamic> param = {
       'lat': lat.toString(),
       'lon': lon.toString(),

@@ -1,9 +1,9 @@
 import 'package:weather_app/shared/constant.dart';
 
 class System {
-  final String country;
-  final int sunrise;
-  final int sunset;
+  final String? country;
+  final int? sunrise;
+  final int? sunset;
 
   System({this.country, this.sunrise, this.sunset});
 
@@ -14,8 +14,8 @@ class System {
 
   static System withTimezone(System system, int differentTime) {
     return System(
-        sunrise: system.sunrise + differentTime * oneHourMilli,
-        sunset: system.sunset + differentTime * oneHourMilli,
+        sunrise: system.sunrise! + differentTime * oneHourMilli,
+        sunset: system.sunset! + differentTime * oneHourMilli,
         country: system.country);
   }
 

@@ -12,9 +12,9 @@ import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
 
 class AppBloc extends BlocBase {
-  List<City> _cities;
-  List<City> _suggestCities;
-  List<Timezone> _timezones;
+  List<City>? _cities;
+  List<City>? _suggestCities;
+  List<Timezone>? _timezones;
   BehaviorSubject<ApplicationError> _errorBehavior = BehaviorSubject();
 
   addError(ApplicationError error) {
@@ -82,11 +82,11 @@ class AppBloc extends BlocBase {
 
   Stream<ApplicationError> get errorStream => _errorBehavior.stream;
 
-  List<City> get cities => _cities;
+  List<City>? get cities => _cities;
 
-  List<City> get suggestCities => _suggestCities;
+  List<City>? get suggestCities => _suggestCities;
 
-  List<Timezone> get timezones => _timezones;
+  List<Timezone>? get timezones => _timezones;
 
   @override
   void dispose() {

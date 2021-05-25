@@ -29,9 +29,9 @@ const double _textSize = 12;
 const double _textTimeSize = 10;
 
 class ChartWidget extends StatefulWidget {
-  final ChartData chartData;
+  final ChartData? chartData;
 
-  const ChartWidget({Key key, this.chartData}) : super(key: key);
+  const ChartWidget({Key? key, this.chartData}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ChartWidgetState();
@@ -39,12 +39,12 @@ class ChartWidget extends StatefulWidget {
 
 class _ChartWidgetState extends State<ChartWidget> {
   double _fraction = 0.0;
-  ui.Image image;
-  ImageInfo imageInfo;
-  List<ImageInfo> weatherImagesInfo;
-  BehaviorSubject<ImageInfo> humidityBehaviorSubject = BehaviorSubject();
-  BehaviorSubject<List<ImageInfo>> weatherImageInfoSubject = BehaviorSubject();
-  StreamSubscription streamSubscription;
+  ui.Image? image;
+  ImageInfo? imageInfo;
+  List<ImageInfo>? weatherImagesInfo;
+  BehaviorSubject<ImageInfo?> humidityBehaviorSubject = BehaviorSubject();
+  BehaviorSubject<List<ImageInfo>?> weatherImageInfoSubject = BehaviorSubject();
+  late StreamSubscription streamSubscription;
 
   @override
   void dispose() {
@@ -74,14 +74,14 @@ class _ChartWidgetState extends State<ChartWidget> {
       imageInfo = await getImageInfo(context, mIcPrecipitationWhite);
       humidityBehaviorSubject.add(imageInfo);
 
-      weatherImagesInfo = await getListIcon(widget.chartData.iconCode);
+      weatherImagesInfo = await getListIcon(widget.chartData!.iconCode!);
       weatherImageInfoSubject.add(weatherImagesInfo);
     }
   }
 
-  Future<List<ImageInfo>> getListIcon(List<String> iconCode) async {
+  Future<List<ImageInfo>> getListIcon(List<String?> iconCode) async {
     List<ImageInfo> list = [];
-    for (String code in iconCode) {
+    for (String? code in iconCode) {
       ImageInfo image = await getImageInfo(context, getIconForecastUrl(code));
       list.add(image);
     }
@@ -103,7 +103,7 @@ class _ChartWidgetState extends State<ChartWidget> {
   @override
   Widget build(BuildContext context) {
     Widget chartWidget;
-    if (widget.chartData.points.length < 3) {
+    if (widget.chartData!.points!.length < 3) {
       chartWidget = _getChartUnavailableWidget(context);
     } else {
       chartWidget = _getChartWidget();
@@ -111,8 +111,8 @@ class _ChartWidgetState extends State<ChartWidget> {
 
     return Container(
       key: Key("chart_widget_container"),
-      width: widget.chartData.width,
-      height: widget.chartData.height,
+      width: widget.chartData!.width,
+      height: widget.chartData!.height,
       child: chartWidget,
     );
   }
@@ -122,27 +122,27 @@ class _ChartWidgetState extends State<ChartWidget> {
         stream: Rx.combineLatest2(
             humidityBehaviorSubject.stream,
             weatherImageInfoSubject.stream,
-            (ImageInfo humidity, List<ImageInfo> weatherIcons) =>
+            (ImageInfo? humidity, List<ImageInfo>? weatherIcons) =>
                 ImageInfoWeather(humidity, weatherIcons)),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            ImageInfoWeather imageInfoWeather = snapshot.data;
+            ImageInfoWeather imageInfoWeather = snapshot.data as ImageInfoWeather;
             return Container(
               margin: EdgeInsets.only(top: 25),
               child: CustomPaint(
                   key: Key("chart_widget_custom_paint"),
                   painter: _ChartPainter(
-                      widget.chartData.points,
-                      widget.chartData.pointLabels,
-                      widget.chartData.width,
-                      widget.chartData.height,
-                      widget.chartData.axes,
+                      widget.chartData!.points,
+                      widget.chartData!.pointLabels,
+                      widget.chartData!.width,
+                      widget.chartData!.height,
+                      widget.chartData!.axes,
                       _fraction,
                       imageInfoWeather.humidityInfo,
-                      widget.chartData.dateTimeLabels,
+                      widget.chartData!.dateTimeLabels,
                       imageInfoWeather.weatherIconsInfo,
-                      widget.chartData.maxTempIndex,
-                      widget.chartData.minTempIndex)),
+                      widget.chartData!.maxTempIndex,
+                      widget.chartData!.minTempIndex)),
             );
           } else {
             return Container();
@@ -173,17 +173,17 @@ class _ChartPainter extends CustomPainter {
       this.maxTempIndex,
       this.minTempIndex);
 
-  final List<Point> points;
-  final List<String> pointLabels;
-  final double width;
-  final double height;
-  final List<ChartLine> axes;
+  final List<Point>? points;
+  final List<String>? pointLabels;
+  final double? width;
+  final double? height;
+  final List<ChartLine>? axes;
   final double fraction;
-  final ImageInfo imageInfo;
-  final List<ImageInfo> iconImage;
-  final List<String> dateTimeLabels;
-  final int maxTempIndex;
-  final int minTempIndex;
+  final ImageInfo? imageInfo;
+  final List<ImageInfo>? iconImage;
+  final List<String>? dateTimeLabels;
+  final int? maxTempIndex;
+  final int? minTempIndex;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -191,33 +191,33 @@ class _ChartPainter extends CustomPainter {
       _drawIconList(canvas);
     }
     _drawDateTimes(canvas);
-    for (int index = 0; index < points.length; index++) {
+    for (int index = 0; index < points!.length; index++) {
       Offset textOffset = Offset(
-          points[index].x - marginLeftTemp, points[index].y - marginBottomTemp);
+          points![index].x - marginLeftTemp, points![index].y - marginBottomTemp);
       _drawLine(canvas, index);
       if (index == maxTempIndex) {
-        _drawTempText(canvas, textOffset, pointLabels[index], true,
+        _drawTempText(canvas, textOffset, pointLabels![index], true,
             isMax: true);
       } else if (index == minTempIndex) {
-        _drawTempText(canvas, textOffset, pointLabels[index], true,
+        _drawTempText(canvas, textOffset, pointLabels![index], true,
             isMin: true);
       } else {
-        _drawTempText(canvas, textOffset, pointLabels[index], true);
+        _drawTempText(canvas, textOffset, pointLabels![index], true);
       }
     }
     if (fraction > 0.999) {
-      Offset textOffset = Offset(points[points.length - 1].x - marginLeftTemp,
-          points[points.length - 1].y - marginBottomTemp);
-      _drawTempText(canvas, textOffset, pointLabels[points.length - 1], true);
+      Offset textOffset = Offset(points![points!.length - 1].x - marginLeftTemp,
+          points![points!.length - 1].y - marginBottomTemp);
+      _drawTempText(canvas, textOffset, pointLabels![points!.length - 1], true);
     }
     _drawAxes(canvas);
   }
 
   _drawLine(Canvas canvas, int index) {
     Paint paint = _getLinePaint(Colors.blue, 2);
-    if (index < points.length - 1) {
-      canvas.drawLine(_getOffsetFromPoint(points[index]),
-          _getOffsetFromPoint(points[index + 1]), paint);
+    if (index < points!.length - 1) {
+      canvas.drawLine(_getOffsetFromPoint(points![index]),
+          _getOffsetFromPoint(points![index + 1]), paint);
     }
   }
 
@@ -300,7 +300,7 @@ class _ChartPainter extends CustomPainter {
       canvas: canvas,
       rect: Rect.fromLTWH(offset.dx - _marginLeftHumidity, offset.dy,
           _iconHumiditySize, _iconHumiditySize),
-      image: imageInfo.image, // <- the loaded image
+      image: imageInfo!.image, // <- the loaded image
       filterQuality: FilterQuality.high,
     );
   }
@@ -316,30 +316,30 @@ class _ChartPainter extends CustomPainter {
   }
 
   void _drawIconList(Canvas canvas) {
-    for (int i = 0; i < iconImage.length; i++) {
+    for (int i = 0; i < iconImage!.length; i++) {
       Offset offset =
-          Offset(points[i].x - _marginLeftIconWeather, _marginTopIconWeather);
-      _drawIcon(offset, canvas, iconImage[i]);
+          Offset(points![i].x - _marginLeftIconWeather, _marginTopIconWeather);
+      _drawIcon(offset, canvas, iconImage![i]);
     }
   }
 
   void _drawDateTimes(Canvas canvas) async {
-    for (int index = 0; index < dateTimeLabels.length; index++) {
+    for (int index = 0; index < dateTimeLabels!.length; index++) {
       Offset offset =
-          Offset(points[index].x - _marginLeftDateTimes, -_marginTopDateTimes);
+          Offset(points![index].x - _marginLeftDateTimes, -_marginTopDateTimes);
       TextStyle textStyle = _getTextStyle(1, false);
       TextSpan textSpan = settingBloc.timeEnum == TimeEnum.twelve
           ? TextSpan(
               style: textStyle,
-              text: dateTimeLabels[index]
-                  .substring(0, dateTimeLabels[index].lastIndexOf(' ')),
+              text: dateTimeLabels![index]
+                  .substring(0, dateTimeLabels![index].lastIndexOf(' ')),
               children: [
                   TextSpan(
-                      text: dateTimeLabels[index]
-                          .substring(dateTimeLabels[index].lastIndexOf(' ')),
+                      text: dateTimeLabels![index]
+                          .substring(dateTimeLabels![index].lastIndexOf(' ')),
                       style: TextStyle(color: Colors.white70, fontSize: 8))
                 ])
-          : TextSpan(style: textStyle, text: dateTimeLabels[index]);
+          : TextSpan(style: textStyle, text: dateTimeLabels![index]);
       TextPainter textPainter =
           TextPainter(text: textSpan, textDirection: TextDirection.ltr);
       textPainter.layout();
@@ -373,7 +373,7 @@ class _ChartPainter extends CustomPainter {
     Paint axesPaint = _getLinePaint(Colors.white30, 1);
 
     if (axes != null) {
-      for (ChartLine lineAxis in axes) {
+      for (ChartLine lineAxis in axes!) {
         var dashWidth = 3;
         var dashSpace = 3;
         double starty = lineAxis.lineStartOffset.dy;
@@ -405,9 +405,9 @@ class _ChartPainter extends CustomPainter {
     var dashSpace = 3;
     double startX = 0;
     final space = (dashSpace + dashWidth);
-    while (startX < width) {
+    while (startX < width!) {
       canvas.drawLine(
-          Offset(startX, height), Offset(startX + dashWidth, height), paint);
+          Offset(startX, height!), Offset(startX + dashWidth, height!), paint);
       startX += space;
     }
   }
@@ -422,8 +422,8 @@ class _ChartPainter extends CustomPainter {
 }
 
 class ImageInfoWeather {
-  final ImageInfo humidityInfo;
-  final List<ImageInfo> weatherIconsInfo;
+  final ImageInfo? humidityInfo;
+  final List<ImageInfo>? weatherIconsInfo;
 
   ImageInfoWeather(this.humidityInfo, this.weatherIconsInfo);
 }

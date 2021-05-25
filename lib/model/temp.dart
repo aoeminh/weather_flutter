@@ -1,10 +1,10 @@
 class Temp {
-  double day;
-  double min;
-  double max;
-  double night;
-  double eve;
-  double morn;
+  double? day;
+  double? min;
+  double? max;
+  double? night;
+  double? eve;
+  double? morn;
 
   Temp({this.day, this.min, this.max, this.night, this.eve, this.morn});
 
@@ -28,12 +28,12 @@ class Temp {
     return data;
   }
 
-  Temp copyWith({double day,
-    double min,
-    double max,
-    double night,
-    double eve,
-    double morn}) {
+  Temp copyWith({double? day,
+    double? min,
+    double? max,
+    double? night,
+    double? eve,
+    double? morn}) {
     return Temp(day: day ?? this.day,
         min: min ?? this.min,
         max: max ?? this.max,

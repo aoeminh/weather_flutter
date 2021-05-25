@@ -15,7 +15,7 @@ class Wind {
         "deg": deg,
       };
 
-  Wind copyWith({double speed, double deg}) {
+  Wind copyWith({double? speed, double? deg}) {
     return Wind(speed ?? this.speed, deg ?? this.deg);
   }
 

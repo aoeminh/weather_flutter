@@ -24,7 +24,7 @@ class Preferences {
   static Future<List<City>> getListCityFromCache() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_LIST_CITY_KEY) != null
-        ? (jsonDecode(preferences.getString(_LIST_CITY_KEY)) as List<dynamic>)
+        ? (jsonDecode(preferences.getString(_LIST_CITY_KEY)!) as List<dynamic>)
             .map((e) => City.fromJson(e))
             .toList()
         : [];
@@ -35,7 +35,7 @@ class Preferences {
     await preferences.setString(_TEMP_SETTING_KEY, tempSetting);
   }
 
-  static Future<String> getTempSetting() async {
+  static Future<String?> getTempSetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_TEMP_SETTING_KEY);
   }
@@ -45,7 +45,7 @@ class Preferences {
     await preferences.setString(_WIND_SETTING_KEY, windSetting);
   }
 
-  static Future<String> getWindSetting() async {
+  static Future<String?> getWindSetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_WIND_SETTING_KEY);
   }
@@ -55,7 +55,7 @@ class Preferences {
     await preferences.setString(_PRESSURE_SETTING_KEY, pressureSetting);
   }
 
-  static Future<String> getPressureSetting() async {
+  static Future<String?> getPressureSetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_PRESSURE_SETTING_KEY);
   }
@@ -65,7 +65,7 @@ class Preferences {
     await preferences.setString(_DATE_SETTING_KEY, dateSetting);
   }
 
-  static Future<String> getDateSetting() async {
+  static Future<String?> getDateSetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_DATE_SETTING_KEY);
   }
@@ -75,7 +75,7 @@ class Preferences {
     await preferences.setString(_TIME_SETTING_KEY, timeSetting);
   }
 
-  static Future<String> getTimeSetting() async {
+  static Future<String?> getTimeSetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_TIME_SETTING_KEY);
   }
@@ -85,7 +85,7 @@ class Preferences {
     await preferences.setString(_VISIBILITY_SETTING_KEY, visibilitySetting);
   }
 
-  static Future<String> getVisibilitySetting() async {
+  static Future<String?> getVisibilitySetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_VISIBILITY_SETTING_KEY);
   }

@@ -7,20 +7,20 @@ import 'overall_weather_data.dart';
 import 'package:weather_app/shared/constant.dart';
 
 class Daily {
-  final int dt;
-  final int sunrise;
-  final int sunset;
-  final Temp temp;
-  final FeelsLike feelsLike;
-  final double pressure;
-  final int humidity;
-  final double dewPoint;
-  final double windSpeed;
-  final int windDeg;
-  final List<Weather> weather;
-  final int clouds;
-  final double pop;
-  final double uvi;
+  final int? dt;
+  final int? sunrise;
+  final int? sunset;
+  final Temp? temp;
+  final FeelsLike? feelsLike;
+  final double? pressure;
+  final int? humidity;
+  final double? dewPoint;
+  final double? windSpeed;
+  final int? windDeg;
+  final List<Weather>? weather;
+  final int? clouds;
+  final double? pop;
+  final double? uvi;
 
   Daily(
       {this.dt,
@@ -59,15 +59,15 @@ class Daily {
 
   static Daily withTimeZone(Daily daily, int differentTime) {
     return Daily(
-        dt: daily.dt + differentTime * oneHourMilli,
+        dt: daily.dt! + differentTime * oneHourMilli,
         clouds: daily.clouds,
         dewPoint: daily.dewPoint,
         feelsLike: daily.feelsLike,
         humidity: daily.humidity,
         pop: daily.pop,
         pressure: daily.pressure,
-        sunrise: daily.sunrise + differentTime * oneHourMilli,
-        sunset: daily.sunset + differentTime * oneHourMilli,
+        sunrise: daily.sunrise! + differentTime * oneHourMilli,
+        sunset: daily.sunset! + differentTime * oneHourMilli,
         temp: daily.temp,
         uvi: daily.uvi,
         weather: daily.weather,
@@ -76,20 +76,20 @@ class Daily {
   }
 
   Daily copyWith(
-      {int dt,
-      int sunrise,
-      int sunset,
-      Temp temp,
-      FeelsLike feelsLike,
-      double pressure,
-      int humidity,
-      double dewPoint,
-      double windSpeed,
-      int windDeg,
-      List<Weather> weather,
-      int clouds,
-      double pop,
-      double uvi}) {
+      {int? dt,
+      int? sunrise,
+      int? sunset,
+      Temp? temp,
+      FeelsLike? feelsLike,
+      double? pressure,
+      int? humidity,
+      double? dewPoint,
+      double? windSpeed,
+      int? windDeg,
+      List<Weather>? weather,
+      int? clouds,
+      double? pop,
+      double? uvi}) {
     return Daily(
         dt: dt ?? this.dt,
         clouds: clouds ?? this.clouds,

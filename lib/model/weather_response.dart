@@ -9,18 +9,18 @@ import 'overall_weather_data.dart';
 import '../shared/constant.dart';
 
 class WeatherResponse {
-  final int dt;
-  final Coordinates cord;
-  final List<Weather> overallWeatherData;
-  final MainWeatherData mainWeatherData;
-  final Wind wind;
-  final Clouds clouds;
-  final System system;
-  final int id;
-  final String name;
-  final int cod;
-  final String station;
-  ApplicationError _errorCode;
+  final int? dt;
+  final Coordinates? cord;
+  final List<Weather>? overallWeatherData;
+  final MainWeatherData? mainWeatherData;
+  final Wind? wind;
+  final Clouds? clouds;
+  final System? system;
+  final int? id;
+  final String? name;
+  final int? cod;
+  final String? station;
+  ApplicationError? _errorCode;
 
   WeatherResponse(
       {this.dt,
@@ -65,13 +65,13 @@ class WeatherResponse {
   static WeatherResponse formatWithTimezone(
       WeatherResponse weatherResponse, int differentTime) {
     return WeatherResponse(
-      dt: weatherResponse.dt + differentTime * oneHourMilli,
+      dt: weatherResponse.dt! + differentTime * oneHourMilli,
       cord: weatherResponse.cord,
       overallWeatherData: weatherResponse.overallWeatherData,
       mainWeatherData: weatherResponse.mainWeatherData,
       wind: weatherResponse.wind,
       clouds: weatherResponse.clouds,
-      system: System.withTimezone(weatherResponse.system, differentTime),
+      system: System.withTimezone(weatherResponse.system!, differentTime),
       id: weatherResponse.id,
       name: weatherResponse.name,
       cod: weatherResponse.cod,
@@ -80,17 +80,17 @@ class WeatherResponse {
   }
 
   WeatherResponse copyWith(
-      {int dt,
-      Coordinates cord,
-      List<Weather> overallWeatherData,
-      MainWeatherData mainWeatherData,
-      Wind wind,
-      Clouds clouds,
-      System system,
-      int id,
-      String name,
-      int cod,
-      String station}) {
+      {int? dt,
+      Coordinates? cord,
+      List<Weather>? overallWeatherData,
+      MainWeatherData? mainWeatherData,
+      Wind? wind,
+      Clouds? clouds,
+      System? system,
+      int? id,
+      String? name,
+      int? cod,
+      String? station}) {
     return WeatherResponse(
       dt: dt ?? this.dt,
       cord: cord ?? this.cord,
@@ -112,5 +112,5 @@ class WeatherResponse {
     return response;
   }
 
-  ApplicationError get errorCode => _errorCode;
+  ApplicationError? get errorCode => _errorCode;
 }

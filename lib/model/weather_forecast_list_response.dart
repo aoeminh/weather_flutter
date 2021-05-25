@@ -3,9 +3,9 @@ import 'city.dart';
 import 'weather_forecast_response.dart';
 
 class WeatherForecastListResponse {
-  final List<WeatherForecastResponse> list;
-  final City city;
-  ApplicationError _errorCode;
+  final List<WeatherForecastResponse>? list;
+  final City? city;
+  ApplicationError? _errorCode;
 
   WeatherForecastListResponse({this.list, this.city});
 
@@ -24,17 +24,17 @@ class WeatherForecastListResponse {
   }
 
   WeatherForecastListResponse copyWith(
-      {List<WeatherForecastResponse> list, City city}) {
+      {List<WeatherForecastResponse>? list, City? city}) {
     return WeatherForecastListResponse(
         list: list ?? this.list, city: city ?? this.city);
   }
 
   WeatherForecastListResponse formatWithTimezone(
-      {List<WeatherForecastResponse> list, City city}) {
+      {List<WeatherForecastResponse>? list, City? city}) {
     return WeatherForecastListResponse(
         list: list ?? this.list, city: city ?? this.city);
   }
 
 
-  ApplicationError get errorCode => _errorCode;
+  ApplicationError? get errorCode => _errorCode;
 }

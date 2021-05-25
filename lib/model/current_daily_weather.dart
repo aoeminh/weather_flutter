@@ -2,20 +2,20 @@ import 'overall_weather_data.dart';
 import 'package:weather_app/shared/constant.dart';
 
 class CurrentDailyWeather {
-  int dt;
-  int sunrise;
-  int sunset;
-  double temp;
-  double feelsLike;
-  int pressure;
-  int humidity;
-  double dewPoint;
-  double uvi;
-  int clouds;
-  double visibility;
-  double windSpeed;
-  int windDeg;
-  List<Weather> weather;
+  int? dt;
+  int? sunrise;
+  int? sunset;
+  double? temp;
+  double? feelsLike;
+  int? pressure;
+  int? humidity;
+  double? dewPoint;
+  double? uvi;
+  int? clouds;
+  double? visibility;
+  double? windSpeed;
+  int? windDeg;
+  List<Weather>? weather;
 
   CurrentDailyWeather(
       {this.dt,
@@ -50,7 +50,7 @@ class CurrentDailyWeather {
     if (json['weather'] != null) {
       weather = <Weather>[];
       json['weather'].forEach((v) {
-        weather.add(new Weather.fromJson(v));
+        weather!.add(new Weather.fromJson(v));
       });
     }
   }
@@ -63,14 +63,14 @@ class CurrentDailyWeather {
         weather: currentDailyWeather.weather,
         uvi: currentDailyWeather.uvi,
         temp: currentDailyWeather.temp,
-        sunset: currentDailyWeather.sunset + differentTime * oneHourMilli,
+        sunset: currentDailyWeather.sunset! + differentTime * oneHourMilli,
         sunrise: currentDailyWeather.sunrise = differentTime * oneHourMilli,
         pressure: currentDailyWeather.pressure,
         humidity: currentDailyWeather.humidity,
         feelsLike: currentDailyWeather.feelsLike,
         dewPoint: currentDailyWeather.dewPoint,
         clouds: currentDailyWeather.clouds,
-        dt: currentDailyWeather.dt + differentTime * oneHourMilli,
+        dt: currentDailyWeather.dt! + differentTime * oneHourMilli,
         visibility: currentDailyWeather.visibility);
   }
 
@@ -90,26 +90,26 @@ class CurrentDailyWeather {
     data['wind_speed'] = this.windSpeed;
     data['wind_deg'] = this.windDeg;
     if (this.weather != null) {
-      data['weather'] = this.weather.map((v) => v.toJson()).toList();
+      data['weather'] = this.weather!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 
   CurrentDailyWeather copyWith(
-      {int dt,
-      int sunrise,
-      int sunset,
-      double temp,
-      double feelsLike,
-      int pressure,
-      int humidity,
-      double dewPoint,
-      double uvi,
-      int clouds,
-      double visibility,
-      double windSpeed,
-      int windDeg,
-      List<Weather> weather}) {
+      {int? dt,
+      int? sunrise,
+      int? sunset,
+      double? temp,
+      double? feelsLike,
+      int? pressure,
+      int? humidity,
+      double? dewPoint,
+      double? uvi,
+      int? clouds,
+      double? visibility,
+      double? windSpeed,
+      int? windDeg,
+      List<Weather>? weather}) {
     return CurrentDailyWeather(
         windDeg: windDeg ?? this.windDeg,
         weather: weather ?? this.weather,

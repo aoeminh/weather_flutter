@@ -9,7 +9,7 @@ import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 
-Image getIconForecastImage(String iconCode, {double width, double height}) {
+Image getIconForecastImage(String? iconCode, {double? width, double? height}) {
   switch (iconCode) {
     case mClear:
       return Image.asset(
@@ -83,7 +83,7 @@ Image getIconForecastImage(String iconCode, {double width, double height}) {
   }
 }
 
-String getIconForecastUrl(String iconCode) {
+String getIconForecastUrl(String? iconCode) {
   switch (iconCode) {
     case mClear:
       return mIconClears;
@@ -117,7 +117,7 @@ String getIconForecastUrl(String iconCode) {
   }
 }
 
-String getBgImagePath(String iconCode) {
+String getBgImagePath(String? iconCode) {
   switch (iconCode) {
     case mClear:
       return mBgClear;
@@ -151,7 +151,7 @@ String getBgImagePath(String iconCode) {
   }
 }
 
-String getBgAppbarPath(String iconCode) {
+String getBgAppbarPath(String? iconCode) {
   switch (iconCode) {
     case mClear:
       return bgAppbarClear;
@@ -235,7 +235,7 @@ String formatDateAndMonth(DateTime dateTime,DateEnum dateEnum) {
   return date;
 }
 
-String formatWeekDayAndTime(DateTime dateTime, TimeEnum timeEnum) {
+String formatWeekDayAndTime(DateTime? dateTime, TimeEnum timeEnum) {
   DateFormat df = new DateFormat('EEE HH:mm');
   switch (timeEnum) {
     case TimeEnum.twelve:
@@ -246,12 +246,12 @@ String formatWeekDayAndTime(DateTime dateTime, TimeEnum timeEnum) {
       break;
   }
 
-  String date = df.format(dateTime);
+  String date = df.format(dateTime!);
   return date;
 }
 
 String formatTime(DateTime dateTime, TimeEnum timeEnum) {
-  DateFormat df;
+  late DateFormat df;
   switch (timeEnum) {
     case TimeEnum.twelve:
       df = new DateFormat('h:mm a');
@@ -279,7 +279,7 @@ Map<String, List<WeatherForecastResponse>> mapForecastsForSameDay(
     if (!map.containsKey(dayKey)) {
       map[dayKey] = <WeatherForecastResponse>[];
     }
-    map[dayKey].add(response);
+    map[dayKey]!.add(response);
   }
   return map;
 }
@@ -288,49 +288,49 @@ String _getDayKey(DateTime dateTime) {
   return "${dateTime.day.toString()}-${dateTime.month.toString()}-${dateTime.year.toString()}";
 }
 
-double convertTemp(double temp, TempEnum tempEnum) {
+double? convertTemp(double? temp, TempEnum tempEnum) {
   if (tempEnum == TempEnum.F) {
-    return convertCelsiusToFahrenheit(temp);
+    return convertCelsiusToFahrenheit(temp!);
   }
   return temp;
 }
 
-double convertWindSpeed(double speed, WindEnum windEnum) {
+double? convertWindSpeed(double? speed, WindEnum windEnum) {
   switch (windEnum) {
     case WindEnum.kmh:
       return speed;
     case WindEnum.mph:
-      return convertKmHToMph(speed);
+      return convertKmHToMph(speed!);
     case WindEnum.ms:
-      return convertKmHToMps(speed);
+      return convertKmHToMps(speed!);
     default:
       return speed;
   }
 }
 
-double convertPressure(double pressure, PressureEnum pressureEnum) {
+double? convertPressure(double? pressure, PressureEnum pressureEnum) {
   switch (pressureEnum) {
     case PressureEnum.mBar:
       return pressure;
     case PressureEnum.bar:
-      return convertHpaToBar(pressure);
+      return convertHpaToBar(pressure!);
     case PressureEnum.mmHg:
-      return convertHpaTommHg(pressure);
+      return convertHpaTommHg(pressure!);
     case PressureEnum.psi:
-      return convertHpaToPsi(pressure);
+      return convertHpaToPsi(pressure!);
     case PressureEnum.inHg:
-      return convertHpaToinHg(pressure);
+      return convertHpaToinHg(pressure!);
     default:
       return pressure;
   }
 }
 
-double convertVisibility(double visibility, VisibilityEnum visibilityEnum) {
+double? convertVisibility(double? visibility, VisibilityEnum visibilityEnum) {
   switch (visibilityEnum) {
     case VisibilityEnum.km:
       return visibility;
     case VisibilityEnum.mile:
-      return convertKmToMiles(visibility);
+      return convertKmToMiles(visibility!);
     default:
       return visibility;
   }
@@ -351,12 +351,12 @@ double convertKmHToMph(double speed) => speed * 0.62;
 double convertKmHToMps(double speed) => speed * 1000 / 3600;
 
 String formatTemperature(
-    {double temperature, int positions = 0, round = true, String unit = ''}) {
+    {double? temperature, int positions = 0, round = true, String unit = ''}) {
   if (round) {
-    temperature = temperature.floor().toDouble();
+    temperature = temperature!.floor().toDouble();
   }
 
-  return "${temperature.toStringAsFixed(positions)}$degree$unit";
+  return "${temperature!.toStringAsFixed(positions)}$degree$unit";
 }
 
 double convertCelsiusToFahrenheit(double temperature) {
@@ -428,8 +428,8 @@ String formatHumidity(double humidity) {
 }
 
 int getDayMode(System system) {
-  int sunrise = system.sunrise * 1000;
-  int sunset = system.sunset * 1000;
+  int sunrise = system.sunrise! * 1000;
+  int sunset = system.sunset! * 1000;
   return getDayModeFromSunriseSunset(sunrise, sunset);
 }
 

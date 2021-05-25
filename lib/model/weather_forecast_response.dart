@@ -7,7 +7,7 @@ import 'overall_weather_data.dart';
 import '../utils/types_helper.dart';
 
 class WeatherForecastResponse {
-  final int dt;
+  final int? dt;
   final MainWeatherData mainWeatherData;
   final List<Weather> overallWeatherData;
   final Clouds clouds;
@@ -44,16 +44,16 @@ class WeatherForecastResponse {
         snow = _getRain(json["snow"]);
 
   WeatherForecastResponse copyWith(
-      {int dt,
-      MainWeatherData mainWeatherData,
-      List<Weather> overallWeatherData,
-      Clouds clouds,
-      Wind wind,
-      DateTime dateTime,
-      Rain rain,
-      Rain snow,
-      double visibility,
-      double pop}) {
+      {int? dt,
+      MainWeatherData? mainWeatherData,
+      List<Weather>? overallWeatherData,
+      Clouds? clouds,
+      Wind? wind,
+      DateTime? dateTime,
+      Rain? rain,
+      Rain? snow,
+      double? visibility,
+      double? pop}) {
     return WeatherForecastResponse(
         dt ?? this.dt,
         mainWeatherData ?? this.mainWeatherData,

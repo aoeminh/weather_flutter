@@ -20,11 +20,11 @@ import '../../shared/text_style.dart';
 import 'weather_screen.dart';
 
 class HomePage extends StatefulWidget {
-  final List<City> listCity;
+  final List<City>? listCity;
 
-  const HomePage({Key key, this.listCity}) : super(key: key);
+  const HomePage({Key? key, this.listCity}) : super(key: key);
 
-  static _HomePageState of(BuildContext context) =>
+  static _HomePageState? of(BuildContext context) =>
       context.findAncestorStateOfType<_HomePageState>();
 
   @override
@@ -33,14 +33,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool isShowingDialog = false;
-  StreamSubscription subscription;
-  int currentPage;
+  late StreamSubscription subscription;
+  int? currentPage;
 
   @override
   void initState() {
     super.initState();
     currentPage = 0;
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     appBloc.getListCity();
     appBloc.getListSuggestCity();
     appBloc.getListTimezone();
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   _checkNetWork() {
     appBloc.checkNetWork().then((isNetWorkAvailable) {
       if (isNetWorkAvailable) {
-        pageBloc.addListCity(widget.listCity);
+        pageBloc.addListCity(widget.listCity!);
       } else {
         appBloc.addError(ApplicationError.connectionError);
       }
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
-  _showErrorDialog({String content, VoidCallback callback}) {
+  _showErrorDialog({String? content, VoidCallback? callback}) {
     isShowingDialog = true;
     showDialog(
         barrierDismissible: false,
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    content,
+                    content!,
                     style: textSecondaryWhite70,
                   ),
                   const SizedBox(
@@ -155,7 +155,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   _showNotification() async {
-    WeatherResponse weatherResponse = settingBloc.weatherResponse;
+    WeatherResponse weatherResponse = settingBloc.weatherResponse!;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('id', 'name', 'description',
             importance: Importance.defaultImportance,
@@ -173,9 +173,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     String title =
-        '${weatherResponse.mainWeatherData.temp}$degreeC at ${weatherResponse.name} ';
+        '${weatherResponse.mainWeatherData!.temp}$degreeC at ${weatherResponse.name} ';
     String body =
-        'Feels like ${weatherResponse.mainWeatherData.feelsLike}$degreeC . ${weatherResponse.overallWeatherData[0].description} ';
+        'Feels like ${weatherResponse.mainWeatherData!.feelsLike}$degreeC . ${weatherResponse.overallWeatherData![0].description} ';
 
     await flutterLocalNotificationsPlugin
         .show(0, title, body, notificationDetails, payload: 'payload');
@@ -191,17 +191,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return SafeArea(
       child: StreamBuilder<List<City>>(
-        stream: pageBloc.pageStream,
+        stream: pageBloc.pageStream as Stream<List<City>>?,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return PageView(
               controller: controller,
               scrollDirection: Axis.horizontal,
-              children: snapshot.data
+              children: snapshot.data!
                   .map((data) => WeatherScreen(
-                      index: snapshot.data.indexOf(data),
-                      lat: data.coordinates.latitude,
-                      lon: data.coordinates.longitude))
+                      index: snapshot.data!.indexOf(data),
+                      lat: data.coordinates!.latitude,
+                      lon: data.coordinates!.longitude))
                   .toList(),
               onPageChanged: (page) {
                 currentPage = page;
@@ -243,7 +243,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     appBloc.dispose();
     pageBloc.dispose();
     settingBloc.dispose();

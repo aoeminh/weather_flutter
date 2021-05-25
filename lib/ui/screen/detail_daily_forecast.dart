@@ -14,11 +14,11 @@ const double _iconLowHighSize = 20;
 const double _iconRowSize = 14;
 
 class DetailDailyForecast extends StatefulWidget {
-  final WeatherForecastDaily weatherForecastDaily;
-  final int currentIndex;
+  final WeatherForecastDaily? weatherForecastDaily;
+  final int? currentIndex;
 
   const DetailDailyForecast(
-      {Key key, this.weatherForecastDaily, this.currentIndex})
+      {Key? key, this.weatherForecastDaily, this.currentIndex})
       : super(key: key);
 
   @override
@@ -35,8 +35,8 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: widget.currentIndex,
-      length: widget.weatherForecastDaily.daily.length,
+      initialIndex: widget.currentIndex!,
+      length: widget.weatherForecastDaily!.daily!.length,
       child: Scaffold(
           backgroundColor: Colors.blue,
           appBar: AppBar(
@@ -57,7 +57,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                 isScrollable: true,
                 unselectedLabelColor: Colors.white.withOpacity(0.3),
                 tabs: [
-                  ...widget.weatherForecastDaily.daily
+                  ...widget.weatherForecastDaily!.daily!
                       .asMap()
                       .map((i, daily) {
                         return MapEntry(
@@ -65,11 +65,11 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                           Container(
                             child: Column(children: [
                               Text(
-                                '${formatWeekday(DateTime.fromMillisecondsSinceEpoch(daily.dt))}',
+                                '${formatWeekday(DateTime.fromMillisecondsSinceEpoch(daily.dt!))}',
                                 style: textTitleWhite70,
                               ),
                               Text(
-                                '${formatDateAndMonth(DateTime.fromMillisecondsSinceEpoch(daily.dt),settingBloc.dateEnum)}',
+                                '${formatDateAndMonth(DateTime.fromMillisecondsSinceEpoch(daily.dt!),settingBloc.dateEnum)}',
                                 style: textTitleWhite70,
                               ),
                             ]),
@@ -82,7 +82,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
           ),
           body: TabBarView(
             children: <Widget>[
-              ...widget.weatherForecastDaily.daily
+              ...widget.weatherForecastDaily!.daily!
                   .map((daily) => _buildBodyTabView(daily))
             ],
           )),
@@ -109,32 +109,32 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
         ),
       );
 
-  _buildDetail(Daily daily, {bool isDay}) {
+  _buildDetail(Daily daily, {required bool isDay}) {
     String session;
     String temp;
     Image icon;
-    String status;
+    String? status;
     String feelslike;
     if (isDay) {
       session = 'Day';
-      temp = '${daily.temp.day.toInt()}$degree';
+      temp = '${daily.temp!.day!.toInt()}$degree';
       icon = Image.asset(
         mIconHigh,
         width: _iconLowHighSize,
         height: _iconLowHighSize,
       );
-      status = daily.weather[0].main;
-      feelslike = '${daily.temp.max.toInt()}$degree';
+      status = daily.weather![0].main;
+      feelslike = '${daily.temp!.max!.toInt()}$degree';
     } else {
       session = 'Night';
-      temp = '${daily.temp.night.toInt()}$degree';
+      temp = '${daily.temp!.night!.toInt()}$degree';
       icon = Image.asset(
         mIconLow,
         width: _iconLowHighSize,
         height: _iconLowHighSize,
       );
-      status = daily.weather[0].description;
-      feelslike = '${daily.temp.min.toInt()}$degree';
+      status = daily.weather![0].description;
+      feelslike = '${daily.temp!.min!.toInt()}$degree';
     }
 
     return Container(
@@ -153,7 +153,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Image.asset(
-                getIconForecastUrl(daily.weather[0].icon),
+                getIconForecastUrl(daily.weather![0].icon),
                 width: _iconStatusSize,
                 height: _iconStatusSize,
               ),
@@ -171,23 +171,23 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
             height: margin,
           ),
           Text(
-            status,
+            status!,
             style: textTitleH2White,
           ),
           _buildRowDetail(mIconSettingTemp, 'Feels like(max)', feelslike),
           _divider(),
-          _buildRowDetail(mIconWind, 'Wind', "${formatWind(daily.windSpeed,settingBloc.windEnum.value)}"),
+          _buildRowDetail(mIconWind, 'Wind', "${formatWind(daily.windSpeed!,settingBloc.windEnum.value)}"),
           _divider(),
           isDay
               ? _buildRowDetail(
-                  mIconUVIndex, 'UV index', "${daily.uvi.toInt()}")
+                  mIconUVIndex, 'UV index', "${daily.uvi!.toInt()}")
               : Container(),
           isDay ? _divider() : Container(),
           _buildRowDetail(
-              mIcPrecipitation, 'Pop', "${formatHumidity(daily.pop)}"),
+              mIcPrecipitation, 'Pop', "${formatHumidity(daily.pop!)}"),
           _divider(),
           _buildRowDetail(mIconCloudCover, 'Cloud Cover',
-              "${formatHumidity(daily.clouds.toDouble())}"),
+              "${formatHumidity(daily.clouds!.toDouble())}"),
         ],
       ),
     );
@@ -260,7 +260,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                   height: _iconStatusSize,
                 ),
                 Text(
-                  '${getRiseAndSetTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise), DateTime.fromMillisecondsSinceEpoch(daily.sunset))}',
+                  '${getRiseAndSetTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise!), DateTime.fromMillisecondsSinceEpoch(daily.sunset!))}',
                   style: textTitleWhite,
                 )
               ],
@@ -277,7 +277,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise),settingBloc.timeEnum)}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise!),settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],
@@ -294,7 +294,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset),settingBloc.timeEnum)}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset!),settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],

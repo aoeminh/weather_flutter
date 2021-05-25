@@ -5,57 +5,57 @@ import 'city.dart';
 import 'weather_forecast_response.dart';
 
 class WeatherForecastHolder {
-  List<double> _temperatures;
-  List<double> _pops;
-  double _averageTemperature;
-  double _maxTemperature;
-  double _minTemperature;
+  List<double>? _temperatures;
+  List<double>? _pops;
+  double? _averageTemperature;
+  double? _maxTemperature;
+  double? _minTemperature;
 
-  List<double> _winds;
-  double _averageWind;
-  double _maxWind;
-  double _minWind;
+  List<double>? _winds;
+  double? _averageWind;
+  double? _maxWind;
+  double? _minWind;
 
-  List<double> _rains;
-  double _averageRain;
-  double _maxRain;
-  double _minRain;
+  List<double>? _rains;
+  double? _averageRain;
+  double? _maxRain;
+  double? _minRain;
 
-  List<double> _pressures;
-  double _averagePressure;
-  double _maxPressure;
-  double _minPressure;
+  List<double>? _pressures;
+  double? _averagePressure;
+  double? _maxPressure;
+  double? _minPressure;
 
-  String _dateShortFormatted;
-  String _dateFullFormatted;
-  int _weatherCode;
-  String _weatherCodeAsset;
-  List<WeatherForecastResponse> _forecastList;
-  City _city;
+  String? _dateShortFormatted;
+  String? _dateFullFormatted;
+  int? _weatherCode;
+  String? _weatherCodeAsset;
+  List<WeatherForecastResponse>? _forecastList;
+  City? _city;
 
   WeatherForecastHolder(
-      List<WeatherForecastResponse> forecastList, City city) {
+      List<WeatherForecastResponse> forecastList, City? city) {
     _forecastList = forecastList;
     _temperatures = _getTemperaturesList();
     _pops =_getPopsList();
-    _averageTemperature = _calculateAverage(_temperatures);
-    _maxTemperature = _calculateMax(_temperatures);
-    _minTemperature = _calculateMin(_temperatures);
+    _averageTemperature = _calculateAverage(_temperatures!);
+    _maxTemperature = _calculateMax(_temperatures!);
+    _minTemperature = _calculateMin(_temperatures!);
 
     _winds = _getWindList();
-    _averageWind = _calculateAverage(_winds);
-    _maxWind = _calculateMax(_winds);
-    _minWind = _calculateMin(_winds);
+    _averageWind = _calculateAverage(_winds!);
+    _maxWind = _calculateMax(_winds!);
+    _minWind = _calculateMin(_winds!);
 
     _rains = _getRainList();
-    _averageRain = _calculateAverage(_rains);
-    _maxRain = _calculateMax(_rains);
-    _minRain = _calculateMin(_rains);
+    _averageRain = _calculateAverage(_rains!);
+    _maxRain = _calculateMax(_rains!);
+    _minRain = _calculateMin(_rains!);
 
     _pressures = _getPressureList();
-    _averagePressure = _calculateAverage(_pressures);
-    _maxPressure = _calculateMax(_pressures);
-    _minPressure = _calculateMin(_pressures);
+    _averagePressure = _calculateAverage(_pressures!);
+    _maxPressure = _calculateMax(_pressures!);
+    _minPressure = _calculateMin(_pressures!);
 
     setupDateFormatted(forecastList[0].dateTime);
     // setupWeatherCode(forecastList);
@@ -64,7 +64,7 @@ class WeatherForecastHolder {
 
   List<double> _getTemperaturesList() {
     List<double> temperatures = [];
-    for (WeatherForecastResponse response in forecastList) {
+    for (WeatherForecastResponse response in forecastList!) {
       temperatures.add(response.mainWeatherData.temp.toDouble());
     }
     return temperatures;
@@ -72,7 +72,7 @@ class WeatherForecastHolder {
 
   List<double> _getPopsList() {
     List<double> pops = [];
-    for (WeatherForecastResponse response in forecastList) {
+    for (WeatherForecastResponse response in forecastList!) {
       pops.add(response.pop);
     }
     return pops;
@@ -81,7 +81,7 @@ class WeatherForecastHolder {
 
   List<double> _getWindList() {
     List<double> winds = [];
-    for (WeatherForecastResponse response in forecastList) {
+    for (WeatherForecastResponse response in forecastList!) {
       var speed = response.wind.speed;
       winds.add(speed);
     }
@@ -106,7 +106,7 @@ class WeatherForecastHolder {
     }
 
     _dateShortFormatted = dayString + "/" + monthString;
-    _dateFullFormatted = _dateShortFormatted + "/" + dateTime.year.toString();
+    _dateFullFormatted = _dateShortFormatted! + "/" + dateTime.year.toString();
   }
 
   double _calculateAverage(List<double> values) {
@@ -154,12 +154,12 @@ class WeatherForecastHolder {
 
   ChartData setupChartData(
       ChartDataType chartDataType, double width, double height) {
-    return ChartData(this, forecastList, chartDataType, width, height);
+    return ChartData(this, forecastList!, chartDataType, width, height);
   }
 
   List<String> getWindDirectionList() {
     List<String> windDirections = [];
-    for (WeatherForecastResponse response in forecastList) {
+    for (WeatherForecastResponse response in forecastList!) {
       windDirections.add(response.wind.getDegCode());
     }
     return windDirections;
@@ -167,7 +167,7 @@ class WeatherForecastHolder {
 
   List<double> _getRainList() {
     List<double> rainList = [];
-    for (WeatherForecastResponse response in forecastList) {
+    for (WeatherForecastResponse response in forecastList!) {
       double rainSum = 0;
       if (response.rain != null && response.rain.amount != null) {
         rainSum = response.rain.amount;
@@ -182,56 +182,56 @@ class WeatherForecastHolder {
 
   List<double> _getPressureList() {
     List<double> pressureList = [];
-    for (WeatherForecastResponse response in forecastList) {
+    for (WeatherForecastResponse response in forecastList!) {
       pressureList.add(response.mainWeatherData.pressure);
     }
     return pressureList;
   }
 
-  String get weatherCodeAsset => _weatherCodeAsset;
+  String? get weatherCodeAsset => _weatherCodeAsset;
 
-  int get weatherCode => _weatherCode;
+  int? get weatherCode => _weatherCode;
 
-  double get averageTemperature => _averageTemperature;
+  double? get averageTemperature => _averageTemperature;
 
-  double get minTemperature => _minTemperature;
+  double? get minTemperature => _minTemperature;
 
-  double get maxTemperature => _maxTemperature;
+  double? get maxTemperature => _maxTemperature;
 
-  String get dateFullFormatted => _dateFullFormatted;
+  String? get dateFullFormatted => _dateFullFormatted;
 
-  String get dateShortFormatted => _dateShortFormatted;
+  String? get dateShortFormatted => _dateShortFormatted;
 
-  List<WeatherForecastResponse> get forecastList => _forecastList;
+  List<WeatherForecastResponse>? get forecastList => _forecastList;
 
-  City get city => _city;
+  City? get city => _city;
 
-  double get minWind => _minWind;
+  double? get minWind => _minWind;
 
-  double get maxWind => _maxWind;
+  double? get maxWind => _maxWind;
 
-  double get averageWind => _averageWind;
+  double? get averageWind => _averageWind;
 
-  List<double> get winds => _winds;
+  List<double>? get winds => _winds;
 
-  List<double> get temperatures => _temperatures;
+  List<double>? get temperatures => _temperatures;
 
-  List<double> get pops => _pops;
+  List<double>? get pops => _pops;
 
-  double get minRain => _minRain;
+  double? get minRain => _minRain;
 
-  double get maxRain => _maxRain;
+  double? get maxRain => _maxRain;
 
-  double get averageRain => _averageRain;
+  double? get averageRain => _averageRain;
 
-  List<double> get rains => _rains;
+  List<double>? get rains => _rains;
 
-  double get minPressure => _minPressure;
+  double? get minPressure => _minPressure;
 
-  double get maxPressure => _maxPressure;
+  double? get maxPressure => _maxPressure;
 
-  double get averagePressure => _averagePressure;
+  double? get averagePressure => _averagePressure;
 
-  List<double> get pressures => _pressures;
+  List<double>? get pressures => _pressures;
 
 }

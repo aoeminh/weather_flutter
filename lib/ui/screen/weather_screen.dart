@@ -59,11 +59,11 @@ const double _ratioBlurBg = 1 / 150;
 const double _ratioBlurImageBg = 1 / 10;
 
 class WeatherScreen extends StatefulWidget {
-  final double lat;
-  final double lon;
-  final int index;
+  final double? lat;
+  final double? lon;
+  final int? index;
 
-  const WeatherScreen({Key key, this.lat, this.lon, this.index});
+  const WeatherScreen({Key? key, this.lat, this.lon, this.index});
 
   @override
   _WeatherScreenState createState() => _WeatherScreenState();
@@ -74,15 +74,15 @@ class _WeatherScreenState extends State<WeatherScreen>
   final ApiServiceBloc bloc = ApiServiceBloc();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
-  WeatherResponse weatherResponse;
-  WeatherForecastListResponse weatherForecastListResponse;
-  WeatherForecastDaily weatherForecastDaily;
-  WeatherData weatherData;
+  WeatherResponse? weatherResponse;
+  WeatherForecastListResponse? weatherForecastListResponse;
+  WeatherForecastDaily? weatherForecastDaily;
+  WeatherData? weatherData;
   BehaviorSubject<DateTime> timeSubject =
       BehaviorSubject.seeded(DateTime.now());
   BehaviorSubject<double> _scrollSubject = BehaviorSubject.seeded(0);
-  AnimationController _controller;
-  AnimationController _controller2;
+  AnimationController? _controller;
+  AnimationController? _controller2;
   ScrollController _scrollController = ScrollController();
   int currentTime = 0;
   String timezone = '';
@@ -121,7 +121,7 @@ class _WeatherScreenState extends State<WeatherScreen>
         DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli));
   }
 
-  getData({double lat, double lon}) {
+  getData({double? lat, double? lon}) {
     bloc.fetchWeatherForecast7Day(
         lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
@@ -164,8 +164,8 @@ class _WeatherScreenState extends State<WeatherScreen>
     bloc.dispose();
     _controller?.dispose();
     _controller2?.dispose();
-    timeSubject?.close();
-    _scrollSubject?.close();
+    timeSubject.close();
+    _scrollSubject.close();
     super.dispose();
   }
 
@@ -176,9 +176,9 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<WeatherData>(
+    return StreamBuilder<WeatherData?>(
       stream: Rx.combineLatest3(bloc.weatherStream, bloc.weatherForecastStream,
-          bloc.weatherForecastDailyStream, (a, b, c) {
+          bloc.weatherForecastDailyStream, (dynamic a, dynamic b, dynamic c) {
         if (a is WeatherStateSuccess &&
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
@@ -196,9 +196,9 @@ class _WeatherScreenState extends State<WeatherScreen>
           weatherData = snapshot.data;
           convertDataAndFormatTime();
           pageBloc.removeItemWhenFirstLoadApp(
-              weatherData.weatherForecastListResponse.city);
+              weatherData!.weatherForecastListResponse!.city);
           _createTime(DateTime.fromMillisecondsSinceEpoch(
-              weatherData.weatherForecastDaily.current.dt));
+              weatherData!.weatherForecastDaily!.current!.dt!));
         }
         // keep old data when request fail
         return weatherData != null
@@ -223,26 +223,26 @@ class _WeatherScreenState extends State<WeatherScreen>
                                   child: ImageFiltered(
                                     imageFilter: ImageFilter.blur(
                                         sigmaY:
-                                            (snapshot.data * _ratioBlurImageBg),
-                                        sigmaX: (snapshot.data *
+                                            (snapshot.data! * _ratioBlurImageBg),
+                                        sigmaX: (snapshot.data! *
                                             _ratioBlurImageBg)),
                                     child: Image.asset(
-                                      getBgImagePath(weatherData.weatherResponse
-                                          .overallWeatherData[0].icon),
+                                      getBgImagePath(weatherData!.weatherResponse!
+                                          .overallWeatherData![0].icon),
                                       fit: BoxFit.fill,
                                     ),
                                   ),
                                 ),
                                 Container(
                                   color: Colors.black.withOpacity(
-                                      snapshot.data * _ratioBlurBg),
+                                      snapshot.data! * _ratioBlurBg),
                                 ),
                               ],
                             );
                           }
                           return Container();
                         }),
-                    _body(weatherData)
+                    _body(weatherData!)
                   ],
                 ),
                 drawer: _drawer(),
@@ -257,46 +257,46 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   convertDataAndFormatTime() {
-    WeatherResponse weatherResponse = weatherData.weatherResponse;
+    WeatherResponse weatherResponse = weatherData!.weatherResponse!;
     WeatherForecastListResponse weatherForecastListResponse =
-        weatherData.weatherForecastListResponse;
+        weatherData!.weatherForecastListResponse!;
     WeatherForecastDaily weatherForecastDaily =
-        weatherData.weatherForecastDaily;
-    weatherData = weatherData.copyWith(
+        weatherData!.weatherForecastDaily!;
+    weatherData = weatherData!.copyWith(
         weatherResponse: weatherResponse.copyWith(
-            dt: weatherResponse.dt + differentTime * oneHourMilli,
-            wind: weatherResponse.wind.copyWith(
+            dt: weatherResponse.dt! + differentTime * oneHourMilli,
+            wind: weatherResponse.wind!.copyWith(
                 speed: convertWindSpeed(
-                    weatherResponse.wind.speed, settingBloc.windEnum)),
-            mainWeatherData: weatherResponse.mainWeatherData.copyWith(
+                    weatherResponse.wind!.speed, settingBloc.windEnum)),
+            mainWeatherData: weatherResponse.mainWeatherData!.copyWith(
                 pressure: convertPressure(
-                    weatherResponse.mainWeatherData.pressure,
+                    weatherResponse.mainWeatherData!.pressure,
                     settingBloc.pressureEnum),
                 temp: convertTemp(
-                    weatherResponse.mainWeatherData.temp, settingBloc.tempEnum),
-                tempMin: convertTemp(weatherResponse.mainWeatherData.tempMin,
+                    weatherResponse.mainWeatherData!.temp, settingBloc.tempEnum),
+                tempMin: convertTemp(weatherResponse.mainWeatherData!.tempMin,
                     settingBloc.tempEnum),
-                tempMax: convertTemp(weatherResponse.mainWeatherData.tempMax,
+                tempMax: convertTemp(weatherResponse.mainWeatherData!.tempMax,
                     settingBloc.tempEnum),
                 feelsLike: convertTemp(
-                    weatherResponse.mainWeatherData.feelsLike,
+                    weatherResponse.mainWeatherData!.feelsLike,
                     settingBloc.tempEnum))),
         weatherForecastListResponse: weatherForecastListResponse.copyWith(
             list: _convertForecastListResponse(weatherForecastListResponse)),
         weatherForecastDaily: weatherForecastDaily.copyWith(
-            daily: _convertListDaily(weatherForecastDaily.daily),
-            current: weatherForecastDaily.current.copyWith(
-                visibility: convertVisibility(weatherForecastDaily.current.visibility, settingBloc.visibilityEnum),
-                feelsLike: convertTemp(weatherForecastDaily.current.feelsLike, settingBloc.tempEnum),
-                temp: convertTemp(weatherForecastDaily.current.temp, settingBloc.tempEnum))));
+            daily: _convertListDaily(weatherForecastDaily.daily!),
+            current: weatherForecastDaily.current!.copyWith(
+                visibility: convertVisibility(weatherForecastDaily.current!.visibility, settingBloc.visibilityEnum),
+                feelsLike: convertTemp(weatherForecastDaily.current!.feelsLike, settingBloc.tempEnum),
+                temp: convertTemp(weatherForecastDaily.current!.temp, settingBloc.tempEnum))));
   }
 
   List<WeatherForecastResponse> _convertForecastListResponse(
       WeatherForecastListResponse weatherForecastListResponse) {
     List<WeatherForecastResponse> list =
-        weatherForecastListResponse.list.map((e) {
+        weatherForecastListResponse.list!.map((e) {
       return e.copyWith(
-          dt: e.dt + differentTime * oneHourMilli,
+          dt: e.dt! + differentTime * oneHourMilli,
           wind: e.wind.copyWith(
               speed: convertWindSpeed(e.wind.speed, settingBloc.windEnum)),
           mainWeatherData: e.mainWeatherData.copyWith(
@@ -317,29 +317,29 @@ class _WeatherScreenState extends State<WeatherScreen>
     return dailies
         .map((e) => e.copyWith(
             windSpeed: convertWindSpeed(e.windSpeed, settingBloc.windEnum),
-            dewPoint: convertTemp(e.temp.day, settingBloc.tempEnum),
+            dewPoint: convertTemp(e.temp!.day, settingBloc.tempEnum),
             pressure: convertPressure(e.pressure, settingBloc.pressureEnum),
-            temp: e.temp.copyWith(
-                day: convertTemp(e.temp.day, settingBloc.tempEnum),
-                eve: convertTemp(e.temp.eve, settingBloc.tempEnum),
-                max: convertTemp(e.temp.max, settingBloc.tempEnum),
-                min: convertTemp(e.temp.min, settingBloc.tempEnum),
-                morn: convertTemp(e.temp.morn, settingBloc.tempEnum),
-                night: convertTemp(e.temp.night, settingBloc.tempEnum)),
-            feelsLike: e.feelsLike.copyWith(
-                day: convertTemp(e.temp.day, settingBloc.tempEnum),
-                eve: convertTemp(e.feelsLike.eve, settingBloc.tempEnum),
-                morn: convertTemp(e.feelsLike.morn, settingBloc.tempEnum),
-                night: convertTemp(e.feelsLike.night, settingBloc.tempEnum))))
+            temp: e.temp!.copyWith(
+                day: convertTemp(e.temp!.day, settingBloc.tempEnum),
+                eve: convertTemp(e.temp!.eve, settingBloc.tempEnum),
+                max: convertTemp(e.temp!.max, settingBloc.tempEnum),
+                min: convertTemp(e.temp!.min, settingBloc.tempEnum),
+                morn: convertTemp(e.temp!.morn, settingBloc.tempEnum),
+                night: convertTemp(e.temp!.night, settingBloc.tempEnum)),
+            feelsLike: e.feelsLike!.copyWith(
+                day: convertTemp(e.temp!.day, settingBloc.tempEnum),
+                eve: convertTemp(e.feelsLike!.eve, settingBloc.tempEnum),
+                morn: convertTemp(e.feelsLike!.morn, settingBloc.tempEnum),
+                night: convertTemp(e.feelsLike!.night, settingBloc.tempEnum))))
         .toList();
   }
 
-  int _getDifferentTime(String timezone) {
+  int _getDifferentTime(String? timezone) {
     print('value $timezone');
     String value = '';
-    for (Timezone time in appBloc.timezones) {
-      if (time.value.toLowerCase().contains(getTimezone(timezone))) {
-        value = getTimezone(time.name);
+    for (Timezone time in appBloc.timezones!) {
+      if (time.value!.toLowerCase().contains(getTimezone(timezone!))) {
+        value = getTimezone(time.name!);
       }
     }
 
@@ -367,7 +367,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(getBgAppbarPath(weatherData
-                            .weatherResponse.overallWeatherData[0].icon)),
+                            .weatherResponse!.overallWeatherData![0].icon)),
                         fit: BoxFit.fill)),
               ),
               StreamBuilder<double>(
@@ -376,7 +376,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                     if (snapshot.hasData) {
                       return Container(
                         color: Colors.black
-                            .withOpacity(snapshot.data * _ratioBlurBg),
+                            .withOpacity(snapshot.data! * _ratioBlurBg),
                       );
                     }
                     return Container();
@@ -406,7 +406,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               _buildDetail(weatherData.weatherForecastDaily),
               _buildWindAndPressure(weatherData.weatherResponse),
               _buildSunTime(weatherData.weatherResponse,
-                  weatherData.weatherForecastDaily.timezone)
+                  weatherData.weatherForecastDaily!.timezone)
             ],
           ),
         ),
@@ -458,11 +458,11 @@ class _WeatherScreenState extends State<WeatherScreen>
                   onChanged: (isOn) {
                     isOnNotification = isOn;
                     _showNotification(
-                        isOnNotification, weatherData.weatherResponse);
+                        isOnNotification, weatherData!.weatherResponse);
                   },
                 ), () {
               isOnNotification = !isOnNotification;
-              _showNotification(isOnNotification, weatherData.weatherResponse);
+              _showNotification(isOnNotification, weatherData!.weatherResponse);
             }),
             _buildItemUnit(
                 mIconSettingTemp,
@@ -494,7 +494,7 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _listLocation() {
     return StreamBuilder<List<City>>(
-        stream: pageBloc.currentCitiesStream,
+        stream: pageBloc.currentCitiesStream as Stream<List<City>>?,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Column(
@@ -507,7 +507,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       InkWell(
                         onTap: () {
                           Navigator.pop(context);
-                          return Navigator.push(
+                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EditLocationScreen()));
@@ -527,17 +527,17 @@ class _WeatherScreenState extends State<WeatherScreen>
                       ListView.builder(
                           shrinkWrap: true,
                           padding: EdgeInsets.zero,
-                          itemCount: snapshot.data.length >
+                          itemCount: snapshot.data!.length >
                                   _defaultDisplayNumberLocation
                               ? isShowMore
-                                  ? snapshot.data.length
+                                  ? snapshot.data!.length
                                   : _defaultDisplayNumberLocation
-                              : snapshot.data.length,
+                              : snapshot.data!.length,
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            return _itemLocation(snapshot.data[index], index);
+                            return _itemLocation(snapshot.data![index], index);
                           }),
-                      _showMoreLocation(snapshot.data.length)
+                      _showMoreLocation(snapshot.data!.length)
                     ],
                   ),
                 ),
@@ -608,7 +608,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     }
   }
 
-  _showNotification(bool isOn, WeatherResponse response) {
+  _showNotification(bool isOn, WeatherResponse? response) {
     settingBloc.onOffNotification(isOn, response);
     setState(() {});
   }
@@ -663,7 +663,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _titleAppbar(WeatherResponse weatherResponse) {
+  _titleAppbar(WeatherResponse? weatherResponse) {
     return Column(
       children: [
         const SizedBox(
@@ -690,7 +690,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _currentWeather(WeatherResponse weatherResponse) {
+  _currentWeather(WeatherResponse? weatherResponse) {
     return Container(
         height: _mainWeatherHeight,
         margin: EdgeInsets.symmetric(vertical: margin),
@@ -705,19 +705,19 @@ class _WeatherScreenState extends State<WeatherScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '${weatherResponse.overallWeatherData[0].main}',
+          '${weatherResponse.overallWeatherData![0].main}',
           style: textTitleH1White,
         ),
         const SizedBox(
           height: marginLarge,
         ),
-        _buildTempRow(weatherResponse.mainWeatherData.temp),
+        _buildTempRow(weatherResponse.mainWeatherData!.temp),
         const SizedBox(height: margin),
-        _buildFeelsLike(weatherResponse.mainWeatherData.feelsLike,
-            weatherResponse.mainWeatherData.humidity),
+        _buildFeelsLike(weatherResponse.mainWeatherData!.feelsLike,
+            weatherResponse.mainWeatherData!.humidity),
         const SizedBox(height: margin),
-        _buildMaxMinTemp(weatherResponse.mainWeatherData.tempMax,
-            weatherResponse.mainWeatherData.tempMin)
+        _buildMaxMinTemp(weatherResponse.mainWeatherData!.tempMax,
+            weatherResponse.mainWeatherData!.tempMin)
       ],
     );
   }
@@ -795,7 +795,7 @@ class _WeatherScreenState extends State<WeatherScreen>
       );
 
   _buildHourlyForecast(
-      WeatherForecastListResponse weatherForecastListResponse) {
+      WeatherForecastListResponse? weatherForecastListResponse) {
     return weatherForecastListResponse != null
         ? _buildBodyHourlyForecast(weatherForecastListResponse)
         : Container(
@@ -841,7 +841,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                 child: Center(
                   child: ChartWidget(
                     chartData: WeatherForecastHolder(
-                      weatherForecastListResponse.list,
+                      weatherForecastListResponse.list!,
                       weatherForecastListResponse.city,
                     ).setupChartData(ChartDataType.temperature,
                         _mainWeatherWidth, _chartHeight),
@@ -877,7 +877,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildDailyForecast(WeatherForecastDaily weatherForecastDaily) {
+  _buildDailyForecast(WeatherForecastDaily? weatherForecastDaily) {
     return weatherForecastDaily != null
         ? _buildBodyDailyForecast(weatherForecastDaily)
         : Container();
@@ -908,7 +908,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               Container(
                   padding: EdgeInsets.all(paddingLarge),
                   child: Text(
-                    "${weatherForecastDaily.daily[0].weather[0].description}",
+                    "${weatherForecastDaily.daily![0].weather![0].description}",
                     style: textTitleH1White,
                   )),
               Divider(
@@ -928,19 +928,19 @@ class _WeatherScreenState extends State<WeatherScreen>
       margin: EdgeInsets.symmetric(horizontal: margin),
       child: ListView.separated(
         padding: EdgeInsets.zero,
-        itemCount: data.daily.length,
+        itemCount: data.daily!.length,
         scrollDirection: Axis.vertical,
         physics: NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
           DateFormat dayFormat = DateFormat("MM/dd");
           DateFormat weekDayFormat = DateFormat("E");
           String day = dayFormat.format(
-              DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
+              DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!));
           String weekday = DateTime.now().day ==
-                  DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt).day
+                  DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!).day
               ? 'Today'
               : weekDayFormat.format(
-                  DateTime.fromMillisecondsSinceEpoch(data.daily[index].dt));
+                  DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!));
           return GestureDetector(
             onTap: () => Navigator.push(
                 context,
@@ -974,7 +974,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                   Expanded(
                       flex: 1,
                       child: getIconForecastImage(
-                          data.daily[index].weather[0].icon,
+                          data.daily![index].weather![0].icon,
                           width: 30,
                           height: 30)),
                   Expanded(
@@ -982,7 +982,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       child: Container(
                         margin: EdgeInsets.only(left: margin),
                         child: Text(
-                          '${data.daily[index].weather[0].description}',
+                          '${data.daily![index].weather![0].description}',
                           style: textTitleWhite70,
                         ),
                       )),
@@ -991,8 +991,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                       child: Container(
                         margin: EdgeInsets.only(left: marginLarge),
                         child: Text(
-                          '${data.daily[index].temp.min.toInt()}$degree - '
-                          '${data.daily[index].temp.max.toInt()}$degree',
+                          '${data.daily![index].temp!.min!.toInt()}$degree - '
+                          '${data.daily![index].temp!.max!.toInt()}$degree',
                           style: textTitleWhite,
                         ),
                       )),
@@ -1019,10 +1019,10 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildDetail(WeatherForecastDaily weatherForecastDaily) {
+  _buildDetail(WeatherForecastDaily? weatherForecastDaily) {
     return weatherForecastDaily != null
         ? _buildBodyDetail(
-            weatherForecastDaily.daily[0], weatherForecastDaily.current)
+            weatherForecastDaily.daily![0], weatherForecastDaily.current!)
         : Container();
   }
 
@@ -1039,7 +1039,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         builder: (context) => DetailDailyForecast(
                               currentIndex: 0,
                               weatherForecastDaily:
-                                  weatherData.weatherForecastDaily,
+                                  weatherData!.weatherForecastDaily,
                             )))
                 : () {}),
         GestureDetector(
@@ -1050,7 +1050,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       builder: (context) => DetailDailyForecast(
                             currentIndex: 0,
                             weatherForecastDaily:
-                                weatherData.weatherForecastDaily,
+                                weatherData!.weatherForecastDaily,
                           )))
               : () {},
           child: Container(
@@ -1068,13 +1068,13 @@ class _WeatherScreenState extends State<WeatherScreen>
                     Expanded(
                       flex: 1,
                       child: _buildItemDetail(
-                          'Pop', mIcPrecipitation, formatHumidity(daily.pop)),
+                          'Pop', mIcPrecipitation, formatHumidity(daily.pop!)),
                     ),
                     _verticalDivider(),
                     Expanded(
                       flex: 1,
                       child: _buildItemDetail('Humidity', mIconHumidity,
-                          formatHumidity(daily.humidity.toDouble())),
+                          formatHumidity(daily.humidity!.toDouble())),
                     ),
                     _verticalDivider(),
                     Expanded(
@@ -1082,7 +1082,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         child: _buildItemDetail(
                           'UV Index',
                           mIconUVIndex,
-                          daily.uvi.toStringAsFixed(0),
+                          daily.uvi!.toStringAsFixed(0),
                         ))
                   ],
                 ),
@@ -1097,7 +1097,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       child: _buildItemDetail(
                           'Visibility',
                           mIconVisibility,
-                          formatVisibility(currentDailyWeather.visibility,
+                          formatVisibility(currentDailyWeather.visibility!,
                               settingBloc.visibilityEnum.value)),
                     ),
                     _verticalDivider(),
@@ -1112,7 +1112,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         child: _buildItemDetail(
                           'Cloud Cover',
                           mIconCloudCover,
-                          formatHumidity(daily.clouds.toDouble()),
+                          formatHumidity(daily.clouds!.toDouble()),
                         ))
                   ],
                 ),
@@ -1160,7 +1160,7 @@ class _WeatherScreenState extends State<WeatherScreen>
         ],
       );
 
-  _buildWindAndPressure(WeatherResponse weatherResponse) {
+  _buildWindAndPressure(WeatherResponse? weatherResponse) {
     return weatherResponse != null
         ? _bodyWindAndPressure(weatherResponse)
         : Container();
@@ -1179,7 +1179,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         builder: (context) => DetailDailyForecast(
                               currentIndex: 0,
                               weatherForecastDaily:
-                                  weatherData.weatherForecastDaily,
+                                  weatherData!.weatherForecastDaily,
                             )))
                 : () {}),
         GestureDetector(
@@ -1190,7 +1190,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       builder: (context) => DetailDailyForecast(
                             currentIndex: 0,
                             weatherForecastDaily:
-                                weatherData.weatherForecastDaily,
+                                weatherData!.weatherForecastDaily,
                           )))
               : () {},
           child: Container(
@@ -1211,10 +1211,10 @@ class _WeatherScreenState extends State<WeatherScreen>
                         Stack(
                           children: [
                             AnimatedBuilder(
-                                animation: _controller,
+                                animation: _controller!,
                                 builder: (context, _child) {
                                   return Transform.rotate(
-                                      angle: _controller.value * 2 * math.pi,
+                                      angle: _controller!.value * 2 * math.pi,
                                       child: _child);
                                 },
                                 child: Image.asset(
@@ -1235,10 +1235,10 @@ class _WeatherScreenState extends State<WeatherScreen>
                         Stack(
                           children: [
                             AnimatedBuilder(
-                                animation: _controller2,
+                                animation: _controller2!,
                                 builder: (context, _child) {
                                   return Transform.rotate(
-                                      angle: _controller2.value * 2 * math.pi,
+                                      angle: _controller2!.value * 2 * math.pi,
                                       child: _child);
                                 },
                                 child: Image.asset(
@@ -1283,7 +1283,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         ],
                       ),
                       Text(
-                        '${formatWind(weatherResponse.wind.speed, settingBloc.windEnum.value)} ${getWindDirection(weatherResponse.wind.deg)}',
+                        '${formatWind(weatherResponse.wind!.speed, settingBloc.windEnum.value)} ${getWindDirection(weatherResponse.wind!.deg)}',
                         style: textTitleWhite,
                       ),
                       Container(
@@ -1318,7 +1318,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                             ],
                           ),
                           Text(
-                            '${formatPressure(weatherResponse.mainWeatherData.pressure, settingBloc.pressureEnum.value)}',
+                            '${formatPressure(weatherResponse.mainWeatherData!.pressure, settingBloc.pressureEnum.value)}',
                             style: textTitleWhite,
                           )
                         ],
@@ -1334,13 +1334,13 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildSunTime(WeatherResponse weatherResponse, String timezone) {
+  _buildSunTime(WeatherResponse? weatherResponse, String? timezone) {
     return weatherResponse != null
         ? _buildSunTimeBody(weatherResponse, timezone)
         : Container();
   }
 
-  _buildSunTimeBody(WeatherResponse weatherResponse, String timezone) {
+  _buildSunTimeBody(WeatherResponse weatherResponse, String? timezone) {
     return Column(
       children: [
         _buildRowTitle(
@@ -1353,7 +1353,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                         builder: (context) => DetailDailyForecast(
                               currentIndex: 0,
                               weatherForecastDaily:
-                                  weatherData.weatherForecastDaily,
+                                  weatherData!.weatherForecastDaily,
                             )))
                 : () {}),
         Container(
@@ -1373,13 +1373,13 @@ class _WeatherScreenState extends State<WeatherScreen>
                               builder: (context) => DetailDailyForecast(
                                     currentIndex: 0,
                                     weatherForecastDaily:
-                                        weatherData.weatherForecastDaily,
+                                        weatherData!.weatherForecastDaily,
                                   )))
                       : () {},
                   child: RepaintBoundary(
                     child: SunPathWidget(
-                      sunrise: weatherResponse.system.sunrise,
-                      sunset: weatherResponse.system.sunset,
+                      sunrise: weatherResponse.system!.sunrise,
+                      sunset: weatherResponse.system!.sunset,
                       differentTime: _getDifferentTime(timezone),
                     ),
                   )),
@@ -1389,11 +1389,11 @@ class _WeatherScreenState extends State<WeatherScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunrise), settingBloc.timeEnum)}',
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system!.sunrise!), settingBloc.timeEnum)}',
                       style: textSecondaryWhite70,
                     ),
                     Text(
-                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system.sunset), settingBloc.timeEnum)}',
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system!.sunset!), settingBloc.timeEnum)}',
                       style: textSecondaryWhite70,
                     ),
                   ],
@@ -1487,7 +1487,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                               leading: Radio<String>(
                                 value: e,
                                 groupValue: groupValue,
-                                onChanged: (String value) {
+                                onChanged: (String? value) {
                                   _changeSetting(value, settingEnum);
                                 },
                               ),
@@ -1502,7 +1502,7 @@ class _WeatherScreenState extends State<WeatherScreen>
         });
   }
 
-  _changeSetting(String value, SettingEnum settingEnum) {
+  _changeSetting(String? value, SettingEnum settingEnum) {
     settingBloc.changeSetting(value, settingEnum);
     Navigator.pop(context);
   }
@@ -1513,10 +1513,10 @@ class _WeatherScreenState extends State<WeatherScreen>
 }
 
 class WeatherData {
-  final WeatherResponse weatherResponse;
-  final WeatherForecastListResponse weatherForecastListResponse;
-  final WeatherForecastDaily weatherForecastDaily;
-  final WeatherStateError error;
+  final WeatherResponse? weatherResponse;
+  final WeatherForecastListResponse? weatherForecastListResponse;
+  final WeatherForecastDaily? weatherForecastDaily;
+  final WeatherStateError? error;
 
   WeatherData(
       {this.weatherResponse,
@@ -1525,10 +1525,10 @@ class WeatherData {
       this.error});
 
   WeatherData copyWith(
-      {WeatherResponse weatherResponse,
-      WeatherForecastListResponse weatherForecastListResponse,
-      WeatherForecastDaily weatherForecastDaily,
-      WeatherStateError error}) {
+      {WeatherResponse? weatherResponse,
+      WeatherForecastListResponse? weatherForecastListResponse,
+      WeatherForecastDaily? weatherForecastDaily,
+      WeatherStateError? error}) {
     return WeatherData(
         weatherResponse: weatherResponse ?? this.weatherResponse,
         weatherForecastListResponse:

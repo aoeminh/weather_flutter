@@ -5,8 +5,8 @@ import 'package:rxdart/rxdart.dart';
 
 abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     with TickerProviderStateMixin {
-  AnimationController controller;
-  BehaviorSubject<double> _streamController;
+  AnimationController? controller;
+  late BehaviorSubject<double> _streamController;
 
   Widget build(BuildContext context);
 
@@ -15,9 +15,9 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
       double end = 1.0,
       int duration: 2000,
       Curve curve = Curves.easeInOut}) {
-    if (controller != null) controller.dispose();
+    if (controller != null) controller!.dispose();
     if (this.mounted) controller = _getAnimationController(this, duration);
-    Animation animation = _getCurvedAnimation(controller, curve);
+    Animation animation = _getCurvedAnimation(controller!, curve);
     _streamController = BehaviorSubject<double>();
 
     Animation<double> tween = _getTween(start, end, animation);
@@ -26,7 +26,7 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     };
     tween..addListener(valueListener);
 
-    controller.forward();
+    controller!.forward();
   }
 
   AnimationController _getAnimationController(
@@ -41,12 +41,12 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
 
   static Animation<double> _getTween(
       double start, double end, Animation animation) {
-    return Tween(begin: start, end: end).animate(animation);
+    return Tween(begin: start, end: end).animate(animation as Animation<double>);
   }
 
   @override
   void dispose() {
-    if (controller != null) controller.dispose();
+    if (controller != null) controller!.dispose();
     _streamController.close();
     super.dispose();
   }

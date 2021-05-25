@@ -1,8 +1,8 @@
 class FeelsLike {
-  double day;
-  double night;
-  double eve;
-  double morn;
+  double? day;
+  double? night;
+  double? eve;
+  double? morn;
 
   FeelsLike({this.day, this.night, this.eve, this.morn});
 
@@ -22,10 +22,10 @@ class FeelsLike {
     return data;
   }
 
-  FeelsLike copyWith({double day,
-    double night,
-    double eve,
-    double morn}) {
+  FeelsLike copyWith({double? day,
+    double? night,
+    double? eve,
+    double? morn}) {
     return FeelsLike(day: day ?? this.day,
         night: night ?? this.night,
         eve: eve ?? this.eve,

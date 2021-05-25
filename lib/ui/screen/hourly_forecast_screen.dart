@@ -15,10 +15,10 @@ const double iconWeatherSize = 40;
 const double iconDetailSize = 20;
 
 class HourlyForecastScreen extends StatefulWidget {
-  final WeatherForecastListResponse weatherForecastListResponse;
+  final WeatherForecastListResponse? weatherForecastListResponse;
 
 
-  const HourlyForecastScreen({Key key, this.weatherForecastListResponse})
+  const HourlyForecastScreen({Key? key, this.weatherForecastListResponse})
       : super(key: key);
 
   @override
@@ -73,9 +73,9 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
               padding: EdgeInsets.symmetric(horizontal: margin),
               child: ScrollablePositionedList.separated(
                   itemBuilder: (context, index) =>
-                      _buildItem(widget.weatherForecastListResponse.list[index]),
+                      _buildItem(widget.weatherForecastListResponse!.list![index]),
                   separatorBuilder: (context, index) => const Divider(color: Colors.grey,),
-                  itemCount: widget.weatherForecastListResponse.list.length,
+                  itemCount: widget.weatherForecastListResponse!.list!.length,
                 itemScrollController: itemScrollController,
                 itemPositionsListener: itemPositionsListener,
               ),
@@ -95,7 +95,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
             stream: dateBehaviorSubject.stream,
             builder: (context, snapshot){
               if(snapshot.hasData){
-                DateTime dateTime = widget.weatherForecastListResponse.list[snapshot.data].dateTime;
+                DateTime dateTime = widget.weatherForecastListResponse!.list![snapshot.data!].dateTime;
                 return Container(
                     margin: EdgeInsets.all(padding),
 

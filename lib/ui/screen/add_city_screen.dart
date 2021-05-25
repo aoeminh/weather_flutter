@@ -14,7 +14,7 @@ class AddCityScreen extends StatefulWidget {
 }
 
 class _AddCityScreenState extends State<AddCityScreen> {
-  List<City> listCity = [];
+  List<City>? listCity = [];
 
   @override
   void initState() {
@@ -60,8 +60,8 @@ class _AddCityScreenState extends State<AddCityScreen> {
         if (textEditingValue.text == '') {
           return const [];
         }
-        return listCity.where((City city) {
-          return city.name
+        return listCity!.where((City city) {
+          return city.name!
             .toLowerCase()
             .contains(textEditingValue.text.toLowerCase());
         });
@@ -105,7 +105,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
                 },
                 child: Material(
                   child: ListTile(
-                    title: Text(option.name),
+                    title: Text(option.name!),
                   ),
                 ),
               );
@@ -148,13 +148,13 @@ class _AddCityScreenState extends State<AddCityScreen> {
     return ListView.separated(
         padding: EdgeInsets.zero,
         itemBuilder: (context, index) {
-          return _itemSimilar(appBloc.suggestCities[index]);
+          return _itemSimilar(appBloc.suggestCities![index]);
         },
         separatorBuilder: (context, index) => Divider(
               height: 1,
               color: Colors.white24,
             ),
-        itemCount: appBloc.suggestCities.length);
+        itemCount: appBloc.suggestCities!.length);
   }
 
   _itemSimilar(City city) => InkWell(

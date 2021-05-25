@@ -16,11 +16,11 @@ const double _height = 150;
 const double _width = 300;
 
 class SunPathWidget extends StatefulWidget {
-  final int sunrise;
-  final int sunset;
-  final int differentTime;
+  final int? sunrise;
+  final int? sunset;
+  final int? differentTime;
 
-  const SunPathWidget({Key key, this.sunrise, this.sunset, this.differentTime})
+  const SunPathWidget({Key? key, this.sunrise, this.sunset, this.differentTime})
       : super(key: key);
 
   @override
@@ -28,14 +28,14 @@ class SunPathWidget extends StatefulWidget {
 }
 
 class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
-  ImageInfo imageInfo;
-  BehaviorSubject<ImageInfo> _behaviorSubject = BehaviorSubject();
+  ImageInfo? imageInfo;
+  BehaviorSubject<ImageInfo?> _behaviorSubject = BehaviorSubject();
 
 
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
       _init();
     });
   }
@@ -47,7 +47,7 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<ImageInfo>(
+    return StreamBuilder<ImageInfo?>(
         stream: _behaviorSubject.stream,
         builder: (context, imageSnapshot) {
           if (imageSnapshot.hasData) {
@@ -113,13 +113,13 @@ class _SunPathWidgetState extends AnimatedState<SunPathWidget> {
 }
 
 class _SunPathPainter extends CustomPainter {
-  final double fraction;
+  final double? fraction;
   final double pi = 3.14159;
   final int dayAsMs = 86400000;
-  final int sunrise;
-  final int sunset;
-  final int differentTime;
-  final ImageInfo imageInfo;
+  final int? sunrise;
+  final int? sunset;
+  final int? differentTime;
+  final ImageInfo? imageInfo;
 
   _SunPathPainter(this.sunrise, this.sunset, this.fraction, this.imageInfo,
       this.differentTime);
@@ -136,7 +136,7 @@ class _SunPathPainter extends CustomPainter {
           _getPosition(fraction).dy - _iconSunMargin,
           _iconSunSize,
           _iconSunSize),
-      image: imageInfo.image, // <- the loaded image
+      image: imageInfo!.image, // <- the loaded image
       filterQuality: FilterQuality.high,
     );
   }
@@ -148,7 +148,7 @@ class _SunPathPainter extends CustomPainter {
 
   Paint _getArcPaint() {
     Paint paint = Paint();
-    paint..color = Colors.yellow[100];
+    paint..color = Colors.yellow[100]!;
     paint..strokeWidth = 0.5;
     paint..style = PaintingStyle.stroke;
     return paint;
@@ -156,16 +156,16 @@ class _SunPathPainter extends CustomPainter {
 
   Offset _getPosition(fraction) {
     int now = DateTime.now().millisecondsSinceEpoch +
-        differentTime * oneHourMilli;
+        differentTime! * oneHourMilli;
 
     double difference = 0;
 
-    if (now < sunrise) {
+    if (now < sunrise!) {
       difference = 0;
-    } else if (now > sunset) {
+    } else if (now > sunset!) {
       difference = 1;
     } else {
-      difference = (now - sunrise) / (sunset - sunrise);
+      difference = (now - sunrise!) / (sunset! - sunrise!);
     }
 
     var x = _width / 2 * cos((1 + difference * fraction) * pi) + _width / 2;
@@ -175,12 +175,12 @@ class _SunPathPainter extends CustomPainter {
 }
 
 class _SunPathCliper extends CustomClipper<Path> {
-  final double fraction;
+  final double? fraction;
   final double pi = 3.14159;
   final int dayAsMs = 86400000;
-  final int sunrise;
-  final int sunset;
-  final int differentTime;
+  final int? sunrise;
+  final int? sunset;
+  final int? differentTime;
 
   _SunPathCliper(this.sunrise, this.sunset, this.fraction, this.differentTime);
 
@@ -188,7 +188,7 @@ class _SunPathCliper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     Rect rect = Rect.fromLTWH(0, 0, size.width, size.height * 2);
-    path.arcTo(rect, pi, (pi * _getDifferent() * fraction), true);
+    path.arcTo(rect, pi, (pi * _getDifferent() * fraction!), true);
     path.lineTo(_getPosition(fraction).dx, size.height);
     path.lineTo(0, size.height);
 
@@ -202,13 +202,13 @@ class _SunPathCliper extends CustomClipper<Path> {
 
   double _getDifferent() {
     int now = DateTime.now().millisecondsSinceEpoch +
-        differentTime * oneHourMilli;
-    if (now < sunrise) {
+        differentTime! * oneHourMilli;
+    if (now < sunrise!) {
       return 0;
-    } else if (now > sunset) {
+    } else if (now > sunset!) {
       return 1;
     } else {
-      return (now - sunrise) / (sunset - sunrise);
+      return (now - sunrise!) / (sunset! - sunrise!);
     }
   }
 

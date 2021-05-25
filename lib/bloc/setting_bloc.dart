@@ -33,7 +33,7 @@ extension TempExtenstion on TempEnum {
     }
   }
 
-  TempEnum setValue(String value) {
+  TempEnum setValue(String? value) {
     switch (value) {
       case degreeC:
         return TempEnum.C;
@@ -59,7 +59,7 @@ extension WindExtenstion on WindEnum {
     }
   }
 
-  WindEnum setValue(String value) {
+  WindEnum setValue(String? value) {
     switch (value) {
       case kmh:
         return WindEnum.kmh;
@@ -91,7 +91,7 @@ extension PressureExtenstion on PressureEnum {
     }
   }
 
-  PressureEnum setValue(String value) {
+  PressureEnum setValue(String? value) {
     switch (value) {
       case mBar:
         return PressureEnum.mBar;
@@ -122,7 +122,7 @@ extension VisibilityExtenstion on VisibilityEnum {
     }
   }
 
-  VisibilityEnum setValue(String value) {
+  VisibilityEnum setValue(String? value) {
     switch (value) {
       case km:
         return VisibilityEnum.km;
@@ -147,7 +147,7 @@ extension TimeExtenstion on TimeEnum {
     }
   }
 
-  TimeEnum setValue(String value) {
+  TimeEnum setValue(String? value) {
     switch (value) {
       case twelveClock:
         return TimeEnum.twelve;
@@ -173,7 +173,7 @@ extension DateExtenstion on DateEnum {
     }
   }
 
-  DateEnum setValue(String value) {
+  DateEnum setValue(String? value) {
     switch (value) {
       case ddMMYY:
         return DateEnum.ddMMyyyyy;
@@ -189,8 +189,8 @@ extension DateExtenstion on DateEnum {
 
 class SettingBloc extends BlocBase {
   bool _isOnNotify = false;
-  WeatherResponse _weatherResponse;
-  WeatherData _weatherData;
+  WeatherResponse? _weatherResponse;
+  WeatherData? _weatherData;
   TempEnum _tempEnum = TempEnum.C;
   WindEnum _windEnum = WindEnum.kmh;
   PressureEnum _pressureEnum = PressureEnum.mBar;
@@ -201,13 +201,13 @@ class SettingBloc extends BlocBase {
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   PublishSubject<SettingEnum> _settingBehavior = PublishSubject();
 
-  onOffNotification(bool isOn, WeatherResponse weatherResponse) {
+  onOffNotification(bool isOn, WeatherResponse? weatherResponse) {
     _isOnNotify = isOn;
     _weatherResponse = weatherResponse;
     _notificationSubject.add(_isOnNotify);
   }
 
-  changeSetting(String value, SettingEnum settingEnum) {
+  changeSetting(String? value, SettingEnum settingEnum) {
     switch (settingEnum) {
       case SettingEnum.TempEnum:
         _tempEnum = _tempEnum.setValue(value);
@@ -270,9 +270,9 @@ class SettingBloc extends BlocBase {
 
   bool get isOnNotification => _isOnNotify;
 
-  WeatherResponse get weatherResponse => _weatherResponse;
+  WeatherResponse? get weatherResponse => _weatherResponse;
 
-  WeatherData get weatherData => _weatherData;
+  WeatherData? get weatherData => _weatherData;
 
   Stream get notificationStream => _notificationSubject.stream;
 

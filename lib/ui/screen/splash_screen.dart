@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
     appBloc.determinePosition().then((city) {
       if (city != null) {
         print(
-            'city ${city.coordinates.latitude}  ${city.coordinates.longitude}');
+            'city ${city.coordinates!.latitude}  ${city.coordinates!.longitude}');
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(

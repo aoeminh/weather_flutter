@@ -18,9 +18,9 @@ const double iconWeatherSize = 30;
 const double iconDetailSize = 20;
 
 class DailyForecastScreen extends StatelessWidget {
-  final WeatherForecastDaily weatherForecastDaily;
+  final WeatherForecastDaily? weatherForecastDaily;
 
-  const DailyForecastScreen({Key key, this.weatherForecastDaily})
+  const DailyForecastScreen({Key? key, this.weatherForecastDaily})
       : super(key: key);
 
   @override
@@ -51,14 +51,14 @@ class DailyForecastScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => DetailDailyForecast(weatherForecastDaily: weatherForecastDaily,currentIndex: index,))),
-              child: _buildItemDailyForecast(weatherForecastDaily.daily[index]),
+              child: _buildItemDailyForecast(weatherForecastDaily!.daily![index]),
             );
           },
           separatorBuilder: (context, index) => Divider(
                 height: 1,
                 color: Colors.grey,
               ),
-          itemCount: weatherForecastDaily.daily.length),
+          itemCount: weatherForecastDaily!.daily!.length),
     );
   }
 
@@ -67,7 +67,7 @@ class DailyForecastScreen extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       child: Column(
         children: [
-          _dateRow(DateTime.fromMillisecondsSinceEpoch(daily.dt)),
+          _dateRow(DateTime.fromMillisecondsSinceEpoch(daily.dt!)),
           _detailDay(daily),
           Container(
               alignment: Alignment.centerRight,
@@ -114,7 +114,7 @@ class DailyForecastScreen extends StatelessWidget {
         Expanded(
             flex: 1,
             child: Image.asset(
-              getIconForecastUrl(daily.weather[0].icon),
+              getIconForecastUrl(daily.weather![0].icon),
               width: iconWeatherSize,
               height: iconWeatherSize,
             )),
@@ -124,7 +124,7 @@ class DailyForecastScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${daily.weather[0].main}',
+                '${daily.weather![0].main}',
                 style: textSecondaryWhite,
               ),
               Row(
@@ -140,7 +140,7 @@ class DailyForecastScreen extends StatelessWidget {
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise),settingBloc.timeEnum)}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise!),settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],
@@ -158,7 +158,7 @@ class DailyForecastScreen extends StatelessWidget {
                   height: iconDetailSize,
                 ),
                 Text(
-                  '${daily.temp.max.toInt()}$degree',
+                  '${daily.temp!.max!.toInt()}$degree',
                   style: textTitleWhite,
                 )
               ],
@@ -179,7 +179,7 @@ class DailyForecastScreen extends StatelessWidget {
         Expanded(
             flex: 1,
             child: Image.asset(
-              getIconForecastUrl(daily.weather[0].icon),
+              getIconForecastUrl(daily.weather![0].icon),
               width: iconWeatherSize,
               height: iconWeatherSize,
             )),
@@ -189,7 +189,7 @@ class DailyForecastScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${daily.weather[0].description}',
+                '${daily.weather![0].description}',
                 style: textSecondaryWhite,
               ),
               Row(
@@ -205,7 +205,7 @@ class DailyForecastScreen extends StatelessWidget {
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset),settingBloc.timeEnum)}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset!),settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],
@@ -223,7 +223,7 @@ class DailyForecastScreen extends StatelessWidget {
                   height: iconDetailSize,
                 ),
                 Text(
-                  '${daily.temp.min.toInt()}$degree',
+                  '${daily.temp!.min!.toInt()}$degree',
                   style: textTitleWhite70,
                 )
               ],

@@ -20,14 +20,14 @@ final IOSInitializationSettings initializationSettingsIOS =
 final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
-Future selectNotification(String payload) async {
+Future selectNotification(String? payload) async {
   if (payload != null) {
     debugPrint('notification payload: $payload');
   }
 }
 
 Future onDidReceiveLocalNotification(
-    int id, String title, String body, String payload) async {
+    int id, String? title, String? body, String? payload) async {
   print('onDidReceiveLocalNotification');
   // display a dialog with the notification details, tap ok to go to another page
 }

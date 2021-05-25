@@ -1,6 +1,6 @@
 class Timezone {
-  final String value;
-  final String name;
+  final String? value;
+  final String? name;
 
   Timezone(this.value, this.name);
 

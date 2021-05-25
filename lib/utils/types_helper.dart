@@ -1,6 +1,6 @@
 
 class TypesHelper {
-  static double toDouble(num val) {
+  static double toDouble(num? val) {
     try {
       if (val == null){
         return 0;

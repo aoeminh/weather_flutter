@@ -28,7 +28,7 @@ class WeatherStateSuccess extends WeatherState {
 }
 
 class WeatherStateError extends WeatherState {
-  final ApplicationError error;
+  final ApplicationError? error;
 
   WeatherStateError(this.error);
 }

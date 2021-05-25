@@ -36,8 +36,8 @@ class MainWeatherData {
       };
 
   MainWeatherData copyWith(
-      {double temp, double pressure, double humidity, double tempMin,
-        double tempMax, double pressureSeaLevel, double pressureGroundLevel, double feelsLike}) {
+      {double? temp, double? pressure, double? humidity, double? tempMin,
+        double? tempMax, double? pressureSeaLevel, double? pressureGroundLevel, double? feelsLike}) {
     return MainWeatherData(
         temp ?? this.temp,
         pressure ?? this.pressure,
