@@ -1,4 +1,3 @@
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
@@ -15,7 +14,6 @@ class AddCityScreen extends StatefulWidget {
 }
 
 class _AddCityScreenState extends State<AddCityScreen> {
-  GlobalKey key = new GlobalKey<AutoCompleteTextFieldState<City>>();
   List<City> listCity = [];
 
   @override
@@ -45,59 +43,75 @@ class _AddCityScreenState extends State<AddCityScreen> {
       );
 
   _searchView() {
-    final double width = MediaQuery.of(context).size.width;
     return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(radiusSmall)),
-      child: Row(
-        children: [
-          Container(
-            height: _heightItem,
-            width: width,
-            child: AutoCompleteTextField<City>(
-              suggestions: listCity,
-              key: key,
-              decoration: InputDecoration(
-                hintText: 'Insert city name',
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                focusColor: Colors.black,
-                icon: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                        margin: EdgeInsets.only(left: margin),
-                        child: Icon(Icons.arrow_back))),
-              ),
-              itemSubmitted: _onItemSubmit,
-              itemBuilder: (context, city) {
-                return Container(
-                    padding: EdgeInsets.symmetric(horizontal: padding),
-                    height: _heightItem,
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${city.name} - ${city.country}',
-                        )));
-              },
-              itemFilter: (city, string) =>
-                  city.name.toLowerCase().startsWith(string.toLowerCase()),
-              itemSorter: (a, b) => a.name.compareTo(b.name),
-            ),
-          )
-        ],
-      ),
-    );
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(radiusSmall)),
+        child: _test());
   }
 
   _onItemSubmit(City city) {
     pageBloc.addNewCity(city);
-print('_onItemSubmit ${city.name} ${city.coordinates.latitude}');
     Navigator.pop(context);
   }
+
+  _test() => RawAutocomplete<City>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text == '') {
+          return const [];
+        }
+        return listCity.where((City city) {
+          return city.name
+            .toLowerCase()
+            .contains(textEditingValue.text.toLowerCase());
+        });
+      },
+      onSelected: (City city) {
+        _onItemSubmit(city);
+      },
+      displayStringForOption: (city) {
+        return '${city.name} - ${city.country}';
+      },
+      fieldViewBuilder:
+          (context, textEditController, focusNode, voidCallBack) => TextField(
+                controller: textEditController,
+                focusNode: focusNode,
+                decoration: InputDecoration(
+                  hintText: 'Insert city name',
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  focusColor: Colors.black,
+                  icon: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                          margin: EdgeInsets.only(left: margin),
+                          child: Icon(Icons.arrow_back))),
+                ),
+              ),
+      optionsViewBuilder: (BuildContext context,
+              AutocompleteOnSelected<City> onSelected,
+              Iterable<City> options) {
+        return ListView.builder(
+            padding: const EdgeInsets.all(8.0),
+            itemCount: options.length,
+            itemBuilder: (BuildContext context, int index) {
+              final City option = options.elementAt(index);
+              return GestureDetector(
+                onTap: () {
+                  onSelected(option);
+                },
+                child: Material(
+                  child: ListTile(
+                    title: Text(option.name),
+                  ),
+                ),
+              );
+            },
+          );
+      });
 
   _similarCity() {
     return Container(
@@ -144,8 +158,8 @@ print('_onItemSubmit ${city.name} ${city.coordinates.latitude}');
   }
 
   _itemSimilar(City city) => InkWell(
-    onTap: () =>_onItemSubmit(city),
-    child: Container(
+        onTap: () => _onItemSubmit(city),
+        child: Container(
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.symmetric(horizontal: padding),
           height: _heightItem,
@@ -158,5 +172,5 @@ print('_onItemSubmit ${city.name} ${city.coordinates.latitude}');
                 ]),
           ),
         ),
-  );
+      );
 }
