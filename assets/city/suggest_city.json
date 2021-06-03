@@ -1,9 +1,164 @@
 [
   {
+    "id": 1273294,
+    "name": "Delhi",
+    "state": "",
+    "country": "India",
+    "province": "Delhi",
+    "coord": {
+      "lon": 77.216667,
+      "lat": 28.666668
+    }
+  },
+  {
+    "id": 1275339,
+    "name": "Mumbai",
+    "state": "",
+    "country": "India",
+    "province": "Maharashtra",
+    "coord": {
+      "lon": 72.847939,
+      "lat": 19.01441
+    }
+  },
+  {
+    "id": 1275004,
+    "name": "Kolkata",
+    "state": "",
+    "country": "India",
+    "province": "West Bengal",
+    "coord": {
+      "lon": 88.36972,
+      "lat": 22.569719
+    }
+  },
+  {
+    "id": 1264527,
+    "name": "Chennai",
+    "state": "",
+    "country": "IN",
+    "province": "Tamil Nadu",
+    "coord": {
+      "lon": 80.278473,
+      "lat": 13.08784
+    }
+  },
+  {
+    "id": 2950159,
+    "name": "Berlin",
+    "state": "",
+    "country": "Germany",
+    "province": "Berlin",
+    "coord": {
+      "lon": 13.41053,
+      "lat": 52.524368
+    }
+  },
+  {
+    "id": 2935517,
+    "name": "Dortmund",
+    "state": "",
+    "country": "Germany",
+    "province": "Nordrhein-Westfalen",
+    "coord": {
+      "lon": 7.45,
+      "lat": 51.51667
+    }
+  },
+  {
+    "id": 2925177,
+    "name": "Freiburg",
+    "state": "",
+    "country": "Germany",
+    "province": "Baden-Württemberg",
+    "coord": {
+      "lon": 7.85222,
+      "lat": 47.995899
+    }
+  },
+  {
+    "id": 3169070,
+    "name": "Rome",
+    "state": "",
+    "country": "Italy",
+    "province": "Lazio",
+    "coord": {
+      "lon": 12.4839,
+      "lat": 41.894741
+    }
+  },
+  {
+    "id": 3173435,
+    "name": "Milan",
+    "state": "",
+    "country": "Italy",
+    "province": "Lombardia",
+    "coord": {
+      "lon": 9.18951,
+      "lat": 45.464272
+    }
+  },
+  {
+    "id": 3164603,
+    "name": "Venice",
+    "state": "",
+    "country": "Italy",
+    "province": "Veneto",
+    "coord": {
+      "lon": 12.32667,
+      "lat": 45.43861
+    }
+  },
+  {
+    "id": 683506,
+    "name": "Bucharest",
+    "state": "",
+    "country": "Romania",
+    "province": "Bucharest",
+    "coord": {
+      "lon": 26.10626,
+      "lat": 44.432251
+    }
+  },
+  {
+    "id": 6835,
+    "name": "Timisoara",
+    "state": "",
+    "country": "Romania",
+    "province": "Timis",
+    "coord": {
+      "lat": 45.75882062,
+      "lng": 21.22344844
+    }
+  },
+  {
+    "id": 6835,
+    "name": "Cluj-Napoca",
+    "state": "",
+    "country": "Romania",
+    "province": "Cluj",
+    "coord": {
+      "lat": 46.78842185,
+      "lng": 23.5984456
+    }
+  },
+  {
+    "id": 524894,
+    "name": "Moscow",
+    "state": "",
+    "country": "Russia",
+    "province": "Moskva",
+    "coord": {
+      "lon": 37.606667,
+      "lat": 55.761665
+    }
+  },
+  {
     "id": 5128581,
     "name": "New York",
     "state": "NY",
-    "country": "US",
+    "country": "United States of America",
+    "province": "New York",
     "coord": {
       "lon": -74.005966,
       "lat": 40.714272
@@ -13,7 +168,8 @@
     "id": 1705545,
     "name": "Los Angeles",
     "state": "",
-    "country": "PH",
+    "country": "Chile",
+    "province": "Bío-Bío",
     "coord": {
       "lon": -118.243683,
       "lat": 34.052235
@@ -23,77 +179,41 @@
     "id": 6942553,
     "name": "Paris",
     "state": "",
-    "country": "CA",
+    "country": "France",
+    "province": "Île-de-France",
     "coord": {
       "lon": 2.352222,
       "lat": 48.856613
     }
   },
   {
-    "id": 2950159,
-    "name": "Berlin",
-    "state": "",
-    "country": "DE",
-    "coord": {
-      "lon": 13.41053,
-      "lat": 52.524368
-    }
-  },
-  {
     "id": 2643743,
     "name": "London",
     "state": "",
-    "country": "GB",
+    "country": "United Kingdom",
+    "province": "Westminster",
     "coord": {
       "lon": -0.12574,
       "lat": 51.50853
     }
   },
   {
-    "id": 3169070,
-    "name": "Rome",
-    "state": "",
-    "country": "IT",
-    "coord": {
-      "lon": 12.4839,
-      "lat": 41.894741
-    }
-  },
-  {
-    "id": 1273294,
-    "name": "Delhi",
-    "state": "",
-    "country": "IN",
-    "coord": {
-      "lon": 77.216667,
-      "lat": 28.666668
-    }
-  },
-  {
     "id": 3117735,
     "name": "Madrid",
     "state": "",
-    "country": "ES",
+    "country": "Spain",
+    "province": "Comunidad de Madrid",
     "coord": {
       "lon": -3.70256,
       "lat": 40.4165
     }
   },
   {
-    "id": 5368361,
-    "name": "Los Angeles",
-    "state": "CA",
-    "country": "US",
-    "coord": {
-      "lon": -118.243683,
-      "lat": 34.052231
-    }
-  },
-  {
     "id": 360630,
     "name": "Cairo",
     "state": "",
-    "country": "EG",
+    "country": "Egypt",
+    "province": "Al Qahirah",
     "coord": {
       "lon": 31.24967,
       "lat": 30.06263
@@ -103,7 +223,8 @@
     "id": 1816670,
     "name": "Beijing",
     "state": "",
-    "country": "CN",
+    "country": "China",
+    "province": "Beijing",
     "coord": {
       "lon": 116.397232,
       "lat": 39.907501
@@ -113,7 +234,8 @@
     "id": 1880252,
     "name": "Singapore",
     "state": "",
-    "country": "SG",
+    "country": "Singapore",
+    "province": "Singapore",
     "coord": {
       "lon": 103.850067,
       "lat": 1.28967
@@ -123,7 +245,8 @@
     "id": 2147714,
     "name": "Sydney",
     "state": "",
-    "country": "AU",
+    "country": "Australia",
+    "province": "New South Wales",
     "coord": {
       "lon": 151.207321,
       "lat": -33.867851
@@ -133,7 +256,8 @@
     "id": 1850147,
     "name": "Tokyo",
     "state": "",
-    "country": "JP",
+    "country": "Japan",
+    "province": "Tokyo",
     "coord": {
       "lon": 139.691711,
       "lat": 35.689499
@@ -143,7 +267,8 @@
     "id": 112931,
     "name": "Tehran",
     "state": "",
-    "country": "IR",
+    "country": "Iran",
+    "province": "Tehran",
     "coord": {
       "lon": 51.421509,
       "lat": 35.694389
@@ -153,7 +278,8 @@
     "id": 2673722,
     "name": "Stockholm",
     "state": "",
-    "country": "SE",
+    "country": "Sweden",
+    "province": "Stockholm",
     "coord": {
       "lon": 18.0,
       "lat": 59.5

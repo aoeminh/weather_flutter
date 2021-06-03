@@ -170,7 +170,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
                 text: city.name,
                 style: textTitleWhite,
                 children: <TextSpan>[
-                  TextSpan(text: '- ${city.country}', style: textTitleWhite70)
+                  TextSpan(text: ' - ${city.province}/${city.country}', style: textTitleWhite70)
                 ]),
           ),
         ),
