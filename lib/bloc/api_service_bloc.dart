@@ -1,17 +1,28 @@
 import 'package:rxdart/rxdart.dart';
-import 'package:weather_app/model/weather_forecast_7_day.dart';
+import 'package:weather_app/model/daily.dart';
+import 'package:weather_app/model/weather_forcast_daily.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
+import 'package:weather_app/model/weather_forecast_response.dart';
+import 'package:weather_app/shared/constant.dart';
+import 'package:weather_app/utils/utils.dart';
 import 'base_bloc.dart';
 import 'app_bloc.dart';
 import '../model/application_error.dart';
 import '../model/weather_response.dart';
+import 'setting_bloc.dart';
+typedef OnTest = Function(bool test);
 
 class ApiServiceBloc extends BlocBase {
   BehaviorSubject<WeatherState> _weatherBehaviorSubject = BehaviorSubject();
   BehaviorSubject<WeatherState> _forecastBehaviorSubject = BehaviorSubject();
   BehaviorSubject<WeatherState> _behaviorSubjectForDailyDay = BehaviorSubject();
+  BehaviorSubject<OnTest> behaviorSubjectCity1 = BehaviorSubject();
 
   fetchWeather(double? lat, double? lon, {String units = 'metric'}) async {
+    behaviorSubjectCity1.add((test) => {
+
+      print('test $test')
+    });
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
         WeatherResponse weatherResponse =

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/daily.dart';
-import 'package:weather_app/model/weather_forecast_7_day.dart';
+import 'package:weather_app/model/weather_forcast_daily.dart';
 import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';

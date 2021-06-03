@@ -31,10 +31,9 @@ class WeatherForecastHolder {
   int? _weatherCode;
   String? _weatherCodeAsset;
   List<WeatherForecastResponse>? _forecastList;
-  City? _city;
 
   WeatherForecastHolder(
-      List<WeatherForecastResponse> forecastList, City? city) {
+      List<WeatherForecastResponse> forecastList) {
     _forecastList = forecastList;
     _temperatures = _getTemperaturesList();
     _pops =_getPopsList();
@@ -59,7 +58,6 @@ class WeatherForecastHolder {
 
     setupDateFormatted(forecastList[0].dateTime);
     // setupWeatherCode(forecastList);
-    _city = city;
   }
 
   List<double> _getTemperaturesList() {
@@ -203,8 +201,6 @@ class WeatherForecastHolder {
   String? get dateShortFormatted => _dateShortFormatted;
 
   List<WeatherForecastResponse>? get forecastList => _forecastList;
-
-  City? get city => _city;
 
   double? get minWind => _minWind;
 

@@ -1,4 +1,4 @@
-import 'package:weather_app/model/weather_forecast_7_day.dart';
+import 'package:weather_app/model/weather_forcast_daily.dart';
 import 'package:weather_app/model/weather_forecast_list_response.dart';
 import 'package:weather_app/model/weather_response.dart';
 

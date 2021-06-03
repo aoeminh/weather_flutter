@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance!.addObserver(this);
     appBloc.getListCity();
     appBloc.getListSuggestCity();
-    appBloc.getListTimezone();
     _listenConnectNetWork();
     _listenNotification();
     _checkNetWork();

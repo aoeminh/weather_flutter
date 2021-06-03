@@ -18,7 +18,7 @@ const double _width = 300;
 class SunPathWidget extends StatefulWidget {
   final int? sunrise;
   final int? sunset;
-  final int? differentTime;
+  final double? differentTime;
 
   const SunPathWidget({Key? key, this.sunrise, this.sunset, this.differentTime})
       : super(key: key);
@@ -118,7 +118,7 @@ class _SunPathPainter extends CustomPainter {
   final int dayAsMs = 86400000;
   final int? sunrise;
   final int? sunset;
-  final int? differentTime;
+  final double? differentTime;
   final ImageInfo? imageInfo;
 
   _SunPathPainter(this.sunrise, this.sunset, this.fraction, this.imageInfo,
@@ -155,8 +155,8 @@ class _SunPathPainter extends CustomPainter {
   }
 
   Offset _getPosition(fraction) {
-    int now = DateTime.now().millisecondsSinceEpoch +
-        differentTime! * oneHourMilli;
+    int now = (DateTime.now().millisecondsSinceEpoch +
+        differentTime! * oneHourMilli).toInt();
 
     double difference = 0;
 
@@ -180,7 +180,7 @@ class _SunPathCliper extends CustomClipper<Path> {
   final int dayAsMs = 86400000;
   final int? sunrise;
   final int? sunset;
-  final int? differentTime;
+  final double? differentTime;
 
   _SunPathCliper(this.sunrise, this.sunset, this.fraction, this.differentTime);
 
@@ -201,8 +201,9 @@ class _SunPathCliper extends CustomClipper<Path> {
   }
 
   double _getDifferent() {
-    int now = DateTime.now().millisecondsSinceEpoch +
-        differentTime! * oneHourMilli;
+    int now = (DateTime.now().millisecondsSinceEpoch +
+        differentTime! * oneHourMilli).toInt();
+    print('sss ${DateTime.fromMillisecondsSinceEpoch(sunrise!)}');
     if (now < sunrise!) {
       return 0;
     } else if (now > sunset!) {

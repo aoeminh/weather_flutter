@@ -1,3 +1,7 @@
+import 'package:weather_app/utils/utils.dart';
+
+import '../bloc/setting_bloc.dart';
+
 import 'application_error.dart';
 import 'system.dart';
 import 'wind.dart';
@@ -62,46 +66,43 @@ class WeatherResponse {
         "station": station,
       };
 
-  static WeatherResponse formatWithTimezone(
-      WeatherResponse weatherResponse, int differentTime) {
-    return WeatherResponse(
-      dt: weatherResponse.dt! + differentTime * oneHourMilli,
-      cord: weatherResponse.cord,
-      overallWeatherData: weatherResponse.overallWeatherData,
-      mainWeatherData: weatherResponse.mainWeatherData,
-      wind: weatherResponse.wind,
-      clouds: weatherResponse.clouds,
-      system: System.withTimezone(weatherResponse.system!, differentTime),
-      id: weatherResponse.id,
-      name: weatherResponse.name,
-      cod: weatherResponse.cod,
-      station: weatherResponse.station,
-    );
-  }
+  WeatherResponse.formatWithTimezone(
+      WeatherResponse weatherResponse, double differentTime)
+      : dt = (weatherResponse.dt! + differentTime * oneHourMilli).toInt(),
+        cord = weatherResponse.cord,
+        overallWeatherData = weatherResponse.overallWeatherData,
+        mainWeatherData = weatherResponse.mainWeatherData,
+        wind = weatherResponse.wind,
+        clouds = weatherResponse.clouds,
+        system = System.withTimezone(weatherResponse.system!, differentTime),
+        id = weatherResponse.id,
+        name = weatherResponse.name,
+        cod = weatherResponse.cod,
+        station = weatherResponse.station;
 
-  WeatherResponse copyWith(
-      {int? dt,
-      Coordinates? cord,
-      List<Weather>? overallWeatherData,
-      MainWeatherData? mainWeatherData,
-      Wind? wind,
-      Clouds? clouds,
-      System? system,
-      int? id,
-      String? name,
-      int? cod,
-      String? station}) {
+  WeatherResponse copyWithSettingData(
+      TempEnum tempEnum, WindEnum windEnum, PressureEnum pressureEnum) {
     return WeatherResponse(
-      dt: dt ?? this.dt,
-      cord: cord ?? this.cord,
-      overallWeatherData: overallWeatherData ?? this.overallWeatherData,
-      mainWeatherData: mainWeatherData ?? this.mainWeatherData,
-      wind: wind ?? this.wind,
-      clouds: clouds ?? this.clouds,
-      system: system ?? this.system,
-      id: id ?? this.id,
-      name: name ?? this.name,
-      cod: cod ?? this.cod,
+      dt: this.dt,
+      cord: this.cord,
+      overallWeatherData: this.overallWeatherData,
+      mainWeatherData: this.mainWeatherData!.copyWith(
+          pressure: convertPressure(
+              this.mainWeatherData!.pressure, settingBloc.pressureEnum),
+          temp: convertTemp(this.mainWeatherData!.temp, settingBloc.tempEnum),
+          tempMin:
+              convertTemp(this.mainWeatherData!.tempMin, settingBloc.tempEnum),
+          tempMax:
+              convertTemp(this.mainWeatherData!.tempMax, settingBloc.tempEnum),
+          feelsLike: convertTemp(
+              this.mainWeatherData!.feelsLike, settingBloc.tempEnum)),
+      wind: this.wind!.copyWith(
+          speed: convertWindSpeed(this.wind!.speed, settingBloc.windEnum)),
+      clouds: this.clouds,
+      system: this.system,
+      id: this.id,
+      name: this.name,
+      cod: this.cod,
       station: station ?? this.station,
     );
   }

@@ -57,17 +57,17 @@ class Daily {
         pop = TypesHelper.toDouble(json['pop']) * 100,
         uvi = TypesHelper.toDouble(json['uvi']);
 
-  static Daily withTimeZone(Daily daily, int differentTime) {
+  static Daily withTimeZone(Daily daily, double differentTime) {
     return Daily(
-        dt: daily.dt! + differentTime * oneHourMilli,
+        dt: (daily.dt! + differentTime * oneHourMilli).toInt(),
         clouds: daily.clouds,
         dewPoint: daily.dewPoint,
         feelsLike: daily.feelsLike,
         humidity: daily.humidity,
         pop: daily.pop,
         pressure: daily.pressure,
-        sunrise: daily.sunrise! + differentTime * oneHourMilli,
-        sunset: daily.sunset! + differentTime * oneHourMilli,
+        sunrise: (daily.sunrise! + differentTime * oneHourMilli).toInt(),
+        sunset: (daily.sunset! + differentTime * oneHourMilli).toInt(),
         temp: daily.temp,
         uvi: daily.uvi,
         weather: daily.weather,

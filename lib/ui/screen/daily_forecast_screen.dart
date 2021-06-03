@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../model/daily.dart';
-import '../../model/weather_forecast_7_day.dart';
+import '../../model/weather_forcast_daily.dart';
 import '../../shared/colors.dart';
 import '../../shared/dimens.dart';
 import '../../shared/image.dart';

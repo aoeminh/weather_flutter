@@ -14,7 +14,6 @@ import 'base_bloc.dart';
 class AppBloc extends BlocBase {
   List<City>? _cities;
   List<City>? _suggestCities;
-  List<Timezone>? _timezones;
   BehaviorSubject<ApplicationError> _errorBehavior = BehaviorSubject();
 
   addError(ApplicationError error) {
@@ -59,13 +58,6 @@ class AppBloc extends BlocBase {
     _suggestCities = list.map((e) => City.fromJson(e)).toList();
   }
 
-  getListTimezone() async {
-    String timezoneStr =
-        await rootBundle.loadString("assets/city/timezone.json");
-    List<dynamic> list = jsonDecode(timezoneStr);
-    _timezones = list.map((e) => Timezone.fromJson(e)).toList();
-  }
-
   List<City> decodeListCity(String cities) {
     return (jsonDecode(cities) as List<dynamic>)
         .map((e) => City.fromJson(e))
@@ -85,8 +77,6 @@ class AppBloc extends BlocBase {
   List<City>? get cities => _cities;
 
   List<City>? get suggestCities => _suggestCities;
-
-  List<Timezone>? get timezones => _timezones;
 
   @override
   void dispose() {

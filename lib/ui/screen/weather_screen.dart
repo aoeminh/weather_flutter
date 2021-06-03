@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../bloc/api_service_bloc.dart';
-import '../../bloc/app_bloc.dart';
 import '../../bloc/base_bloc.dart';
 import '../../bloc/page_bloc.dart';
 import '../../bloc/setting_bloc.dart';
@@ -17,11 +16,9 @@ import '../../model/chart_data.dart';
 import '../../model/city.dart';
 import '../../model/current_daily_weather.dart';
 import '../../model/daily.dart';
-import '../../model/timezone.dart';
-import '../../model/weather_forecast_7_day.dart';
+import '../../model/weather_forcast_daily.dart';
 import '../../model/weather_forecast_holder.dart';
 import '../../model/weather_forecast_list_response.dart';
-import '../../model/weather_forecast_response.dart';
 import '../../model/weather_response.dart';
 import '../../shared/colors.dart';
 import '../../shared/constant.dart';
@@ -57,6 +54,7 @@ const double _iconDrawerSize = 30;
 const int _defaultDisplayNumberLocation = 4;
 const double _ratioBlurBg = 1 / 150;
 const double _ratioBlurImageBg = 1 / 10;
+const double _oneHour = 3600000;
 
 class WeatherScreen extends StatefulWidget {
   final double? lat;
@@ -79,14 +77,13 @@ class _WeatherScreenState extends State<WeatherScreen>
   WeatherForecastDaily? weatherForecastDaily;
   WeatherData? weatherData;
   BehaviorSubject<DateTime> timeSubject =
-      BehaviorSubject.seeded(DateTime.now());
+      BehaviorSubject();
   BehaviorSubject<double> _scrollSubject = BehaviorSubject.seeded(0);
   AnimationController? _controller;
   AnimationController? _controller2;
   ScrollController _scrollController = ScrollController();
   int currentTime = 0;
-  String timezone = '';
-  int differentTime = 0;
+  double differentTime = 0;
   bool isOnNotification = false;
   int listLocationLength = 0;
   bool isShowMore = false;
@@ -118,7 +115,8 @@ class _WeatherScreenState extends State<WeatherScreen>
   _addTime() {
     currentTime += 1000;
     timeSubject.add(DateTime.fromMillisecondsSinceEpoch(
-        DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli));
+        (DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli)
+            .toInt()));
   }
 
   getData({double? lat, double? lon}) {
@@ -139,12 +137,11 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _listenListCityChange() {
     pageBloc.currentCitiesStream.listen((event) {
-      if(this.mounted){
+      if (this.mounted) {
         getData(
             lat: event[widget.index].coordinates.latitude,
             lon: event[widget.index].coordinates.longitude);
       }
-
     });
   }
 
@@ -182,10 +179,12 @@ class _WeatherScreenState extends State<WeatherScreen>
         if (a is WeatherStateSuccess &&
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
-          differentTime = _getDifferentTime(c.weatherResponse.timezone);
+          differentTime = _getDifferentTime(c.weatherResponse.timezoneOffset!);
           return WeatherData(
-              weatherResponse: a.weatherResponse,
-              weatherForecastListResponse: b.weatherResponse,
+              weatherResponse: WeatherResponse.formatWithTimezone(
+                  a.weatherResponse, differentTime),
+              weatherForecastListResponse: b.weatherResponse.withTimezone(
+                  list: b.weatherResponse, differentTime: differentTime),
               weatherForecastDaily: WeatherForecastDaily.withTimezone(
                   c.weatherResponse, differentTime));
         }
@@ -222,13 +221,15 @@ class _WeatherScreenState extends State<WeatherScreen>
                                   width: MediaQuery.of(context).size.width,
                                   child: ImageFiltered(
                                     imageFilter: ImageFilter.blur(
-                                        sigmaY:
-                                            (snapshot.data! * _ratioBlurImageBg),
+                                        sigmaY: (snapshot.data! *
+                                            _ratioBlurImageBg),
                                         sigmaX: (snapshot.data! *
                                             _ratioBlurImageBg)),
                                     child: Image.asset(
-                                      getBgImagePath(weatherData!.weatherResponse!
-                                          .overallWeatherData![0].icon),
+                                      getBgImagePath(weatherData!
+                                          .weatherResponse!
+                                          .overallWeatherData![0]
+                                          .icon),
                                       fit: BoxFit.fill,
                                     ),
                                   ),
@@ -263,92 +264,33 @@ class _WeatherScreenState extends State<WeatherScreen>
     WeatherForecastDaily weatherForecastDaily =
         weatherData!.weatherForecastDaily!;
     weatherData = weatherData!.copyWith(
-        weatherResponse: weatherResponse.copyWith(
-            dt: weatherResponse.dt! + differentTime * oneHourMilli,
-            wind: weatherResponse.wind!.copyWith(
-                speed: convertWindSpeed(
-                    weatherResponse.wind!.speed, settingBloc.windEnum)),
-            mainWeatherData: weatherResponse.mainWeatherData!.copyWith(
-                pressure: convertPressure(
-                    weatherResponse.mainWeatherData!.pressure,
-                    settingBloc.pressureEnum),
-                temp: convertTemp(
-                    weatherResponse.mainWeatherData!.temp, settingBloc.tempEnum),
-                tempMin: convertTemp(weatherResponse.mainWeatherData!.tempMin,
-                    settingBloc.tempEnum),
-                tempMax: convertTemp(weatherResponse.mainWeatherData!.tempMax,
-                    settingBloc.tempEnum),
-                feelsLike: convertTemp(
-                    weatherResponse.mainWeatherData!.feelsLike,
-                    settingBloc.tempEnum))),
+        weatherResponse: weatherResponse.copyWithSettingData(
+            settingBloc.tempEnum,
+            settingBloc.windEnum,
+            settingBloc.pressureEnum),
         weatherForecastListResponse: weatherForecastListResponse.copyWith(
-            list: _convertForecastListResponse(weatherForecastListResponse)),
+            settingBloc.tempEnum,
+            settingBloc.windEnum,
+            settingBloc.pressureEnum),
         weatherForecastDaily: weatherForecastDaily.copyWith(
-            daily: _convertListDaily(weatherForecastDaily.daily!),
-            current: weatherForecastDaily.current!.copyWith(
-                visibility: convertVisibility(weatherForecastDaily.current!.visibility, settingBloc.visibilityEnum),
-                feelsLike: convertTemp(weatherForecastDaily.current!.feelsLike, settingBloc.tempEnum),
-                temp: convertTemp(weatherForecastDaily.current!.temp, settingBloc.tempEnum))));
+            settingBloc.tempEnum,
+            settingBloc.visibilityEnum,
+            settingBloc.windEnum,
+            settingBloc.pressureEnum));
   }
 
-  List<WeatherForecastResponse> _convertForecastListResponse(
-      WeatherForecastListResponse weatherForecastListResponse) {
-    List<WeatherForecastResponse> list =
-        weatherForecastListResponse.list!.map((e) {
-      return e.copyWith(
-          dt: e.dt! + differentTime * oneHourMilli,
-          wind: e.wind.copyWith(
-              speed: convertWindSpeed(e.wind.speed, settingBloc.windEnum)),
-          mainWeatherData: e.mainWeatherData.copyWith(
-              pressure: convertPressure(
-                  e.mainWeatherData.pressure, settingBloc.pressureEnum),
-              temp: convertTemp(e.mainWeatherData.temp, settingBloc.tempEnum),
-              feelsLike: convertTemp(
-                  e.mainWeatherData.feelsLike, settingBloc.tempEnum),
-              tempMax:
-                  convertTemp(e.mainWeatherData.tempMax, settingBloc.tempEnum),
-              tempMin: convertTemp(
-                  e.mainWeatherData.tempMin, settingBloc.tempEnum)));
-    }).toList();
-    return list;
-  }
-
-  _convertListDaily(List<Daily> dailies) {
-    return dailies
-        .map((e) => e.copyWith(
-            windSpeed: convertWindSpeed(e.windSpeed, settingBloc.windEnum),
-            dewPoint: convertTemp(e.temp!.day, settingBloc.tempEnum),
-            pressure: convertPressure(e.pressure, settingBloc.pressureEnum),
-            temp: e.temp!.copyWith(
-                day: convertTemp(e.temp!.day, settingBloc.tempEnum),
-                eve: convertTemp(e.temp!.eve, settingBloc.tempEnum),
-                max: convertTemp(e.temp!.max, settingBloc.tempEnum),
-                min: convertTemp(e.temp!.min, settingBloc.tempEnum),
-                morn: convertTemp(e.temp!.morn, settingBloc.tempEnum),
-                night: convertTemp(e.temp!.night, settingBloc.tempEnum)),
-            feelsLike: e.feelsLike!.copyWith(
-                day: convertTemp(e.temp!.day, settingBloc.tempEnum),
-                eve: convertTemp(e.feelsLike!.eve, settingBloc.tempEnum),
-                morn: convertTemp(e.feelsLike!.morn, settingBloc.tempEnum),
-                night: convertTemp(e.feelsLike!.night, settingBloc.tempEnum))))
-        .toList();
-  }
-
-  int _getDifferentTime(String? timezone) {
-    print('value $timezone');
-    String value = '';
-    for (Timezone time in appBloc.timezones!) {
-      if (time.value!.toLowerCase().contains(getTimezone(timezone!))) {
-        value = getTimezone(time.name!);
-      }
-    }
-
-    return value == '' ? 0 : convertTimezoneToNumber(value);
+  double _getDifferentTime(double timezoneOffset) {
+    return (timezoneOffset  -
+            DateTime.now().timeZoneOffset.inMilliseconds) /
+        _oneHour;
   }
 
   String getTimezone(String timezone) {
-    print('${timezone.substring(timezone.indexOf('/') + 1, timezone.length).toLowerCase()}');
-    return timezone.substring(timezone.indexOf('/') + 1, timezone.length).toLowerCase();
+    print(
+        '${timezone.substring(timezone.indexOf('/') + 1, timezone.length).toLowerCase()}');
+    return timezone
+        .substring(timezone.indexOf('/') + 1, timezone.length)
+        .toLowerCase();
   }
 
   _body(WeatherData weatherData) {
@@ -405,8 +347,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               _buildDailyForecast(weatherData.weatherForecastDaily),
               _buildDetail(weatherData.weatherForecastDaily),
               _buildWindAndPressure(weatherData.weatherResponse),
-              _buildSunTime(weatherData.weatherResponse,
-                  weatherData.weatherForecastDaily!.timezone)
+              _buildSunTime(weatherData.weatherResponse)
             ],
           ),
         ),
@@ -507,7 +448,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                       InkWell(
                         onTap: () {
                           Navigator.pop(context);
-                           Navigator.push(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EditLocationScreen()));
@@ -842,7 +783,6 @@ class _WeatherScreenState extends State<WeatherScreen>
                   child: ChartWidget(
                     chartData: WeatherForecastHolder(
                       weatherForecastListResponse.list!,
-                      weatherForecastListResponse.city,
                     ).setupChartData(ChartDataType.temperature,
                         _mainWeatherWidth, _chartHeight),
                   ),
@@ -936,8 +876,13 @@ class _WeatherScreenState extends State<WeatherScreen>
           DateFormat weekDayFormat = DateFormat("E");
           String day = dayFormat.format(
               DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!));
-          String weekday = DateTime.now().day ==
-                  DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!).day
+          String weekday = DateTime.fromMillisecondsSinceEpoch(
+                          (DateTime.now().millisecondsSinceEpoch +
+                                  differentTime * _oneHour)
+                              .toInt())
+                      .day ==
+                  DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!)
+                      .day
               ? 'Today'
               : weekDayFormat.format(
                   DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!));
@@ -1334,13 +1279,13 @@ class _WeatherScreenState extends State<WeatherScreen>
     );
   }
 
-  _buildSunTime(WeatherResponse? weatherResponse, String? timezone) {
+  _buildSunTime(WeatherResponse? weatherResponse) {
     return weatherResponse != null
-        ? _buildSunTimeBody(weatherResponse, timezone)
+        ? _buildSunTimeBody(weatherResponse)
         : Container();
   }
 
-  _buildSunTimeBody(WeatherResponse weatherResponse, String? timezone) {
+  _buildSunTimeBody(WeatherResponse weatherResponse) {
     return Column(
       children: [
         _buildRowTitle(
@@ -1380,7 +1325,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                     child: SunPathWidget(
                       sunrise: weatherResponse.system!.sunrise,
                       sunset: weatherResponse.system!.sunset,
-                      differentTime: _getDifferentTime(timezone),
+                      differentTime: differentTime,
                     ),
                   )),
               Container(

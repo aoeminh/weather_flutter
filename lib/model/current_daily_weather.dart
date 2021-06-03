@@ -45,7 +45,7 @@ class CurrentDailyWeather {
     uvi = json['uvi'].toDouble();
     clouds = json['clouds'];
     visibility = json['visibility'].toDouble() /1000;
-    windSpeed = json['wind_speed'];
+    windSpeed = json['wind_speed'].toDouble();
     windDeg = json['wind_deg'];
     if (json['weather'] != null) {
       weather = <Weather>[];
@@ -56,21 +56,21 @@ class CurrentDailyWeather {
   }
 
   static CurrentDailyWeather withTimezone(
-      CurrentDailyWeather currentDailyWeather, int differentTime) {
+      CurrentDailyWeather currentDailyWeather, double differentTime) {
     return CurrentDailyWeather(
         windSpeed: currentDailyWeather.windSpeed,
         windDeg: currentDailyWeather.windDeg,
         weather: currentDailyWeather.weather,
         uvi: currentDailyWeather.uvi,
         temp: currentDailyWeather.temp,
-        sunset: currentDailyWeather.sunset! + differentTime * oneHourMilli,
-        sunrise: currentDailyWeather.sunrise = differentTime * oneHourMilli,
+        sunset: (currentDailyWeather.sunset! + differentTime * oneHourMilli).toInt(),
+        sunrise: (currentDailyWeather.sunrise! + differentTime * oneHourMilli).toInt(),
         pressure: currentDailyWeather.pressure,
         humidity: currentDailyWeather.humidity,
         feelsLike: currentDailyWeather.feelsLike,
         dewPoint: currentDailyWeather.dewPoint,
         clouds: currentDailyWeather.clouds,
-        dt: currentDailyWeather.dt! + differentTime * oneHourMilli,
+        dt: (currentDailyWeather.dt! + differentTime * oneHourMilli).toInt(),
         visibility: currentDailyWeather.visibility);
   }
 

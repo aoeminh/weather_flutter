@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:weather_app/model/application_error.dart';
-import 'package:weather_app/model/weather_forecast_7_day.dart';
+import 'package:weather_app/model/weather_forcast_daily.dart';
 import 'weather_api.dart';
 import '../model/weather_forecast_list_response.dart';
 import '../model/weather_response.dart';
