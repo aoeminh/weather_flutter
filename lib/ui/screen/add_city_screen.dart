@@ -20,6 +20,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
   void initState() {
     super.initState();
     listCity = appBloc.cities;
+    print('listCity $listCity');
   }
 
   @override
@@ -57,20 +58,22 @@ class _AddCityScreenState extends State<AddCityScreen> {
 
   _test() => RawAutocomplete<City>(
       optionsBuilder: (TextEditingValue textEditingValue) {
+        print('textEditingValue $textEditingValue');
         if (textEditingValue.text == '') {
           return const [];
         }
         return listCity!.where((City city) {
           return city.name!
-            .toLowerCase()
-            .contains(textEditingValue.text.toLowerCase());
+              .toLowerCase()
+              .contains(textEditingValue.text.toLowerCase());
         });
       },
       onSelected: (City city) {
         _onItemSubmit(city);
       },
       displayStringForOption: (city) {
-        return '${city.name} - ${city.country}';
+        print('city.province ${city.province}');
+        return '${city.name} - ${city.province}/${city.country}';
       },
       fieldViewBuilder:
           (context, textEditController, focusNode, voidCallBack) => TextField(
@@ -92,25 +95,24 @@ class _AddCityScreenState extends State<AddCityScreen> {
                 ),
               ),
       optionsViewBuilder: (BuildContext context,
-              AutocompleteOnSelected<City> onSelected,
-              Iterable<City> options) {
+          AutocompleteOnSelected<City> onSelected, Iterable<City> options) {
         return ListView.builder(
-            padding: const EdgeInsets.all(8.0),
-            itemCount: options.length,
-            itemBuilder: (BuildContext context, int index) {
-              final City option = options.elementAt(index);
-              return GestureDetector(
-                onTap: () {
-                  onSelected(option);
-                },
-                child: Material(
-                  child: ListTile(
-                    title: Text(option.name!),
-                  ),
+          padding: const EdgeInsets.all(8.0),
+          itemCount: options.length,
+          itemBuilder: (BuildContext context, int index) {
+            final City city = options.elementAt(index);
+            return GestureDetector(
+              onTap: () {
+                onSelected(city);
+              },
+              child: Material(
+                child: ListTile(
+                  title: Text('${city.name} - ${city.province}/${city.country}'),
                 ),
-              );
-            },
-          );
+              ),
+            );
+          },
+        );
       });
 
   _similarCity() {

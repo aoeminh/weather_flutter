@@ -1,4 +1,3 @@
-
 import '../utils/types_helper.dart';
 
 class Coordinates {
@@ -11,9 +10,16 @@ class Coordinates {
       : longitude = TypesHelper.toDouble(json["lon"]),
         latitude = TypesHelper.toDouble(json["lat"]);
 
-  Map<String,dynamic> toJson() => {
-    "lon":longitude,
-    "lat":latitude
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "lon": longitude,
+        "lat": latitude
+      };
 
+  static Map<String, dynamic> convertJson(double lng, double lat) {
+    return {
+      "lon": lng,
+      "lat": lat
+    };
+  }
 }

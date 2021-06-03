@@ -7,7 +7,6 @@ import 'package:rxdart/rxdart.dart';
 import '../model/application_error.dart';
 import '../model/city.dart';
 import '../model/coordinates.dart';
-import '../model/timezone.dart';
 import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
 
@@ -47,7 +46,7 @@ class AppBloc extends BlocBase {
     String cityStr = await rootBundle.loadString("assets/city/cities.json");
 
     List<dynamic> list = jsonDecode(cityStr);
-    _cities = list.map((e) => City.fromJson(e)).toList();
+    _cities = list.map((e) => City.fromAssetJson(e)).toList();
   }
 
   getListSuggestCity() async {
