@@ -15,13 +15,10 @@ class WeatherApiImpl extends WeatherApi {
   final String _apiWeatherForecast7Day = "/onecall";
   static final String apiKey = "980fd15d8985bd9e265eac0593d3c9bd";
 
-
-
   @override
-  Future<WeatherResponse> fetchWeather(
-      double? lat, double? lon, String units) async {
-
-    Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, units);
+  Future<WeatherResponse> fetchWeather(double? lat, double? lon, String units,
+      {String lang = 'en'}) async {
+    Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, units, lang: lang);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       return WeatherResponse.fromJson(response.data);
@@ -32,8 +29,10 @@ class WeatherApiImpl extends WeatherApi {
 
   @override
   Future<WeatherForecastListResponse> fetchWeatherForecast(
-      double? lat, double? lon, String units) async {
-    Uri uri = _buildUri(lat, lon, _apiWeatherForecastEndpoint, units);
+      double? lat, double? lon, String units,
+      {String lang = 'en'}) async {
+    Uri uri =
+        _buildUri(lat, lon, _apiWeatherForecastEndpoint, units, lang: lang);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       return WeatherForecastListResponse.fromJson(response.data);
@@ -45,9 +44,10 @@ class WeatherApiImpl extends WeatherApi {
 
   @override
   Future<WeatherForecastDaily> fetchWeatherForecast7Day(
-      double? lat, double? lon, String units, String exclude) async {
-    Uri uri =
-        _buildUri(lat, lon, _apiWeatherForecast7Day, units, exclude: exclude);
+      double? lat, double? lon, String units, String exclude,
+      {String lang = 'en'}) async {
+    Uri uri = _buildUri(lat, lon, _apiWeatherForecast7Day, units,
+        exclude: exclude, lang: lang);
     print('${uri.toString()}');
 
     Response response = await _dio.get(uri.toString());
@@ -59,12 +59,13 @@ class WeatherApiImpl extends WeatherApi {
   }
 
   _buildUri(double? lat, double? lon, String endpoint, String unit,
-      {String? exclude}) {
+      {String? exclude, String? lang}) {
     Map<String, dynamic> param = {
       'lat': lat.toString(),
       'lon': lon.toString(),
       'apiKey': apiKey,
-      'units': unit
+      'units': unit,
+      'lang': lang
     };
 
     // add param to 7 day api

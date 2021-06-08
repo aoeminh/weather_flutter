@@ -203,7 +203,6 @@ class _SunPathCliper extends CustomClipper<Path> {
   double _getDifferent() {
     int now = (DateTime.now().millisecondsSinceEpoch +
         differentTime! * oneHourMilli).toInt();
-    print('sss ${DateTime.fromMillisecondsSinceEpoch(sunrise!)}');
     if (now < sunrise!) {
       return 0;
     } else if (now > sunset!) {

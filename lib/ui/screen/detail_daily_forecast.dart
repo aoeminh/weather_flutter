@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/weather_forcast_daily.dart';
@@ -45,7 +46,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
             leading: GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: Icon(Icons.arrow_back)),
-            title: Text('Detail Daily', style: textTitleH2WhiteBold),
+            title: Text('daily_detail'.tr, style: textTitleH2WhiteBold),
             bottom: TabBar(
                 indicatorColor: Colors.white,
                 labelPadding: EdgeInsets.all(margin),
@@ -69,7 +70,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
                                 style: textTitleWhite70,
                               ),
                               Text(
-                                '${formatDateAndMonth(DateTime.fromMillisecondsSinceEpoch(daily.dt!),settingBloc.dateEnum)}',
+                                '${formatDateAndMonth(DateTime.fromMillisecondsSinceEpoch(daily.dt!), settingBloc.dateEnum)}',
                                 style: textTitleWhite70,
                               ),
                             ]),
@@ -116,7 +117,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
     String? status;
     String feelslike;
     if (isDay) {
-      session = 'Day';
+      session = 'day'.tr;
       temp = '${daily.temp!.day!.toInt()}$degree';
       icon = Image.asset(
         mIconHigh,
@@ -126,7 +127,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
       status = daily.weather![0].main;
       feelslike = '${daily.temp!.max!.toInt()}$degree';
     } else {
-      session = 'Night';
+      session = 'night'.tr;
       temp = '${daily.temp!.night!.toInt()}$degree';
       icon = Image.asset(
         mIconLow,
@@ -174,19 +175,21 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
             status!,
             style: textTitleH2White,
           ),
-          _buildRowDetail(mIconSettingTemp, 'Feels like(max)', feelslike),
+          _buildRowDetail(mIconSettingTemp,
+              '${'feels_like'.tr} (${isDay ? 'max'.tr : 'min'.tr})', feelslike),
           _divider(),
-          _buildRowDetail(mIconWind, 'Wind', "${formatWind(daily.windSpeed!,settingBloc.windEnum.value)}"),
+          _buildRowDetail(mIconWind, 'wind'.tr,
+              "${formatWind(daily.windSpeed!, settingBloc.windEnum.value)}"),
           _divider(),
           isDay
               ? _buildRowDetail(
-                  mIconUVIndex, 'UV index', "${daily.uvi!.toInt()}")
+                  mIconUVIndex, 'uv_index'.tr, "${daily.uvi!.toInt()}")
               : Container(),
           isDay ? _divider() : Container(),
-          _buildRowDetail(
-              mIcPrecipitation, 'Pop', "${formatHumidity(daily.pop!)}"),
+          _buildRowDetail(mIcPrecipitation, 'precipitation'.tr,
+              "${formatHumidity(daily.pop!)}"),
           _divider(),
-          _buildRowDetail(mIconCloudCover, 'Cloud Cover',
+          _buildRowDetail(mIconCloudCover, 'cloud_cover'.tr,
               "${formatHumidity(daily.clouds!.toDouble())}"),
         ],
       ),
@@ -196,10 +199,6 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
   _divider() => Divider(
         height: 1,
         color: Colors.white70,
-      );
-
-  _verticalMargin() => const SizedBox(
-        height: margin,
       );
 
   _buildRowDetail(String image, String title, String content) => Row(
@@ -236,7 +235,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Sun & Moon',
+            '${'sun'.tr} & ${'moon'.tr}',
             style: textTitleH2White,
           ),
           _sunDetail(daily)
@@ -273,11 +272,11 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Rise',
+                  'rise'.tr,
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise!),settingBloc.timeEnum)}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise!), settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],
@@ -290,11 +289,11 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Set',
+                  'set'.tr,
                   style: textSmallWhite70,
                 ),
                 Text(
-                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset!),settingBloc.timeEnum)}',
+                  '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset!), settingBloc.timeEnum)}',
                   style: textTitleWhite,
                 )
               ],

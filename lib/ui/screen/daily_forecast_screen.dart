@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../model/daily.dart';
 import '../../model/weather_forcast_daily.dart';
@@ -34,7 +35,7 @@ class DailyForecastScreen extends StatelessWidget {
               color: secondaryColor,
             )),
         title: Text(
-          'Daily Forecast',
+          'daily_forecast'.tr,
           style: textTitleH2WhiteBold,
         ),
         backgroundColor: Colors.black,
@@ -108,7 +109,7 @@ class DailyForecastScreen extends StatelessWidget {
         Expanded(
             flex: 1,
             child: Text(
-              'Day',
+              'day'.tr,
               style: textSmallWhite70,
             )),
         Expanded(
@@ -136,7 +137,7 @@ class DailyForecastScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: marginSmall,),
                   Text(
-                    'Sunrise: ',
+                    'sunrise'.tr,
                     style: textSmallWhite70,
                   ),
                   Text(
@@ -173,7 +174,7 @@ class DailyForecastScreen extends StatelessWidget {
         Expanded(
             flex: 1,
             child: Text(
-              'Night',
+              'night'.tr,
               style: textSmallWhite70,
             )),
         Expanded(
@@ -201,7 +202,7 @@ class DailyForecastScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: marginSmall,),
                   Text(
-                    'Sunset: ',
+                    'sunset'.tr,
                     style: textSmallWhite70,
                   ),
                   Text(

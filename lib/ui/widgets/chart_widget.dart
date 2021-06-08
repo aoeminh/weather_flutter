@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:get/get.dart';
+import 'package:rxdart/rxdart.dart' as rx;
+import 'package:rxdart/subjects.dart';
 
 import '../../bloc/setting_bloc.dart';
 import '../../model/chart_data.dart';
@@ -119,7 +121,7 @@ class _ChartWidgetState extends State<ChartWidget> {
 
   Widget _getChartWidget() {
     return StreamBuilder<Object>(
-        stream: Rx.combineLatest2(
+        stream: rx.Rx.combineLatest2(
             humidityBehaviorSubject.stream,
             weatherImageInfoSubject.stream,
             (ImageInfo? humidity, List<ImageInfo>? weatherIcons) =>
@@ -153,7 +155,7 @@ class _ChartWidgetState extends State<ChartWidget> {
   Widget _getChartUnavailableWidget(BuildContext context) {
     return Center(
         key: Key("chart_widget_unavailable"),
-        child: Text('ssssss',
+        child: Text('empty'.tr,
             textDirection: TextDirection.ltr,
             style: Theme.of(context).textTheme.headline1));
   }

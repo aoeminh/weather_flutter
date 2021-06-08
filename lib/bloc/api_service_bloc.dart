@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/weather_forcast_daily.dart';
@@ -26,7 +27,7 @@ class ApiServiceBloc extends BlocBase {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
         WeatherResponse weatherResponse =
-            await weatherRepository.fetchWeather(lat, lon, units);
+            await weatherRepository.fetchWeather(lat, lon, units,lang: Get.deviceLocale!.languageCode);
         if (!_weatherBehaviorSubject.isClosed) {
           if (weatherResponse.errorCode != null) {
             _weatherBehaviorSubject
@@ -46,7 +47,7 @@ class ApiServiceBloc extends BlocBase {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
         WeatherForecastListResponse weatherForecastListResponse =
-            await weatherRepository.fetchWeatherForecast(lat, lon, units);
+            await weatherRepository.fetchWeatherForecast(lat, lon, units,lang: Get.deviceLocale!.languageCode);
         if (!_forecastBehaviorSubject.isClosed) {
           if (weatherForecastListResponse.errorCode != null) {
             _forecastBehaviorSubject
@@ -67,7 +68,7 @@ class ApiServiceBloc extends BlocBase {
     checkNetWork().then((isNetWorkAvailable) async {
       if (isNetWorkAvailable) {
         WeatherForecastDaily weatherForecast7Day = await weatherRepository
-            .fetchWeatherForecast7Day(lat, lon, units, exclude);
+            .fetchWeatherForecast7Day(lat, lon, units, exclude,lang: Get.deviceLocale!.languageCode);
         if (!_behaviorSubjectForDailyDay.isClosed) {
           if (weatherForecast7Day.errorCode != null) {
             _behaviorSubjectForDailyDay

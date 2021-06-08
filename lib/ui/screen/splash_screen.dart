@@ -32,17 +32,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   firstLoadApp() {
     appBloc.determinePosition().then((city) {
-      if (city != null) {
-        print(
-            'city ${city.coordinates!.latitude}  ${city.coordinates!.longitude}');
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HomePage(
-                      listCity: [city],
-                    )),
-            (Route<dynamic> route) => false);
-      }
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                    listCity: [city],
+                  )),
+          (Route<dynamic> route) => false);
     });
   }
 

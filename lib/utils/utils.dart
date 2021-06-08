@@ -1,10 +1,10 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/system.dart';
-import 'package:weather_app/model/temp.dart';
 import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
@@ -201,16 +201,16 @@ String formatDateAndWeekDay(DateTime dateTime,DateEnum dateEnum) {
 
   switch(dateEnum){
     case DateEnum.ddMMyyyyy:
-      df = new DateFormat('EEE dd/M');
+      df = new DateFormat('EEE dd/M',Get.deviceLocale!.languageCode);
       break;
     case DateEnum.mmddyyyyy:
-      df = new DateFormat('EEE M/dd');
+      df = new DateFormat('EEE M/dd',Get.deviceLocale!.languageCode);
       break;
     case DateEnum.yyyymmdd:
-      df = new DateFormat('EEE M/dd');
+      df = new DateFormat('EEE M/dd',Get.deviceLocale!.languageCode);
       break;
     default:
-      df = new DateFormat('EEE dd/M');
+      df = new DateFormat('EEE dd/M',Get.deviceLocale!.languageCode);
   }
   String date = df.format(dateTime);
   return date;
@@ -220,29 +220,29 @@ String formatDateAndMonth(DateTime dateTime,DateEnum dateEnum) {
   DateFormat df;
   switch(dateEnum){
     case DateEnum.ddMMyyyyy:
-      df = new DateFormat('dd/M');
+      df = new DateFormat('dd/M',Get.deviceLocale!.languageCode);
       break;
     case DateEnum.mmddyyyyy:
-      df = new DateFormat('M/dd');
+      df = new DateFormat('M/dd',Get.deviceLocale!.languageCode);
       break;
     case DateEnum.yyyymmdd:
-      df = new DateFormat('M/dd');
+      df = new DateFormat('M/dd',Get.deviceLocale!.languageCode);
       break;
     default:
-      df = new DateFormat('dd/M');
+      df = new DateFormat('dd/M',Get.deviceLocale!.languageCode);
   }
   String date = df.format(dateTime);
   return date;
 }
 
 String formatWeekDayAndTime(DateTime? dateTime, TimeEnum timeEnum) {
-  DateFormat df = new DateFormat('EEE HH:mm');
+  DateFormat df = new DateFormat('EEE HH:mm',Get.deviceLocale!.languageCode);
   switch (timeEnum) {
     case TimeEnum.twelve:
-      df = new DateFormat('EEE HH:mm a');
+      df = new DateFormat('EEE HH:mm a',Get.deviceLocale!.languageCode);
       break;
     case TimeEnum.twentyFour:
-      df = new DateFormat('EEE HH:mm');
+      df = new DateFormat('EEE HH:mm',Get.deviceLocale!.languageCode);
       break;
   }
 
@@ -254,10 +254,10 @@ String formatTime(DateTime dateTime, TimeEnum timeEnum) {
   late DateFormat df;
   switch (timeEnum) {
     case TimeEnum.twelve:
-      df = new DateFormat('h:mm a');
+      df = new DateFormat('h:mm a',Get.deviceLocale!.languageCode);
       break;
     case TimeEnum.twentyFour:
-      df = new DateFormat('HH:mm');
+      df = new DateFormat('HH:mm',Get.deviceLocale!.languageCode);
       break;
   }
   String date = df.format(dateTime);
@@ -265,7 +265,7 @@ String formatTime(DateTime dateTime, TimeEnum timeEnum) {
 }
 
 String formatWeekday(DateTime dateTime) {
-  final df = new DateFormat('EEE');
+  final df = new DateFormat('EEE',Get.deviceLocale!.languageCode);
   String date = df.format(dateTime);
   return date;
 }
@@ -452,7 +452,7 @@ String getRiseAndSetTime(DateTime rise, DateTime set) {
 
   double minute = (sub / (60 * 60 * 100)) % 60;
 
-  return '${hour.toStringAsFixed(0)} hour ${minute.toStringAsFixed(0)} minute';
+  return '${hour.toStringAsFixed(0)} ${'hour'.tr} ${minute.toStringAsFixed(0)} ${'minute'.tr}';
 }
 
 int convertTimezoneToNumber(String timezone) {

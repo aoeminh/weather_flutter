@@ -114,7 +114,6 @@ extension VisibilityExtenstion on VisibilityEnum {
     switch (this) {
       case VisibilityEnum.km:
         return km;
-        break;
       case VisibilityEnum.mile:
         return mile;
       default:

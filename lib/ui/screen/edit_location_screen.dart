@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
 import 'package:weather_app/model/city.dart';
 import 'package:weather_app/shared/text_style.dart';
@@ -38,7 +39,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
               color: Colors.grey,
             ),
           ),
-          title: Text('Edit Location'),
+          title: Text('edit_location'.tr),
           actions: [
             Container(
               margin: EdgeInsets.only(right: margin),
@@ -92,7 +93,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                   width: margin,
                 ),
                 Text(
-                  'Add new city',
+                  'add_new_city'.tr,
                   style: textTitleWhite,
                 )
               ],
@@ -123,7 +124,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                     width: margin,
                   ),
                   Text(
-                    'Add new city',
+                    'add_new_city'.tr,
                     style: textTitleWhite,
                   )
                 ],

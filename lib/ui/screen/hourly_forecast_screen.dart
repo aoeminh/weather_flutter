@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../model/weather_forecast_list_response.dart';
 import '../../model/weather_forecast_response.dart';
@@ -51,7 +52,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            '72 Hours Forecast',
+            '72 ${'hour_forecast'.tr}',
             style: textTitleH1White,
           ),
           leading: GestureDetector(
@@ -160,17 +161,17 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
         const SizedBox(
           height: margin,
         ),
-        _buildRowDetails(mIconSettingWind, 'Wind',
+        _buildRowDetails(mIconSettingWind, 'wind'.tr,
             '${formatWind(weatherForecastResponse.wind.speed,settingBloc.windEnum.value)}'),
         const Divider(
           color: Colors.grey,
         ),
-        _buildRowDetails(mIcPrecipitation, 'Precipitation',
+        _buildRowDetails(mIcPrecipitation, 'precipitation'.tr,
             '${formatHumidity(weatherForecastResponse.pop)}'),
         const Divider(
           color: Colors.grey,
         ),
-        _buildRowDetails(mIconCloudCover, 'Cloud Cover',
+        _buildRowDetails(mIconCloudCover, 'cloud_cover'.tr,
             '${weatherForecastResponse.clouds.all}$percent'),
       ],
     );
@@ -180,17 +181,30 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          '${weatherForecastResponse.overallWeatherData[0].main}',
-          style: textTitleWhite,
+        Flexible(
+          fit: FlexFit.loose,
+          flex: 2,
+          child: Text(
+            '${weatherForecastResponse.overallWeatherData[0].description}',
+            style: textTitleWhite,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        Text(
-          'Feels Like: ${weatherForecastResponse.mainWeatherData.feelsLike.toInt()}$degree',
-          style: textTitleWhite,
+        Flexible(
+          fit: FlexFit.loose,
+          flex: 3,
+          child: Text(
+            '${'temp_'.tr} ${weatherForecastResponse.mainWeatherData.feelsLike.toInt()}$degree',
+            style: textTitleWhite,
+          ),
         ),
-        Text(
-          '${weatherForecastResponse.mainWeatherData.temp.toInt()}$degree',
-          style: textTitleWhite,
+        Flexible(
+          fit: FlexFit.loose,
+          flex: 1,
+          child: Text(
+            '${weatherForecastResponse.mainWeatherData.temp.toInt()}$degree',
+            style: textTitleWhite,
+          ),
         ),
       ],
     );

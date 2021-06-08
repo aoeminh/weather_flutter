@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/bloc/page_bloc.dart';
 import 'package:weather_app/model/city.dart';
@@ -20,7 +21,6 @@ class _AddCityScreenState extends State<AddCityScreen> {
   void initState() {
     super.initState();
     listCity = appBloc.cities;
-    print('listCity $listCity');
   }
 
   @override
@@ -78,7 +78,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
                 controller: textEditController,
                 focusNode: focusNode,
                 decoration: InputDecoration(
-                  hintText: 'Insert city name',
+                  hintText: 'insert_city_name'.tr,
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   enabledBorder: InputBorder.none,
@@ -130,7 +130,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
                   width: margin,
                 ),
                 Text(
-                  'Similar location',
+                  'similar_city'.tr,
                   style: textTitleWhite70,
                 ),
               ],

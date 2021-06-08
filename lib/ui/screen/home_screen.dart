@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:system_settings/system_settings.dart';
-import 'package:weather_app/shared/image.dart';
+import '../../shared/image.dart';
+import '../../utils/utils.dart';
 
 import '../../bloc/app_bloc.dart';
 import '../../bloc/page_bloc.dart';
@@ -170,11 +172,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidPlatformChannelSpecifics);
-
     String title =
-        '${weatherResponse.mainWeatherData!.temp}$degreeC at ${weatherResponse.name} ';
+        '${formatTemperature(temperature: weatherResponse.mainWeatherData!.temp)} at ${weatherResponse.name} ';
     String body =
-        'Feels like ${weatherResponse.mainWeatherData!.feelsLike}$degreeC . ${weatherResponse.overallWeatherData![0].description} ';
+        '${'feels_like_'.tr} ${formatTemperature(temperature: weatherResponse.mainWeatherData!.feelsLike)} . ${weatherResponse.overallWeatherData![0].description} ';
 
     await flutterLocalNotificationsPlugin
         .show(0, title, body, notificationDetails, payload: 'payload');

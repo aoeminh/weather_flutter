@@ -7,18 +7,21 @@ import 'package:weather_app/model/weather_response.dart';
 class WeatherRepository {
   final WeatherApi _weatherApi = WeatherApiImpl();
 
-  Future<WeatherResponse> fetchWeather(double? lat, double? lon, String units) {
-    return _weatherApi.fetchWeather(lat, lon, units);
+  Future<WeatherResponse> fetchWeather(double? lat, double? lon, String units,
+      {String lang = 'en'}) {
+    return _weatherApi.fetchWeather(lat, lon, units, lang: lang);
   }
 
   Future<WeatherForecastListResponse> fetchWeatherForecast(
-      double? lat, double? lon, String units) {
-    return _weatherApi.fetchWeatherForecast(lat, lon, units);
+      double? lat, double? lon, String units,
+      {String lang = 'en'}) {
+    return _weatherApi.fetchWeatherForecast(lat, lon, units, lang: lang);
   }
 
   Future<WeatherForecastDaily> fetchWeatherForecast7Day(
-      double? lat, double? lon, String units,String exclude) {
-    return _weatherApi.fetchWeatherForecast7Day(lat, lon, units,exclude);
+      double? lat, double? lon, String units, String exclude,
+      {String lang = 'en'}) {
+    return _weatherApi.fetchWeatherForecast7Day(lat, lon, units, exclude,
+        lang: lang);
   }
-
 }
