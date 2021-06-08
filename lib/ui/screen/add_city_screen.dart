@@ -58,7 +58,6 @@ class _AddCityScreenState extends State<AddCityScreen> {
 
   _test() => RawAutocomplete<City>(
       optionsBuilder: (TextEditingValue textEditingValue) {
-        print('textEditingValue $textEditingValue');
         if (textEditingValue.text == '') {
           return const [];
         }
@@ -72,7 +71,6 @@ class _AddCityScreenState extends State<AddCityScreen> {
         _onItemSubmit(city);
       },
       displayStringForOption: (city) {
-        print('city.province ${city.province}');
         return '${city.name} - ${city.province}/${city.country}';
       },
       fieldViewBuilder:

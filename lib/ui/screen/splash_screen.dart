@@ -53,8 +53,6 @@ class _SplashScreenState extends State<SplashScreen> {
       var listCity = value[1] as List<City>;
       var city = value[0] as City;
       if (listCity.isNotEmpty) {
-        print('list city ${listCity.length}');
-
         var index = listCity.indexWhere((element) {
           return element.isHome;
         });
@@ -62,7 +60,6 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         listCity.add(city);
       }
-      print('list city ${listCity.length}');
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
