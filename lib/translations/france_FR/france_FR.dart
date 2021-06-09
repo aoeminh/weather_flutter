@@ -44,5 +44,6 @@ const Map<String, String> fr = {
   'empty':'Vider',
   'hour': 'heure',
   'minute':'minute',
-  'network_error':'Le réseau semble avoir des problèmes. Assurez-vous d\'avoir une connexion Internet.'
+  'network_error':'Le réseau semble avoir des problèmes. Assurez-vous d\'avoir une connexion Internet.',
+  'check_update': 'Vérifier la mise à jour'
 };

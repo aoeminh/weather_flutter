@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../bloc/api_service_bloc.dart';
 import '../../bloc/base_bloc.dart';
@@ -437,6 +438,27 @@ class _WeatherScreenState extends State<WeatherScreen>
                 'date_format'.tr,
                 settingBloc.dateEnum.value,
                 () => showSettingDialog(SettingEnum.DateEnum)),
+            Divider(height: 1, color: Colors.grey),
+            InkWell(
+              onTap: () {
+                launch(appUrl);
+              },
+              child: Container(
+                padding: EdgeInsets.only(
+                    left: padding, right: paddingSmall, top: padding),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.system_update,
+                      size: _iconDrawerSize,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: padding),
+                    Text('check_update'.tr, style: textTitleWhite),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       );
@@ -589,7 +611,7 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   _buildItemUnit(
       String imagePath, String title, String unit, VoidCallback callback) {
-    return GestureDetector(
+    return InkWell(
       onTap: callback,
       child: Container(
         padding: EdgeInsets.only(
@@ -880,8 +902,10 @@ class _WeatherScreenState extends State<WeatherScreen>
         scrollDirection: Axis.vertical,
         physics: NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          DateFormat dayFormat = DateFormat("MM/dd",Get.deviceLocale!.languageCode);
-          DateFormat weekDayFormat = DateFormat("E",Get.deviceLocale!.languageCode);
+          DateFormat dayFormat =
+              DateFormat("MM/dd", Get.deviceLocale!.languageCode);
+          DateFormat weekDayFormat =
+              DateFormat("E", Get.deviceLocale!.languageCode);
           String day = dayFormat.format(
               DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!));
           String weekday = DateTime.fromMillisecondsSinceEpoch(

@@ -44,5 +44,6 @@ const Map<String, String> ko = {
   'empty': '빈',
   'hour': '시',
   'minute': '분',
-  'network_error': '네트워크에 문제가있는 것 같습니다. 인터넷에 연결되어 있는지 확인하세요.'
+  'network_error': '네트워크에 문제가있는 것 같습니다. 인터넷에 연결되어 있는지 확인하세요.',
+  'check_update': '업데이트를 확인'
 };

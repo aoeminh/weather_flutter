@@ -41,8 +41,10 @@ const Map<String, String> en = {
   'visibility': 'Visibility',
   'dew_point': 'Dew Point',
   'pressure': 'Pressure',
-  'empty':'Empty',
+  'empty': 'Empty',
   'hour': 'hour',
-  'minute':'minute',
-  'network_error':'The network seems to be having problems. Make sure you have an internet connection.'
+  'minute': 'minute',
+  'network_error':
+      'The network seems to be having problems. Make sure you have an internet connection.',
+  'check_update': 'Check for update'
 };

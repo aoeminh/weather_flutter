@@ -194,3 +194,6 @@ const imSettingDate = '$mImgPath'
 
 const imSettingTime = '$mImgPath'
     'ic_setting_time.png';
+
+const icUpdate = '$mImgPath'
+    'ic_update.png';

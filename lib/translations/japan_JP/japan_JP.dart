@@ -44,5 +44,6 @@ const Map<String, String> ja = {
   'empty': '空の',
   'hour': '時間',
   'minute': '分',
-  'network_error': 'ネットワークに問題があるようです。 インターネットに接続していることを確認してください。'
+  'network_error': 'ネットワークに問題があるようです。 インターネットに接続していることを確認してください。',
+  'check_update': '更新を確認'
 };

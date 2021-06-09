@@ -45,5 +45,6 @@ const Map<String, String> ro = {
   'hour': 'ora',
   'minute': 'minut',
   'network_error':
-      'Rețeaua pare să aibă probleme, vă rugăm să vă asigurați că există conexiune la internet.'
+      'Rețeaua pare să aibă probleme, vă rugăm să vă asigurați că există conexiune la internet.',
+  'check_update': 'Verifica pentru actualizare인'
 };

@@ -45,3 +45,4 @@ const String mist ='50d';
 const String mistN ='50n';
 
 const networkErrorMessage = 'No connect internet';
+const appUrl = 'https://play.google.com/store/apps/details?id=minh.quy.weather_app';
