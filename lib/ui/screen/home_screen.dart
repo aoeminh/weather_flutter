@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:system_settings/system_settings.dart';
-import '../../shared/image.dart';
-import '../../utils/utils.dart';
 
 import '../../bloc/app_bloc.dart';
 import '../../bloc/page_bloc.dart';
@@ -17,8 +15,9 @@ import '../../model/city.dart';
 import '../../model/weather_response.dart';
 import '../../shared/colors.dart';
 import '../../shared/dimens.dart';
-import '../../shared/strings.dart';
+import '../../shared/image.dart';
 import '../../shared/text_style.dart';
+import '../../utils/utils.dart';
 import 'weather_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -81,7 +80,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   _showNetWorkErrorDialog() {
     _showErrorDialog(
-        content: networkErrorMessage,
+        content: 'network_error'.tr,
         callback: () {
           SystemSettings.wifi();
           Navigator.pop(context);

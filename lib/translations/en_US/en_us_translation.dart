@@ -24,8 +24,8 @@ const Map<String, String> en = {
   'app_name': 'Free Weather Forecast',
   'notification': 'Notification',
   'temp_unit': 'Temp Unit',
-  'temp': 'Temp',
-  'temp_': 'Temperatur: ',
+  'temp': 'Temperature',
+  'temp_': 'Temperature: ',
   'wind_unit': 'Wind Unit',
   'pressure_unit': 'Pressure Unit',
   'visibility_unit': 'Visibility Unit',
@@ -42,5 +42,6 @@ const Map<String, String> en = {
   'pressure': 'Pressure',
   'empty':'Empty',
   'hour': 'hour',
-  'minute':'minute'
+  'minute':'minute',
+  'network_error':'The network seems to be having problems. Make sure you have an internet connection.'
 };

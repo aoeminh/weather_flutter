@@ -43,5 +43,7 @@ const Map<String, String> de = {
   'pressure': 'Druck',
   'empty': 'Leer',
   'hour': 'Stunde',
-  'minute':'minute'
+  'minute':'minute',
+  'network_error':'Das Netzwerk scheint Probleme zu haben. Stellen Sie sicher, dass eine Internet-Verbindung vorhanden ist.'
+
 };

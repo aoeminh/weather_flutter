@@ -40,7 +40,9 @@ const Map<String, String> ro = {
   'visibility': 'Vizibilitate',
   'dew_point': 'Punct de condensare',
   'pressure': 'Presiune',
-  'empty':'Gol',
+  'empty': 'Gol',
   'hour': 'ora',
-  'minute':'minut'
+  'minute': 'minut',
+  'network_error':
+      'Rețeaua pare să aibă probleme, vă rugăm să vă asigurați că există conexiune la internet.'
 };

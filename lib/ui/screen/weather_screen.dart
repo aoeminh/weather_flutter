@@ -654,7 +654,7 @@ class _WeatherScreenState extends State<WeatherScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '${weatherResponse.overallWeatherData![0].main}',
+          '${weatherResponse.overallWeatherData![0].description}',
           style: textTitleH1White,
         ),
         const SizedBox(
