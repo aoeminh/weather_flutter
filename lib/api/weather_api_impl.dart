@@ -65,7 +65,7 @@ class WeatherApiImpl extends WeatherApi {
       'lon': lon.toString(),
       'apiKey': apiKey,
       'units': unit,
-      'lang': lang
+      'lang': convertSpecialLanguageCode(lang!)
     };
 
     // add param to 7 day api
@@ -77,5 +77,14 @@ class WeatherApiImpl extends WeatherApi {
         host: _baseUrl,
         path: '$_apiPath$endpoint',
         queryParameters: param);
+  }
+
+  String convertSpecialLanguageCode(String languageCode){
+    switch (languageCode){
+      case 'ko':
+        return 'kr';
+      default:
+        return languageCode;
+    }
   }
 }

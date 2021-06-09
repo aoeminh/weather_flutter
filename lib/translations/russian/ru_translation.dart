@@ -10,6 +10,7 @@ const Map<String, String> ru = {
   'feels_like': 'Как будто',
   'feels_like_': 'Как будто: ',
   'max': 'Максимум',
+  'min': 'Мин.',
   'wind': 'Ветер',
   'uv_index': 'UV Индекс',
   'precipitation': 'Атмосферные осадки',

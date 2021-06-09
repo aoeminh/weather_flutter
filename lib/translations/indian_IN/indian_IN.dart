@@ -10,6 +10,7 @@ const Map<String, String> indian = {
   'feels_like': '﻿के जैसे महसूस कर रहे हैं',
   'feels_like_': '﻿के जैसे महसूस कर रहे हैं: ',
   'max': 'मैक्स',
+  'min': 'मिनट',
   'wind': 'हवा',
   'uv_index': 'यूवी सूचकांक',
   'precipitation': 'तेज़ी',

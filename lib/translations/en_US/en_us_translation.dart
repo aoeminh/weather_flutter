@@ -10,6 +10,7 @@ const Map<String, String> en = {
   'feels_like': 'Feels like',
   'feels_like_': 'Feels like: ',
   'max': 'Max',
+  'min': 'Min',
   'wind': 'Wind',
   'uv_index': 'UV Index',
   'precipitation': 'Precipitation',

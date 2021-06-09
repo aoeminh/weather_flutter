@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             enableVibration: false,
             visibility: NotificationVisibility.public,
             enableLights: true,
-            icon: 'ic_launcher',
+            icon: 'ic_little_sun',
             priority: Priority.defaultPriority,
             ongoing: true,
             ticker: 'ticker');

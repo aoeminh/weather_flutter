@@ -48,8 +48,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
-      locale:  Locale('it', 'IT'),
+      title: 'Free Weather Forecast',
+      locale:  AppTranslation.locale,
       translations: AppTranslation(),
       fallbackLocale: Locale('en','US'),
       theme: ThemeData(

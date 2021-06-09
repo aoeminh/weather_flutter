@@ -10,6 +10,7 @@ const Map<String, String> ro = {
   'feels_like': 'Se simte ca',
   'feels_like_': 'Se simte ca: ',
   'max': 'Max',
+  'min': 'Min',
   'wind': 'Vânt',
   'uv_index': 'Indicele UV',
   'precipitation': 'Precipitare',
