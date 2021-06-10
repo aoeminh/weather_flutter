@@ -41,10 +41,11 @@ const Map<String, String> it = {
   'visibility': 'Visibilità',
   'dew_point': 'punto di rugiada',
   'pressure': 'Pressione',
-  'empty':'Vuota',
+  'empty': 'Vuota',
   'hour': 'ore',
-  'minute':'minuta',
-  'network_error':'La rete sembra avere problemi. Assicurati di avere una connessione Internet.',
+  'minute': 'minuta',
+  'network_error':
+      'La rete sembra avere problemi. Assicurati di avere una connessione Internet.',
   'check_update': 'Ricerca aggiornamenti',
   'good': 'Buona',
   'moderate': 'Moderare',
@@ -53,26 +54,28 @@ const Map<String, String> it = {
   'very_unhealthy': 'Molto malsano',
   'hazardous': 'Pericolosa',
   'good_implications':
-  'La qualità dell\'aria è considerata soddisfacente e l\'inquinamento atmosferico presenta un rischio minimo o nullo',
+      'La qualità dell\'aria è considerata soddisfacente e l\'inquinamento atmosferico presenta un rischio minimo o nullo',
   'moderate_implications':
-  'La qualità dell\'aria è accettabile; tuttavia, per alcuni inquinanti potrebbe esserci un moderato problema di salute per un numero molto limitato di persone che sono insolitamente sensibili all\'inquinamento atmosferico.',
+      'La qualità dell\'aria è accettabile; tuttavia, per alcuni inquinanti potrebbe esserci un moderato problema di salute per un numero molto limitato di persone che sono insolitamente sensibili all\'inquinamento atmosferico.',
   'sensitive_implications':
-  'I membri di gruppi sensibili possono avere effetti sulla salute. È improbabile che il pubblico in generale ne risenta.',
+      'I membri di gruppi sensibili possono avere effetti sulla salute. È improbabile che il pubblico in generale ne risenta.',
   'unhealthy_implications':
-  'Tutti possono iniziare a sperimentare effetti sulla salute; i membri di gruppi sensibili possono avere effetti sulla salute più gravi.',
+      'Tutti possono iniziare a sperimentare effetti sulla salute; i membri di gruppi sensibili possono avere effetti sulla salute più gravi.',
   'very_unhealthy_implications':
-  'Avvertenze sanitarie di condizioni di emergenza. L\'intera popolazione ha maggiori probabilità di essere colpita.',
+      'Avvertenze sanitarie di condizioni di emergenza. L\'intera popolazione ha maggiori probabilità di essere colpita.',
   'hazardous_implications':
-  'Allerta sanitaria: tutti possono avere effetti sulla salute più gravi.',
+      'Allerta sanitaria: tutti possono avere effetti sulla salute più gravi.',
   'good_cautionary': 'Nessuna',
   'moderate_cautionary':
-  'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero limitare lo sforzo prolungato all\'aperto.',
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero limitare lo sforzo prolungato all\'aperto.',
   'sensitive_cautionary':
-  'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero limitare lo sforzo prolungato all\'aperto.',
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero limitare lo sforzo prolungato all\'aperto.',
   'unhealthy_cautionary':
-  'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero evitare lo sforzo prolungato all\'aperto; tutti gli altri, specialmente i bambini, dovrebbero limitare lo sforzo prolungato all\'aperto',
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero evitare lo sforzo prolungato all\'aperto; tutti gli altri, specialmente i bambini, dovrebbero limitare lo sforzo prolungato all\'aperto',
   'very_unhealthy_cautionary':
-  'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero evitare tutti gli sforzi all\'aperto; tutti gli altri, specialmente i bambini, dovrebbero limitare lo sforzo all\'aperto.',
-  'hazardous_cautionary': 'Tutti dovrebbero evitare tutti gli sforzi all\'aperto.',
-  'air_quality': 'Qualità dell\'aria'
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero evitare tutti gli sforzi all\'aperto; tutti gli altri, specialmente i bambini, dovrebbero limitare lo sforzo all\'aperto.',
+  'hazardous_cautionary':
+      'Tutti dovrebbero evitare tutti gli sforzi all\'aperto.',
+  'air_quality': 'Qualità dell\'aria',
+  'air_pollution_level': 'Livello di inquinamento atmosferico'
 };

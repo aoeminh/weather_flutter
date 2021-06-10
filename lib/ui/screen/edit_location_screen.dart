@@ -39,7 +39,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
               color: Colors.grey,
             ),
           ),
-          title: Text('edit_location'.tr),
+          title: Text('edit_location'.tr,style: textTitleH2WhiteBold,),
           actions: [
             Container(
               margin: EdgeInsets.only(right: margin),

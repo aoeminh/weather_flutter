@@ -74,6 +74,8 @@ const Map<String, String> ro = {
       'Copiii și adulții activi și persoanele cu boli respiratorii, cum ar fi astmul, ar trebui să evite efortul prelungit în aer liber; toți ceilalți, în special copiii, ar trebui să limiteze efortul prelungit în aer liber',
   'very_unhealthy_cautionary':
       'Copiii și adulții activi și persoanele cu boli respiratorii, cum ar fi astmul, ar trebui să evite orice efort în aer liber; toți ceilalți, în special copiii, ar trebui să limiteze efortul în aer liber.',
-  'hazardous_cautionary': 'Toată lumea ar trebui să evite orice efort în aer liber.',
-  'air_quality': 'Calitatea aerului'
+  'hazardous_cautionary':
+      'Toată lumea ar trebui să evite orice efort în aer liber.',
+  'air_quality': 'Calitatea aerului',
+  'air_pollution_level': 'Nivelul de poluare a aerului'
 };

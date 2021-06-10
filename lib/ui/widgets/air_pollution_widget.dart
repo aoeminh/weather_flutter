@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/model/air_pollution_level.dart';
+import '../../model/air_pollution_level.dart';
+import '../screen/air_pollution_level_screen.dart';
 import '../../shared/text_style.dart';
 
 import '../../model/air_data.dart';
@@ -41,17 +42,25 @@ class AirPollutionWidget extends StatelessWidget {
               const SizedBox(width: margin),
               _level(level, color),
               Expanded(child: Container()),
-              Icon(
-                Icons.info_outline,
-                color: Colors.white,
+              GestureDetector(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AirPollutionLevelScreen())),
+                child: Icon(
+                  Icons.info_outline,
+                  color: Colors.white,
+                ),
               )
             ],
           ),
           const SizedBox(height: margin),
-          Text(implication,style: textSmallWhite70,),
+          Text(
+            implication,
+            style: textSmallWhite70,
+          ),
           const SizedBox(height: margin),
           _rowIaqi(airData)
-
         ],
       ),
     );
@@ -59,7 +68,7 @@ class AirPollutionWidget extends StatelessWidget {
 
   _level(String content, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: marginSmall,horizontal: margin),
+      padding: EdgeInsets.symmetric(vertical: marginSmall, horizontal: margin),
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(26), color: color),
       child: Text(
@@ -70,24 +79,30 @@ class AirPollutionWidget extends StatelessWidget {
   }
 
   _rowIaqi(AirData airData) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    children: [
-      _itemIaqi('PM2.5',airData.iaqi.pm25.v.toInt()),
-      _itemIaqi('CO',airData.iaqi.co.v.toInt()),
-      _itemIaqi('NO2',airData.iaqi.no2.v.toInt()),
-      _itemIaqi('SO2',airData.iaqi.so2.v.toInt()),
-      _itemIaqi('O3',airData.iaqi.o3.v.toInt()),
-    ],
-  );
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _itemIaqi('PM2.5', airData.iaqi.pm25.v.toInt()),
+          _itemIaqi('CO', airData.iaqi.co.v.toInt()),
+          _itemIaqi('NO2', airData.iaqi.no2.v.toInt()),
+          _itemIaqi('SO2', airData.iaqi.so2.v.toInt()),
+          _itemIaqi('O3', airData.iaqi.o3.v.toInt()),
+        ],
+      );
 
-
-
-  _itemIaqi(String title,int data){
+  _itemIaqi(String title, int data) {
     return Column(
       children: [
-        Text('$data',style: textTitleWhite,),
-        const SizedBox(height: margin,),
-        Text(title,style: textSmallWhite70,)
+        Text(
+          '$data',
+          style: textTitleWhite,
+        ),
+        const SizedBox(
+          height: margin,
+        ),
+        Text(
+          title,
+          style: textSmallWhite70,
+        )
       ],
     );
   }

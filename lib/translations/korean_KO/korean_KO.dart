@@ -74,5 +74,6 @@ const Map<String, String> ko = {
   'very_unhealthy_cautionary':
   '활동적인 어린이와 성인, 그리고 천식과 같은 호흡기 질환이있는 사람들은 모든 야외 활동을 피해야합니다. 다른 모든 사람, 특히 어린이는 야외 활동을 제한해야합니다.',
   'hazardous_cautionary': '모든 사람은 모든 야외 활동을 피해야합니다.',
-  'air_quality': '대기 질'
+  'air_quality': '대기 질',
+  'air_pollution_level' :'대기 오염 수준'
 };

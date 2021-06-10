@@ -74,5 +74,7 @@ const Map<String, String> ja = {
   'very_unhealthy_cautionary':
   '活動的な子供と大人、および喘息などの呼吸器疾患のある人は、屋外での活動をすべて避ける必要があります。 他のすべての人、特に子供は、屋外での運動を制限する必要があります。',
   'hazardous_cautionary': '誰もが屋外での活動を避けるべきです。',
-  'air_quality': '空気の質'
+  'air_quality': '空気の質',
+  'air_pollution_level' :'大気汚染レベル'
+
 };
