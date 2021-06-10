@@ -45,6 +45,35 @@ const Map<String, String> de = {
   'hour': 'Stunde',
   'minute':'minute',
   'network_error':'Das Netzwerk scheint Probleme zu haben. Stellen Sie sicher, dass eine Internet-Verbindung vorhanden ist.',
-  'check_update': 'Auf Update überprüfen'
+  'check_update': 'Auf Update überprüfen',
+  'good': 'Gut',
+  'moderate': 'Mäßig',
+  'unhealthy_sensitive': 'Ungesund für sensible Gruppen',
+  'unhealthy': 'Ungesund',
+  'very_unhealthy': 'Sehr ungesund',
+  'hazardous': 'Gefährlich',
+  'good_implications':
+  'Die Luftqualität wird als zufriedenstellend angesehen, und die Luftverschmutzung stellt ein geringes oder kein Risiko dar',
+  'moderate_implications':
+  'Die Luftqualität ist akzeptabel; Bei einigen Schadstoffen kann es jedoch bei einer sehr kleinen Zahl von Personen, die ungewöhnlich empfindlich auf Luftverschmutzung reagieren, zu mäßigen Gesundheitsproblemen kommen.',
+  'sensitive_implications':
+  'Mitglieder empfindlicher Gruppen können gesundheitliche Auswirkungen haben. Die Allgemeinheit wird voraussichtlich nicht betroffen sein.',
+  'unhealthy_implications':
+  'Jeder kann beginnen, gesundheitliche Auswirkungen zu erfahren; Mitglieder empfindlicher Gruppen können schwerwiegendere gesundheitliche Auswirkungen haben.',
+  'very_unhealthy_implications':
+  'Gesundheitswarnungen von Notfallbedingungen. Die gesamte Bevölkerung ist eher betroffen.',
+  'hazardous_implications':
+  'Gesundheitswarnung: Jeder kann schwerwiegendere gesundheitliche Auswirkungen haben.',
+  'good_cautionary': 'Keiner',
+  'moderate_cautionary':
+  'Aktive Kinder und Erwachsene sowie Menschen mit Atemwegserkrankungen wie Asthma sollten längere Anstrengungen im Freien einschränken.',
+  'sensitive_cautionary':
+  'Aktive Kinder und Erwachsene sowie Menschen mit Atemwegserkrankungen wie Asthma sollten längere Anstrengungen im Freien einschränken.',
+  'unhealthy_cautionary':
+  'Aktive Kinder und Erwachsene sowie Menschen mit Atemwegserkrankungen wie Asthma sollten längere Outdoor-Aktivitäten vermeiden; alle anderen, insbesondere Kinder, sollten längere Outdoor-Anstrengungen einschränken',
+  'very_unhealthy_cautionary':
+  'Aktive Kinder und Erwachsene sowie Menschen mit Atemwegserkrankungen wie Asthma sollten alle Anstrengungen im Freien vermeiden; alle anderen, insbesondere Kinder, sollten die Anstrengung im Freien einschränken.',
+  'hazardous_cautionary': 'Jeder sollte jede Anstrengung im Freien vermeiden.',
+  'air_quality': 'Luftqualität'
 
 };

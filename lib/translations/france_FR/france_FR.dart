@@ -41,9 +41,39 @@ const Map<String, String> fr = {
   'visibility': 'Visibilité',
   'dew_point': 'point de rosée',
   'pressure': 'Pression ',
-  'empty':'Vider',
+  'empty': 'Vider',
   'hour': 'heure',
-  'minute':'minute',
-  'network_error':'Le réseau semble avoir des problèmes. Assurez-vous d\'avoir une connexion Internet.',
-  'check_update': 'Vérifier la mise à jour'
+  'minute': 'minute',
+  'network_error':
+      'Le réseau semble avoir des problèmes. Assurez-vous d\'avoir une connexion Internet.',
+  'check_update': 'Vérifier la mise à jour',
+  'good': 'Bien',
+  'moderate': 'Modérer',
+  'unhealthy_sensitive': 'Malsain pour les groupes sensibles',
+  'unhealthy': 'Mauvais pour la santé',
+  'very_unhealthy': 'Très malsain',
+  'hazardous': 'Hasardeuse',
+  'good_implications':
+      'La qualité de l\'air est considérée comme satisfaisante et la pollution de l\'air présente peu ou pas de risque',
+  'moderate_implications':
+      'La qualité de l\'air est acceptable ; cependant, pour certains polluants, il peut y avoir un problème de santé modéré pour un très petit nombre de personnes qui sont particulièrement sensibles à la pollution de l\'air.',
+  'sensitive_implications':
+      'Les membres des groupes sensibles peuvent ressentir des effets sur la santé. Le grand public n\'est pas susceptible d\'être touché.',
+  'unhealthy_implications':
+      'Tout le monde peut commencer à ressentir des effets sur la santé ; les membres de groupes sensibles peuvent subir des effets plus graves sur la santé.',
+  'very_unhealthy_implications':
+      'Avertissements sanitaires des conditions d\'urgence. Toute la population est plus susceptible d\'être touchée.',
+  'hazardous_implications':
+      'Alerte santé : tout le monde peut ressentir des effets plus graves sur la santé.',
+  'good_cautionary': 'Rien',
+  'moderate_cautionary':
+      'Les enfants et les adultes actifs, ainsi que les personnes souffrant de maladies respiratoires, telles que l\'asthme, doivent limiter les efforts prolongés à l\'extérieur.',
+  'sensitive_cautionary':
+      'Les enfants et les adultes actifs, ainsi que les personnes souffrant de maladies respiratoires, telles que l\'asthme, doivent limiter les efforts prolongés à l\'extérieur.',
+  'unhealthy_cautionary':
+      'Les enfants et les adultes actifs, ainsi que les personnes souffrant de maladies respiratoires, telles que l\'asthme, doivent éviter les efforts prolongés en extérieur ; tout le monde, en particulier les enfants, devrait limiter les efforts prolongés à l\'extérieur',
+  'very_unhealthy_cautionary':
+      'Les enfants et les adultes actifs, ainsi que les personnes souffrant de maladies respiratoires, telles que l\'asthme, doivent éviter tout effort à l\'extérieur ; tout le monde, en particulier les enfants, devrait limiter les efforts à l\'extérieur.',
+  'hazardous_cautionary': 'Tout le monde devrait éviter tout effort extérieur.',
+  'air_quality': 'Qualité de l\'air'
 };

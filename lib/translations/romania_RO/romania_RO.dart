@@ -46,5 +46,34 @@ const Map<String, String> ro = {
   'minute': 'minut',
   'network_error':
       'Rețeaua pare să aibă probleme, vă rugăm să vă asigurați că există conexiune la internet.',
-  'check_update': 'Verifica pentru actualizare인'
+  'check_update': 'Verifica pentru actualizare인',
+  'good': 'Bun',
+  'moderate': 'Moderat',
+  'unhealthy_sensitive': 'Nesănătos pentru grupurile sensibile',
+  'unhealthy': 'Nesănătos',
+  'very_unhealthy': 'Foarte nesănătos',
+  'hazardous': 'Riscant',
+  'good_implications':
+      'Calitatea aerului este considerată satisfăcătoare, iar poluarea aerului prezintă un risc redus sau deloc',
+  'moderate_implications':
+      'Calitatea aerului este acceptabilă; cu toate acestea, pentru unii poluanți poate exista o îngrijorare moderată a sănătății pentru un număr foarte mic de persoane care sunt neobișnuit de sensibile la poluarea aerului.',
+  'sensitive_implications':
+      'Membrii grupurilor sensibile pot avea efecte asupra sănătății. Este posibil ca publicul larg să nu fie afectat.',
+  'unhealthy_implications':
+      'Toată lumea poate începe să experimenteze efecte asupra sănătății; membrii grupurilor sensibile pot prezenta efecte mai grave asupra sănătății.',
+  'very_unhealthy_implications':
+      'Avertismente de sănătate privind condițiile de urgență. Este mai probabil ca întreaga populație să fie afectată.',
+  'hazardous_implications':
+      'Alertă asupra sănătății: toată lumea poate avea efecte mai grave asupra sănătății.',
+  'good_cautionary': 'Nici unul',
+  'moderate_cautionary':
+      'Copiii și adulții activi și persoanele cu boli respiratorii, cum ar fi astmul, ar trebui să limiteze efortul prelungit în aer liber.',
+  'sensitive_cautionary':
+      'Copiii și adulții activi și persoanele cu boli respiratorii, cum ar fi astmul, ar trebui să limiteze efortul prelungit în aer liber.',
+  'unhealthy_cautionary':
+      'Copiii și adulții activi și persoanele cu boli respiratorii, cum ar fi astmul, ar trebui să evite efortul prelungit în aer liber; toți ceilalți, în special copiii, ar trebui să limiteze efortul prelungit în aer liber',
+  'very_unhealthy_cautionary':
+      'Copiii și adulții activi și persoanele cu boli respiratorii, cum ar fi astmul, ar trebui să evite orice efort în aer liber; toți ceilalți, în special copiii, ar trebui să limiteze efortul în aer liber.',
+  'hazardous_cautionary': 'Toată lumea ar trebui să evite orice efort în aer liber.',
+  'air_quality': 'Calitatea aerului'
 };

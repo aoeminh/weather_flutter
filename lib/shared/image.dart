@@ -197,3 +197,21 @@ const imSettingTime = '$mImgPath'
 
 const icUpdate = '$mImgPath'
     'ic_update.png';
+
+const icEmojiAqi1 = '$mImgPath'
+    'emoji_aqi_1.png';
+
+const icEmojiAqi2 = '$mImgPath'
+    'emoji_aqi_1.png';
+
+const icEmojiAqi3 = '$mImgPath'
+    'emoji_aqi_3.png';
+
+const icEmojiAqi4 = '$mImgPath'
+    'emoji_aqi_4.png';
+
+const icEmojiAqi5 = '$mImgPath'
+    'emoji_aqi_5.png';
+
+const icEmojiAqi6 = '$mImgPath'
+    'emoji_aqi_6.png';

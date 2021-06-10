@@ -10,11 +10,13 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:weather_app/ui/widgets/air_pollution_widget.dart';
 
 import '../../bloc/api_service_bloc.dart';
 import '../../bloc/base_bloc.dart';
 import '../../bloc/page_bloc.dart';
 import '../../bloc/setting_bloc.dart';
+import '../../model/air_response.dart';
 import '../../model/chart_data.dart';
 import '../../model/city.dart';
 import '../../model/current_daily_weather.dart';
@@ -126,6 +128,7 @@ class _WeatherScreenState extends State<WeatherScreen>
         lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
     bloc.fetchWeatherForecastResponse(lat ?? widget.lat, lon ?? widget.lon);
+    bloc.getAirPollution(lat ?? widget.lat, lon ?? widget.lon);
   }
 
   _initAnim() {
@@ -350,6 +353,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               _buildDailyForecast(weatherData.weatherForecastDaily),
               _buildDetail(weatherData.weatherForecastDaily),
               _buildWindAndPressure(weatherData.weatherResponse),
+              _buildAriPollution(),
               _buildSunTime(weatherData.weatherResponse)
             ],
           ),
@@ -380,7 +384,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                   color: Colors.white,
                 ),
                 const SizedBox(width: margin),
-                Text('app_name'.tr, style: textTitleH2White),
+                Text('app_name'.tr, style: textTitleH1White),
               ],
             ),
           ),
@@ -1006,30 +1010,10 @@ class _WeatherScreenState extends State<WeatherScreen>
   _buildBodyDetail(Daily daily, CurrentDailyWeather currentDailyWeather) {
     return Column(
       children: [
-        _buildRowTitle(
-            'detail'.tr,
-            'more'.tr,
-            weatherData != null
-                ? () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DetailDailyForecast(
-                              currentIndex: 0,
-                              weatherForecastDaily:
-                                  weatherData!.weatherForecastDaily,
-                            )))
-                : () {}),
+        _buildRowTitle('detail'.tr, 'more'.tr,
+            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
         GestureDetector(
-          onTap: weatherData != null
-              ? () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DetailDailyForecast(
-                            currentIndex: 0,
-                            weatherForecastDaily:
-                                weatherData!.weatherForecastDaily,
-                          )))
-              : () {},
+          onTap: weatherData != null ? () => gotoDailyDetailScreen() : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -1146,33 +1130,37 @@ class _WeatherScreenState extends State<WeatherScreen>
         : Container();
   }
 
+  _buildAriPollution() {
+    return StreamBuilder<WeatherState>(
+        stream: bloc.airPollutionStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data is AirStateSuccess) {
+            AirStateSuccess state = snapshot.data! as AirStateSuccess;
+            return _airPollutionBody(state.airResponse);
+          }
+          return Container();
+        });
+  }
+
+  _airPollutionBody(AirResponse airResponse) {
+    return Column(
+      children: [
+        _buildRowTitle('air_quality'.tr, 'more'.tr,
+            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
+        GestureDetector(
+            onTap: weatherData != null ? () => gotoDailyDetailScreen() : () {},
+            child: AirPollutionWidget(airResponse.data))
+      ],
+    );
+  }
+
   _bodyWindAndPressure(WeatherResponse weatherResponse) {
     return Column(
       children: [
-        _buildRowTitle(
-            '${'wind'.tr} & ${'pressure'.tr}',
-            'more'.tr,
-            weatherData != null
-                ? () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DetailDailyForecast(
-                              currentIndex: 0,
-                              weatherForecastDaily:
-                                  weatherData!.weatherForecastDaily,
-                            )))
-                : () {}),
+        _buildRowTitle('${'wind'.tr} & ${'pressure'.tr}', 'more'.tr,
+            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
         GestureDetector(
-          onTap: weatherData != null
-              ? () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DetailDailyForecast(
-                            currentIndex: 0,
-                            weatherForecastDaily:
-                                weatherData!.weatherForecastDaily,
-                          )))
-              : () {},
+          onTap: weatherData != null ? () => gotoDailyDetailScreen() : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -1323,19 +1311,8 @@ class _WeatherScreenState extends State<WeatherScreen>
   _buildSunTimeBody(WeatherResponse weatherResponse) {
     return Column(
       children: [
-        _buildRowTitle(
-            '${'sun'.tr} & ${'moon'.tr}',
-            'more'.tr,
-            weatherData != null
-                ? () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DetailDailyForecast(
-                              currentIndex: 0,
-                              weatherForecastDaily:
-                                  weatherData!.weatherForecastDaily,
-                            )))
-                : () {}),
+        _buildRowTitle('${'sun'.tr} & ${'moon'.tr}', 'more'.tr,
+            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
         Container(
           margin: EdgeInsets.all(margin),
           padding: EdgeInsets.symmetric(vertical: margin, horizontal: padding),
@@ -1347,14 +1324,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               GestureDetector(
                   onTap: weatherData != null
-                      ? () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailDailyForecast(
-                                    currentIndex: 0,
-                                    weatherForecastDaily:
-                                        weatherData!.weatherForecastDaily,
-                                  )))
+                      ? () => gotoDailyDetailScreen()
                       : () {},
                   child: RepaintBoundary(
                     child: SunPathWidget(
@@ -1490,6 +1460,14 @@ class _WeatherScreenState extends State<WeatherScreen>
   Future<void> refresh() async {
     getData();
   }
+
+  gotoDailyDetailScreen() => Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => DetailDailyForecast(
+                currentIndex: 0,
+                weatherForecastDaily: weatherData!.weatherForecastDaily,
+              )));
 }
 
 class WeatherData {

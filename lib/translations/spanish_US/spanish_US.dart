@@ -41,9 +41,39 @@ const Map<String, String> es_us = {
   'visibility': 'Visibilidad',
   'dew_point': 'punto de rocío',
   'pressure': 'Presión',
-  'empty':'Vacía',
+  'empty': 'Vacía',
   'hour': 'hora',
-  'minute':'minuto',
-  'network_error':'La red parece tener problemas. Asegúrate de tener una conexión a Internet.',
-  'check_update': 'Buscar actualizaciones'
+  'minute': 'minuto',
+  'network_error':
+      'La red parece tener problemas. Asegúrate de tener una conexión a Internet.',
+  'check_update': 'Buscar actualizaciones',
+  'good': 'Bueno',
+  'moderate': 'Moderado',
+  'unhealthy_sensitive': 'Malsano para grupos sensibles',
+  'unhealthy': 'Malsano',
+  'very_unhealthy': 'Muy insalubre',
+  'hazardous': 'Peligroso',
+  'good_implications':
+      'La calidad del aire se considera satisfactoria y la contaminación del aire presenta poco o ningún riesgo.',
+  'moderate_implications':
+      'La calidad del aire es aceptable; sin embargo, para algunos contaminantes puede haber un problema de salud moderado para un número muy pequeño de personas que son inusualmente sensibles a la contaminación del aire.',
+  'sensitive_implications':
+      'Los miembros de grupos sensibles pueden experimentar efectos sobre la salud. No es probable que el público en general se vea afectado.',
+  'unhealthy_implications':
+      'Todos pueden comenzar a experimentar efectos sobre la salud; los miembros de grupos sensibles pueden experimentar efectos de salud más graves.',
+  'very_unhealthy_implications':
+      'Advertencias sanitarias de situaciones de emergencia. Es más probable que toda la población se vea afectada.',
+  'hazardous_implications':
+      'Alerta de salud: todos pueden experimentar efectos de salud más graves.',
+  'good_cautionary': 'Ninguno',
+  'precaución_ moderada':
+      'Los niños y adultos activos y las personas con enfermedades respiratorias, como asma, deben limitar el esfuerzo prolongado al aire libre.',
+  'sensitive_cautionary':
+      'Los niños y adultos activos y las personas con enfermedades respiratorias, como asma, deben limitar el esfuerzo prolongado al aire libre.',
+  'unhealthy_cautionary':
+      'Los niños y adultos activos, y las personas con enfermedades respiratorias, como asma, deben evitar el esfuerzo prolongado al aire libre; todos los demás, especialmente los niños, deben limitar el esfuerzo prolongado al aire libre',
+  'very_unhealthy_cautionary':
+      'Los niños y adultos activos, y las personas con enfermedades respiratorias, como asma, deben evitar todo esfuerzo al aire libre; todos los demás, especialmente los niños, deben limitar el esfuerzo al aire libre.',
+  'hazardous_cautionary': 'Todos deben evitar todo esfuerzo al aire libre.',
+  'air_quality': 'Calidad del aire'
 };

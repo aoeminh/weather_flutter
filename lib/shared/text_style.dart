@@ -4,10 +4,10 @@ import 'colors.dart';
 
 const double _fontSize = 12;
 const double _fontSizeSecondary = 14;
-const double _fontSizeSmall = 10;
 const double _fontTitleSize = 16;
 const double _fontTitleSizeH1 = 22;
 const double _fontTitleSizeH2 = 18;
+const double _fontTitle36 = 36;
 const double _fontTitleSizeH3 = 16;
 const double _fontSubTitleSize = 14;
 const double _fontBadgeSize = 8;
@@ -70,6 +70,9 @@ const textTitleH1WhiteBold = TextStyle(
 );
 const textTitleH2White = TextStyle(
     color: mWhite, fontSize: _fontTitleSizeH2, fontWeight: FontWeight.normal);
+
+const textTitleWhite36 = TextStyle(
+    color: mWhite, fontSize: _fontTitle36, fontWeight: FontWeight.normal);
 
 const textTitleH2WhiteBold = TextStyle(
     color: mWhite, fontSize: _fontTitleSizeH2, fontWeight: FontWeight.bold);

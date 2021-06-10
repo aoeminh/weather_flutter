@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:weather_app/model/air_pollution_response.dart';
+import 'package:weather_app/model/air_response.dart';
 import 'package:weather_app/model/application_error.dart';
 import 'package:weather_app/model/weather_forcast_daily.dart';
-import 'weather_api.dart';
+
 import '../model/weather_forecast_list_response.dart';
 import '../model/weather_response.dart';
-import 'package:connectivity/connectivity.dart';
+import 'weather_api.dart';
 
 class WeatherApiImpl extends WeatherApi {
   final Dio _dio = Dio();
@@ -13,12 +15,16 @@ class WeatherApiImpl extends WeatherApi {
   final String _apiWeatherEndpoint = "/weather";
   final String _apiWeatherForecastEndpoint = "/forecast";
   final String _apiWeatherForecast7Day = "/onecall";
+  final String _apiAirPollution = "/air_pollution";
   static final String apiKey = "980fd15d8985bd9e265eac0593d3c9bd";
+  static final String waqiToken = "d05a139b30a73bc0f711d6a36be3522498e01c95";
+  String airAQI =
+      'https://api.waqi.info/feed/geo:40.78788;-74.014313/?token=d05a139b30a73bc0f711d6a36be3522498e01c95';
 
   @override
   Future<WeatherResponse> fetchWeather(double? lat, double? lon, String units,
       {String lang = 'en'}) async {
-    Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, units, lang: lang);
+    Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, unit: units, lang: lang);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       return WeatherResponse.fromJson(response.data);
@@ -31,8 +37,8 @@ class WeatherApiImpl extends WeatherApi {
   Future<WeatherForecastListResponse> fetchWeatherForecast(
       double? lat, double? lon, String units,
       {String lang = 'en'}) async {
-    Uri uri =
-        _buildUri(lat, lon, _apiWeatherForecastEndpoint, units, lang: lang);
+    Uri uri = _buildUri(lat, lon, _apiWeatherForecastEndpoint,
+        unit: units, lang: lang);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       return WeatherForecastListResponse.fromJson(response.data);
@@ -46,10 +52,8 @@ class WeatherApiImpl extends WeatherApi {
   Future<WeatherForecastDaily> fetchWeatherForecast7Day(
       double? lat, double? lon, String units, String exclude,
       {String lang = 'en'}) async {
-    Uri uri = _buildUri(lat, lon, _apiWeatherForecast7Day, units,
-        exclude: exclude, lang: lang);
-    print('${uri.toString()}');
-
+    Uri uri = _buildUri(lat, lon, _apiWeatherForecast7Day,
+        unit: units, exclude: exclude, lang: lang);
     Response response = await _dio.get(uri.toString());
     if (response.statusCode == 200) {
       return WeatherForecastDaily.fromJson(response.data);
@@ -58,14 +62,38 @@ class WeatherApiImpl extends WeatherApi {
     }
   }
 
-  _buildUri(double? lat, double? lon, String endpoint, String unit,
-      {String? exclude, String? lang}) {
+  @override
+  Future<AirPollutionResponse> fetchAirPollution(
+      double? lat, double? lon) async {
+    Uri uri = _buildUri(lat, lon, _apiAirPollution);
+    Response response = await _dio.get(uri.toString());
+    if (response.statusCode == 200) {
+      return AirPollutionResponse.fromJson(response.data);
+    } else {
+      return AirPollutionResponse.withErrorCode(ApplicationError.apiError);
+    }
+  }
+
+  @override
+  Future<AirResponse> getAirPollution(double? lat, double? lon) async {
+    Uri uri = _buildUriForAirPollution(lat, lon);
+    Response response = await _dio.get(uri.toString());
+    print(response.data);
+    if (response.statusCode == 200) {
+      return AirResponse.fromJson(response.data);
+    } else {
+      return AirResponse.withErrorCode(ApplicationError.apiError);
+    }
+  }
+
+  _buildUri(double? lat, double? lon, String endpoint,
+      {String? unit, String? exclude, String? lang}) {
     Map<String, dynamic> param = {
       'lat': lat.toString(),
       'lon': lon.toString(),
       'apiKey': apiKey,
       'units': unit,
-      'lang': convertSpecialLanguageCode(lang!)
+      'lang': convertSpecialLanguageCode(lang ?? '')
     };
 
     // add param to 7 day api
@@ -79,8 +107,17 @@ class WeatherApiImpl extends WeatherApi {
         queryParameters: param);
   }
 
-  String convertSpecialLanguageCode(String languageCode){
-    switch (languageCode){
+  _buildUriForAirPollution(double? lat, double? lon) {
+    Map<String, dynamic> params = {'token': waqiToken};
+    return Uri(
+        scheme: 'https',
+        host: 'api.waqi.info',
+        path: '/feed/geo:$lat;$lon/',
+        queryParameters: params);
+  }
+
+  String convertSpecialLanguageCode(String languageCode) {
+    switch (languageCode) {
       case 'ko':
         return 'kr';
       default:

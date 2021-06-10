@@ -45,5 +45,34 @@ const Map<String, String> ko = {
   'hour': '시',
   'minute': '분',
   'network_error': '네트워크에 문제가있는 것 같습니다. 인터넷에 연결되어 있는지 확인하세요.',
-  'check_update': '업데이트를 확인'
+  'check_update': '업데이트를 확인',
+  'good': '좋은',
+  'moderate': '보통의',
+  'unhealthy_sensitive': '민감한 그룹에게는 건강하지 않음',
+  'unhealthy': '건강에 해로운',
+  'very_unhealthy': '매우 건강하지 않음',
+  'hazardous': '위험',
+  'good_implications':
+  '대기 질은 만족스러운 것으로 간주되며 대기 오염은 위험이 거의 또는 전혀 없습니다.',
+  'moderate_implications':
+  '공기의 질은 괜찮습니다. 그러나 일부 오염 물질의 경우 대기 오염에 비정상적으로 민감한 극소수의 사람들에게 적당한 건강 문제가있을 수 있습니다.',
+  'sensitive_implications':
+  '민감한 그룹의 구성원은 건강에 영향을 미칠 수 있습니다. 일반 대중은 영향을받지 않을 것입니다.',
+  'unhealthy_implications':
+  '모든 사람이 건강에 미치는 영향을 경험하기 시작할 수 있습니다. 민감한 그룹의 구성원은 더 심각한 건강 영향을 경험할 수 있습니다.',
+  'very_unhealthy_implications':
+  '비상 상황에 대한 건강 경고. 전체 인구가 영향을받을 가능성이 더 높습니다.',
+  'hazardous_implications':
+  '건강 경고 : 모든 사람이 더 심각한 건강 영향을 경험할 수 있습니다.',
+  'good_cautionary': '없음',
+  'moderate_cautionary':
+  '활동적인 어린이와 성인, 그리고 천식과 같은 호흡기 질환이있는 사람들은 장기간의 야외 활동을 제한해야합니다.',
+  'sensitive_cautionary':
+  '활동적인 어린이와 성인, 그리고 천식과 같은 호흡기 질환이있는 사람들은 장기간의 야외 활동을 제한해야합니다.',
+  'unhealthy_cautionary':
+  '활동적인 어린이와 성인, 그리고 천식과 같은 호흡기 질환이있는 사람들은 장시간 야외 활동을 피해야합니다. 다른 모든 사람, 특히 어린이는 장시간 야외 활동을 제한해야합니다.',
+  'very_unhealthy_cautionary':
+  '활동적인 어린이와 성인, 그리고 천식과 같은 호흡기 질환이있는 사람들은 모든 야외 활동을 피해야합니다. 다른 모든 사람, 특히 어린이는 야외 활동을 제한해야합니다.',
+  'hazardous_cautionary': '모든 사람은 모든 야외 활동을 피해야합니다.',
+  'air_quality': '대기 질'
 };

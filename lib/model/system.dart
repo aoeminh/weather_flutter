@@ -13,7 +13,6 @@ class System {
         sunset = json["sunset"] * 1000;
 
   static System withTimezone(System system, double differentTime) {
-    print('sssss ${system.sunrise! + differentTime * oneHourMilli}');
     return System(
         sunrise: (system.sunrise! + differentTime * oneHourMilli).toInt(),
         sunset: (system.sunset! + differentTime * oneHourMilli).toInt(),
