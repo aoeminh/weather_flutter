@@ -10,11 +10,11 @@ class Iaqi {
   Iaqi(this.co, this.no2, this.o3, this.pm25, this.so2);
 
   Iaqi.fromJson(Map<String, dynamic> json)
-      : co = Air.fromJson(json['co']),
-        no2 = Air.fromJson(json['no2']),
-        o3 = Air.fromJson(json['o3']),
-        pm25 = Air.fromJson(json['pm25']),
-        so2 = Air.fromJson(json['so2']);
+      : co = Air.fromJson(json['co'] ?? {'v': 0.1}),
+        no2 = Air.fromJson(json['no2'] ?? {'v': 7.8}),
+        o3 = Air.fromJson(json['o3'] ?? {'v': 7.8}),
+        pm25 = Air.fromJson(json['pm25'] ?? {'v': 78}),
+        so2 = Air.fromJson(json['so2'] ?? {'v': 5.8});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
