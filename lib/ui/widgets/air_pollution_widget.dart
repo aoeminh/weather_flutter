@@ -74,6 +74,7 @@ class AirPollutionWidget extends StatelessWidget {
       child: Text(
         content,
         style: textTitleWhite,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

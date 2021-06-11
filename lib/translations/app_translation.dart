@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:get/get.dart';
 
+import 'austraylia_AU/polish_PL.dart';
 import 'en_US/en_us_translation.dart';
 import 'france_FR/france_FR.dart';
 import 'german_DE/de_translation.dart';
@@ -13,6 +14,7 @@ import 'romania_RO/romania_RO.dart';
 import 'russian/ru_translation.dart';
 import 'spanish_US/spanish_US.dart';
 import 'ukraina_UA/ukraina_UA.dart';
+import 'vietnam_VI/vietnam_vi.dart';
 
 class AppTranslation extends Translations {
   static final languageCodes = [
@@ -25,7 +27,10 @@ class AppTranslation extends Translations {
     'fr',
     'ja',
     'ko',
-    'es'
+    'es',
+    'ua',
+    'vi',
+    'pl'
   ];
   static final locales = [
     Locale('en', 'US'),
@@ -39,6 +44,8 @@ class AppTranslation extends Translations {
     Locale('ko', 'KR'),
     Locale('es', 'ES'),
     Locale('ua', 'UA'),
+    Locale('vi', 'VN'),
+    Locale('pl', 'PL'),
   ];
 
   static final Locale? locale = _getLocale();
@@ -63,6 +70,8 @@ class AppTranslation extends Translations {
         'ja': ja,
         'ko': ko,
         'es': es_us,
-        'ua': ua
+        'ua': ua,
+        'vi': vi,
+        'pl': pl
       };
 }
