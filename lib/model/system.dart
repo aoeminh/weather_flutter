@@ -1,17 +1,24 @@
-class System{
-  final String country;
-  final int sunrise;
-  final int sunset;
+import 'package:weather_app/shared/constant.dart';
 
-  System(this.country, this.sunrise, this.sunset);
+class System {
+  final String? country;
+  final int? sunrise;
+  final int? sunset;
 
-  System.fromJson(Map<String,dynamic> json): country = json["country"], sunrise = json["sunrise"], sunset = json["sunset"];
+  System({this.country, this.sunrise, this.sunset});
 
-  Map<String,dynamic> toJson() =>{
-    "country": country,
-    "sunrise": sunrise,
-    "sunset": sunset
-  };
+  System.fromJson(Map<String, dynamic> json)
+      : country = json["country"],
+        sunrise = json["sunrise"] * 1000,
+        sunset = json["sunset"] * 1000;
 
+  static System withTimezone(System system, double differentTime) {
+    return System(
+        sunrise: (system.sunrise! + differentTime * oneHourMilli).toInt(),
+        sunset: (system.sunset! + differentTime * oneHourMilli).toInt(),
+        country: system.country);
+  }
 
+  Map<String, dynamic> toJson() =>
+      {"country": country, "sunrise": sunrise, "sunset": sunset};
 }

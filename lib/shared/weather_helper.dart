@@ -25,26 +25,13 @@ class WeatherHelper {
   //   return asset;
   // }
 
-  static Map<String, List<WeatherForecastResponse>> mapForecastsForSameDay(
-      List<WeatherForecastResponse> forecastList) {
-    Map<String, List<WeatherForecastResponse>> map = new LinkedHashMap();
-    for (int i = 0; i < forecastList.length; i++) {
-      WeatherForecastResponse response = forecastList[i];
-      String dayKey = _getDayKey(response.dateTime);
-      if (!map.containsKey(dayKey)) {
-        map[dayKey] = List<WeatherForecastResponse>();
-      }
-      map[dayKey].add(response);
-    }
-    return map;
-  }
 
   static String _getDayKey(DateTime dateTime) {
     return "${dateTime.day.toString()}-${dateTime.month.toString()}-${dateTime.year.toString()}";
   }
 
   static String formatTemperature(
-      {double temperature,
+      {double? temperature,
       int positions = 0,
       round = true,
       metricUnits = true}) {
@@ -55,10 +42,10 @@ class WeatherHelper {
     }
 
     if (round) {
-      temperature = temperature.floor().toDouble();
+      temperature = temperature!.floor().toDouble();
     }
 
-    return "${temperature.toStringAsFixed(positions)} $unit";
+    return "${temperature!.toStringAsFixed(positions)} $unit";
   }
 
   static double convertCelsiusToFahrenheit(double temperature) {
@@ -66,11 +53,7 @@ class WeatherHelper {
   }
 
   static double convertMetersPerSecondToKilometersPerHour(double speed) {
-    if (speed != null) {
       return speed * 3.6;
-    } else {
-      return 0;
-    }
   }
 
   static double convertMetersPerSecondToMilesPerHour(double speed) {
@@ -110,8 +93,8 @@ class WeatherHelper {
   }
 
   static int getDayMode(System system) {
-    int sunrise = system.sunrise * 1000;
-    int sunset = system.sunset * 1000;
+    int sunrise = system.sunrise! * 1000;
+    int sunset = system.sunset! * 1000;
     return getDayModeFromSunriseSunset(sunrise, sunset);
   }
 

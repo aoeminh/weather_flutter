@@ -1,32 +1,111 @@
-import 'package:flutter/material.dart';
-import 'package:weather_app/model/chart_data.dart';
-import 'package:weather_app/model/chart_line.dart';
-import 'package:weather_app/model/point.dart';
+import 'dart:async';
+import 'dart:ui' as ui;
 
-import 'animated_state.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:rxdart/rxdart.dart' as rx;
+import 'package:rxdart/subjects.dart';
+
+import '../../bloc/setting_bloc.dart';
+import '../../model/chart_data.dart';
+import '../../model/chart_line.dart';
+import '../../model/point.dart';
+import '../../shared/image.dart';
+import '../../utils/utils.dart';
+
+const humidityIconWidth = 15;
+const humidityIconHeight = 15;
+const marginBottomTemp = 24;
+const marginLeftTemp = 8;
+
+const double _marginLeftHumidity = 16;
+const double _iconHumiditySize = 14;
+
+const double _marginLeftIconWeather = 15;
+const double _marginTopIconWeather = -60;
+const double _iconWeatherSize = 30;
+
+const double _marginLeftDateTimes = 18;
+const double _marginTopDateTimes = 80;
+const double _textSize = 12;
+const double _textTimeSize = 10;
 
 class ChartWidget extends StatefulWidget {
-  final ChartData chartData;
+  final ChartData? chartData;
 
-  const ChartWidget({Key key, this.chartData}) : super(key: key);
+  const ChartWidget({Key? key, this.chartData}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ChartWidgetState();
 }
 
-class _ChartWidgetState extends AnimatedState<ChartWidget> {
+class _ChartWidgetState extends State<ChartWidget> {
   double _fraction = 0.0;
+  ui.Image? image;
+  ImageInfo? imageInfo;
+  List<ImageInfo>? weatherImagesInfo;
+  BehaviorSubject<ImageInfo?> humidityBehaviorSubject = BehaviorSubject();
+  BehaviorSubject<List<ImageInfo>?> weatherImageInfoSubject = BehaviorSubject();
+  late StreamSubscription streamSubscription;
+
+  @override
+  void dispose() {
+    humidityBehaviorSubject.close();
+    weatherImageInfoSubject.close();
+    streamSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    animateTween(duration: 500, curve: Curves.linear);
+    if (this.mounted) {
+      init();
+    }
+    streamSubscription = settingBloc.settingStream.listen((event) {
+      if (this.mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  Future<Null> init() async {
+    await Future.delayed(Duration(seconds: 1));
+    if (!humidityBehaviorSubject.isClosed &&
+        !weatherImageInfoSubject.isClosed) {
+      imageInfo = await getImageInfo(context, mIcPrecipitationWhite);
+      humidityBehaviorSubject.add(imageInfo);
+
+      weatherImagesInfo = await getListIcon(widget.chartData!.iconCode!);
+      weatherImageInfoSubject.add(weatherImagesInfo);
+    }
+  }
+
+  Future<List<ImageInfo>> getListIcon(List<String?> iconCode) async {
+    List<ImageInfo> list = [];
+    for (String? code in iconCode) {
+      ImageInfo image = await getImageInfo(context, getIconForecastUrl(code));
+      list.add(image);
+    }
+    return list;
+  }
+
+  Future<ImageInfo> getImageInfo(BuildContext context, String imagePath) async {
+    AssetImage assetImage = AssetImage(imagePath);
+    ImageStream stream =
+        assetImage.resolve(createLocalImageConfiguration(context));
+    Completer<ImageInfo> completer = Completer();
+    stream.addListener(ImageStreamListener((imageInfo, _) {
+      if (!this.mounted) return null;
+      return completer.complete(imageInfo);
+    }));
+    return completer.future;
   }
 
   @override
   Widget build(BuildContext context) {
     Widget chartWidget;
-    if (widget.chartData.points.length < 3) {
+    if (widget.chartData!.points!.length < 3) {
       chartWidget = _getChartUnavailableWidget(context);
     } else {
       chartWidget = _getChartWidget();
@@ -34,98 +113,120 @@ class _ChartWidgetState extends AnimatedState<ChartWidget> {
 
     return Container(
       key: Key("chart_widget_container"),
-      width: widget.chartData.width,
-      height: widget.chartData.height,
+      width: widget.chartData!.width,
+      height: widget.chartData!.height,
       child: chartWidget,
     );
   }
 
   Widget _getChartWidget() {
-    return CustomPaint(
-        key: Key("chart_widget_custom_paint"),
-        painter: _ChartPainter(
-            widget.chartData.points,
-            widget.chartData.pointLabels,
-            widget.chartData.width,
-            widget.chartData.height,
-            widget.chartData.axes,
-            _fraction));
+    return StreamBuilder<Object>(
+        stream: rx.Rx.combineLatest2(
+            humidityBehaviorSubject.stream,
+            weatherImageInfoSubject.stream,
+            (ImageInfo? humidity, List<ImageInfo>? weatherIcons) =>
+                ImageInfoWeather(humidity, weatherIcons)),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            ImageInfoWeather imageInfoWeather = snapshot.data as ImageInfoWeather;
+            return Container(
+              margin: EdgeInsets.only(top: 25),
+              child: CustomPaint(
+                  key: Key("chart_widget_custom_paint"),
+                  painter: _ChartPainter(
+                      widget.chartData!.points,
+                      widget.chartData!.pointLabels,
+                      widget.chartData!.width,
+                      widget.chartData!.height,
+                      widget.chartData!.axes,
+                      _fraction,
+                      imageInfoWeather.humidityInfo,
+                      widget.chartData!.dateTimeLabels,
+                      imageInfoWeather.weatherIconsInfo,
+                      widget.chartData!.maxTempIndex,
+                      widget.chartData!.minTempIndex)),
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 
   Widget _getChartUnavailableWidget(BuildContext context) {
     return Center(
         key: Key("chart_widget_unavailable"),
-        child: Text('ssssss',
+        child: Text('empty'.tr,
             textDirection: TextDirection.ltr,
-            style: Theme.of(context).textTheme.body1));
-  }
-
-  @override
-  void onAnimatedValue(double value) {
-    setState(() {
-      _fraction = value;
-    });
+            style: Theme.of(context).textTheme.headline1));
   }
 }
 
 class _ChartPainter extends CustomPainter {
-  _ChartPainter(this.points, this.pointLabels, this.width, this.height,
-      this.axes, this.fraction);
+  _ChartPainter(
+      this.points,
+      this.pointLabels,
+      this.width,
+      this.height,
+      this.axes,
+      this.fraction,
+      this.imageInfo,
+      this.dateTimeLabels,
+      this.iconImage,
+      this.maxTempIndex,
+      this.minTempIndex);
 
-  final List<Point> points;
-  final List<String> pointLabels;
-  final double width;
-  final double height;
-  final List<ChartLine> axes;
+  final List<Point>? points;
+  final List<String>? pointLabels;
+  final double? width;
+  final double? height;
+  final List<ChartLine>? axes;
   final double fraction;
+  final ImageInfo? imageInfo;
+  final List<ImageInfo>? iconImage;
+  final List<String>? dateTimeLabels;
+  final int? maxTempIndex;
+  final int? minTempIndex;
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = _getLinePaint(Colors.blue, 2);
-    _drawAxes(canvas);
-
-    double fractionLinePerPoint = 1 / points.length;
-
-    int pointsFraction = (points.length * fraction).ceil();
-    double lastLineFraction =
-        fraction - (pointsFraction - 1) * fractionLinePerPoint;
-    double lastLineFractionPercentage = lastLineFraction / (1 / points.length);
-    print(
-        'lastLineFraction $lastLineFraction pointsFraction: $pointsFraction lastLineFractionPercentage: $lastLineFractionPercentage points.length: ${points.length} fraction $fraction');
-    for (int index = 0; index < pointsFraction - 1; index++) {
-      Offset textOffset = Offset(points[index].x - 5, points[index].y - 15);
-      if (index == pointsFraction - 2) {
-        Point startPoint = points[index];
-        Point endPoint = points[index + 1];
-        Offset startOffset = _getOffsetFromPoint(startPoint);
-
-        double diffX = endPoint.x - startPoint.x;
-        double diffY = endPoint.y - startPoint.y;
-
-        Offset endOffset = Offset(
-            startPoint.x + diffX * lastLineFractionPercentage,
-            startPoint.y + diffY * lastLineFractionPercentage);
-        canvas.drawLine(startOffset, endOffset, paint);
-        _drawText(canvas, textOffset, pointLabels[index + 1],
-            lastLineFractionPercentage, true);
+    if (iconImage != null) {
+      _drawIconList(canvas);
+    }
+    _drawDateTimes(canvas);
+    for (int index = 0; index < points!.length; index++) {
+      Offset textOffset = Offset(
+          points![index].x - marginLeftTemp, points![index].y - marginBottomTemp);
+      _drawLine(canvas, index);
+      if (index == maxTempIndex) {
+        _drawTempText(canvas, textOffset, pointLabels![index], true,
+            isMax: true);
+      } else if (index == minTempIndex) {
+        _drawTempText(canvas, textOffset, pointLabels![index], true,
+            isMin: true);
       } else {
-        canvas.drawLine(_getOffsetFromPoint(points[index]),
-            _getOffsetFromPoint(points[index + 1]), paint);
-        print(
-            'index $index startOffset ${_getOffsetFromPoint(points[index])} endOffset ${_getOffsetFromPoint(points[index + 1])}');
-        _drawText(canvas, textOffset, pointLabels[index], 1, true);
+        _drawTempText(canvas, textOffset, pointLabels![index], true);
       }
     }
     if (fraction > 0.999) {
-      Offset textOffset = Offset(
-          points[points.length - 1].x - 5, points[points.length - 1].y - 15);
-      _drawText(canvas, textOffset, pointLabels[points.length - 1], 1, true);
+      Offset textOffset = Offset(points![points!.length - 1].x - marginLeftTemp,
+          points![points!.length - 1].y - marginBottomTemp);
+      _drawTempText(canvas, textOffset, pointLabels![points!.length - 1], true);
+    }
+    _drawAxes(canvas);
+  }
+
+  _drawLine(Canvas canvas, int index) {
+    Paint paint = _getLinePaint(Colors.blue, 2);
+    if (index < points!.length - 1) {
+      canvas.drawLine(_getOffsetFromPoint(points![index]),
+          _getOffsetFromPoint(points![index + 1]), paint);
     }
   }
 
   void _drawText(Canvas canvas, Offset offset, String text,
       double alphaFraction, bool textShadow) {
-    TextStyle textStyle = _getTextStyle(alphaFraction, textShadow);
+    TextStyle textStyle =
+        TextStyle(color: Colors.white, fontSize: _textSize, letterSpacing: 0);
     TextSpan textSpan = TextSpan(style: textStyle, text: text);
     TextPainter textPainter =
         TextPainter(text: textSpan, textDirection: TextDirection.ltr);
@@ -133,38 +234,148 @@ class _ChartPainter extends CustomPainter {
     textPainter.paint(canvas, offset);
   }
 
+  void _drawTempText(Canvas canvas, Offset offset, String text, bool textShadow,
+      {bool isMax = false, bool isMin = false}) {
+    _drawRectangle(canvas, offset, isMax: isMax, isMin: isMin);
+    TextStyle textStyle =
+        TextStyle(color: Colors.white, fontSize: _textSize, letterSpacing: 0);
+
+    TextSpan textSpan = TextSpan(style: textStyle, text: text);
+    TextPainter textPainter =
+        TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+    textPainter.layout();
+    textPainter.paint(canvas, offset);
+  }
+
+  _drawRectangle(Canvas canvas, Offset offset,
+      {bool isMax = false, bool isMin = false}) {
+    Color color;
+    if (isMax) {
+      color = Colors.orange;
+    } else if (isMin) {
+      color = Color(0xff638965);
+    } else {
+      color = Colors.green;
+    }
+    var paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    //a rectangle
+    var height = 18;
+    var width = 24;
+    var newDx = offset.dx - 4;
+    var newDy = offset.dy - 2;
+    var marginQuadraticBezier = 1;
+    var marginConner = 2;
+
+    var path = Path();
+    path.moveTo(newDx, newDy + marginConner);
+    path.lineTo(newDx, newDy + (height - marginConner));
+    path.quadraticBezierTo(
+        newDx + marginQuadraticBezier,
+        newDy + (height - marginQuadraticBezier),
+        newDx + marginConner,
+        newDy + height);
+
+    path.lineTo(newDx + (width / 2) - 4, newDy + height);
+    path.lineTo(newDx + (width / 2), newDy + height + 4);
+    path.lineTo(newDx + (width / 2) + 4, newDy + height);
+    path.lineTo(newDx + (width - marginConner), newDy + height);
+
+    path.quadraticBezierTo(
+        newDx + (width - marginQuadraticBezier),
+        newDy + (height - marginQuadraticBezier),
+        newDx + width,
+        newDy + (height - marginConner));
+    path.lineTo(newDx + width, newDy + marginConner);
+    path.quadraticBezierTo(newDx + (width - marginQuadraticBezier),
+        newDy + marginQuadraticBezier, newDx + (width - marginConner), newDy);
+    path.lineTo(newDx + marginConner, newDy);
+    path.quadraticBezierTo(newDx + marginQuadraticBezier,
+        newDy + marginQuadraticBezier, newDx, newDy + marginConner);
+
+    canvas.drawPath(path, paint);
+  }
+
+  void _drawHumidity(Offset offset, Canvas canvas) async {
+    paintImage(
+      canvas: canvas,
+      rect: Rect.fromLTWH(offset.dx - _marginLeftHumidity, offset.dy,
+          _iconHumiditySize, _iconHumiditySize),
+      image: imageInfo!.image, // <- the loaded image
+      filterQuality: FilterQuality.high,
+    );
+  }
+
+  void _drawIcon(Offset offset, Canvas canvas, ImageInfo image) async {
+    paintImage(
+      canvas: canvas,
+      rect: Rect.fromLTWH(
+          offset.dx, offset.dy, _iconWeatherSize, _iconWeatherSize),
+      image: image.image, // <- the loaded image
+      filterQuality: FilterQuality.high,
+    );
+  }
+
+  void _drawIconList(Canvas canvas) {
+    for (int i = 0; i < iconImage!.length; i++) {
+      Offset offset =
+          Offset(points![i].x - _marginLeftIconWeather, _marginTopIconWeather);
+      _drawIcon(offset, canvas, iconImage![i]);
+    }
+  }
+
+  void _drawDateTimes(Canvas canvas) async {
+    for (int index = 0; index < dateTimeLabels!.length; index++) {
+      Offset offset =
+          Offset(points![index].x - _marginLeftDateTimes, -_marginTopDateTimes);
+      TextStyle textStyle = _getTextStyle(1, false);
+      TextSpan textSpan = settingBloc.timeEnum == TimeEnum.twelve
+          ? TextSpan(
+              style: textStyle,
+              text: dateTimeLabels![index]
+                  .substring(0, dateTimeLabels![index].lastIndexOf(' ')),
+              children: [
+                  TextSpan(
+                      text: dateTimeLabels![index]
+                          .substring(dateTimeLabels![index].lastIndexOf(' ')),
+                      style: TextStyle(color: Colors.white70, fontSize: 8))
+                ])
+          : TextSpan(style: textStyle, text: dateTimeLabels![index]);
+      TextPainter textPainter =
+          TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+      textPainter.layout();
+      textPainter.paint(canvas, offset);
+    }
+  }
+
   TextStyle _getTextStyle(double alphaFraction, bool textShadow) {
-    Color color = Color.fromARGB((220 * alphaFraction).floor(), 255, 255, 255);
     if (textShadow) {
       return new TextStyle(
-          color: color,
-          fontSize: 10,
-          letterSpacing: 0,
-          shadows: [
-            Shadow(offset: Offset(-1.0, -1.0), color: Colors.black),
-            Shadow(offset: Offset(1.0, -1.0), color: Colors.black),
-            Shadow(offset: Offset(1.0, 1.0), color: Colors.black),
-            Shadow(offset: Offset(-1.0, 1.0), color: Colors.black),
-          ]);
+        color: Colors.white,
+        fontSize: _textTimeSize,
+        letterSpacing: 0,
+      );
     } else {
-      return new TextStyle(color: color, fontSize: 10, letterSpacing: 0);
+      return new TextStyle(
+          color: Colors.white, fontSize: _textTimeSize, letterSpacing: 0);
     }
   }
 
   @override
   bool shouldRepaint(_ChartPainter oldDelegate) {
-    return oldDelegate.fraction != fraction;
+    return true;
   }
 
   Offset _getOffsetFromPoint(Point point) {
     return Offset(point.x, point.y);
   }
 
-  void _drawAxes(Canvas canvas) {
+  void _drawAxes(Canvas canvas) async {
     Paint axesPaint = _getLinePaint(Colors.white30, 1);
 
     if (axes != null) {
-      for (ChartLine lineAxis in axes) {
+      for (ChartLine lineAxis in axes!) {
         var dashWidth = 3;
         var dashSpace = 3;
         double starty = lineAxis.lineStartOffset.dy;
@@ -174,11 +385,32 @@ class _ChartPainter extends CustomPainter {
               Offset(lineAxis.lineEndOffset.dx, starty - dashWidth), axesPaint);
           starty -= space;
         }
-
+        _drawCirclePoint(canvas,
+            Offset(lineAxis.lineStartOffset.dx, lineAxis.lineEndOffset.dy));
         _drawText(canvas, lineAxis.textOffset, lineAxis.label, 1, false);
+        _drawHumidity(lineAxis.textOffset, canvas);
       }
+      _buildBottomLine(canvas, axesPaint);
+    }
+  }
+
+  _drawCirclePoint(Canvas canvas, Offset offset) {
+    Paint whitePaint = Paint();
+    whitePaint.color = Colors.white;
+    whitePaint..strokeWidth = 1;
+    whitePaint..style = PaintingStyle.stroke;
+    canvas.drawCircle(offset, 2, whitePaint);
+  }
+
+  _buildBottomLine(Canvas canvas, Paint paint) {
+    var dashWidth = 3;
+    var dashSpace = 3;
+    double startX = 0;
+    final space = (dashSpace + dashWidth);
+    while (startX < width!) {
       canvas.drawLine(
-          Offset(0, height ), Offset(width, height), axesPaint);
+          Offset(startX, height!), Offset(startX + dashWidth, height!), paint);
+      startX += space;
     }
   }
 
@@ -189,4 +421,11 @@ class _ChartPainter extends CustomPainter {
     paint..style = PaintingStyle.stroke;
     return paint;
   }
+}
+
+class ImageInfoWeather {
+  final ImageInfo? humidityInfo;
+  final List<ImageInfo>? weatherIconsInfo;
+
+  ImageInfoWeather(this.humidityInfo, this.weatherIconsInfo);
 }

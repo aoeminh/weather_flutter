@@ -1,0 +1,81 @@
+const Map<String, String> it = {
+  'insert_city_name': 'Inserisci il nome della città',
+  'similar_city': 'Posizione simile',
+  'daily_forecast': 'Dettagli giornalieri',
+  'day': 'Giorno',
+  'sunrise': 'Alba: ',
+  'sunset': 'Tramonto: ',
+  'night': 'Notte',
+  'daily_detail': 'Dettagli giornalieri',
+  'feels_like': 'si sente come',
+  'feels_like_': 'si sente come: ',
+  'max': 'Max',
+  'min': 'Min',
+  'wind': 'Vento',
+  'uv_index': 'Indice UV',
+  'precipitation': 'Precipitazione',
+  'cloud_cover': 'Coperto dalle nuvole',
+  'sun': 'Sole',
+  'moon': 'Luna',
+  'rise': 'Alzati',
+  'set': 'Set',
+  'edit_location': 'Modifica posizione',
+  'add_new_city': 'Aggiungi nuova città',
+  'hour_forecast': 'Previsione oraria',
+  'app_name': 'Free Weather Forecast',
+  'notification': 'Notifiche',
+  'temp_unit': 'Temp Unit',
+  'temp': 'Temperatura',
+  'temp_': 'Temperatura: ',
+  'wind_unit': 'Unità di velocità del vento',
+  'pressure_unit': 'Unità di pressione',
+  'visibility_unit': 'Unità di visibilità',
+  'time_format': 'Formato orario',
+  'date_format': 'Formato data',
+  'collapse': 'Crollo',
+  'show_more': 'Mostra di più',
+  'more': 'Di più',
+  'today': 'Oggi',
+  'detail': 'Dettaglio',
+  'humidity': 'Umidità',
+  'visibility': 'Visibilità',
+  'dew_point': 'punto di rugiada',
+  'pressure': 'Pressione',
+  'empty': 'Vuota',
+  'hour': 'ore',
+  'minute': 'minuta',
+  'network_error':
+      'La rete sembra avere problemi. Assicurati di avere una connessione Internet.',
+  'check_update': 'Ricerca aggiornamenti',
+  'good': 'Buona',
+  'moderate': 'Moderare',
+  'unhealthy_sensitive': 'Malsano per i gruppi sensibili',
+  'unhealthy': 'Malsana',
+  'very_unhealthy': 'Molto malsano',
+  'hazardous': 'Pericolosa',
+  'good_implications':
+      'La qualità dell\'aria è considerata soddisfacente e l\'inquinamento atmosferico presenta un rischio minimo o nullo',
+  'moderate_implications':
+      'La qualità dell\'aria è accettabile; tuttavia, per alcuni inquinanti potrebbe esserci un moderato problema di salute per un numero molto limitato di persone che sono insolitamente sensibili all\'inquinamento atmosferico.',
+  'sensitive_implications':
+      'I membri di gruppi sensibili possono avere effetti sulla salute. È improbabile che il pubblico in generale ne risenta.',
+  'unhealthy_implications':
+      'Tutti possono iniziare a sperimentare effetti sulla salute; i membri di gruppi sensibili possono avere effetti sulla salute più gravi.',
+  'very_unhealthy_implications':
+      'Avvertenze sanitarie di condizioni di emergenza. L\'intera popolazione ha maggiori probabilità di essere colpita.',
+  'hazardous_implications':
+      'Allerta sanitaria: tutti possono avere effetti sulla salute più gravi.',
+  'good_cautionary': 'Nessuna',
+  'moderate_cautionary':
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero limitare lo sforzo prolungato all\'aperto.',
+  'sensitive_cautionary':
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero limitare lo sforzo prolungato all\'aperto.',
+  'unhealthy_cautionary':
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero evitare lo sforzo prolungato all\'aperto; tutti gli altri, specialmente i bambini, dovrebbero limitare lo sforzo prolungato all\'aperto',
+  'very_unhealthy_cautionary':
+      'I bambini e gli adulti attivi e le persone con malattie respiratorie, come l\'asma, dovrebbero evitare tutti gli sforzi all\'aperto; tutti gli altri, specialmente i bambini, dovrebbero limitare lo sforzo all\'aperto.',
+  'hazardous_cautionary':
+      'Tutti dovrebbero evitare tutti gli sforzi all\'aperto.',
+  'air_quality': 'Qualità dell\'aria',
+  'air_pollution_level': 'Livello di inquinamento atmosferico'
+};
