@@ -40,18 +40,29 @@ class AirPollutionWidget extends StatelessWidget {
                 style: textTitleWhite36,
               ),
               const SizedBox(width: margin),
-              _level(level, color),
-              Expanded(child: Container()),
-              GestureDetector(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AirPollutionLevelScreen())),
-                child: Icon(
-                  Icons.info_outline,
-                  color: Colors.white,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: _level(level, color),
+                    ),
+                    const SizedBox(width: margin),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AirPollutionLevelScreen())),
+                      child: Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                      ),
+                    )
+                  ],
                 ),
               )
+
             ],
           ),
           const SizedBox(height: margin),
