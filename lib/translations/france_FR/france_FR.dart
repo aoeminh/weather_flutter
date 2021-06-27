@@ -76,5 +76,21 @@ const Map<String, String> fr = {
       'Les enfants et les adultes actifs, ainsi que les personnes souffrant de maladies respiratoires, telles que l\'asthme, doivent éviter tout effort à l\'extérieur ; tout le monde, en particulier les enfants, devrait limiter les efforts à l\'extérieur.',
   'hazardous_cautionary': 'Tout le monde devrait éviter tout effort extérieur.',
   'air_quality': 'Qualité de l\'air',
-  'air_pollution_level' :'Niveau de pollution atmosphérique'
+  'air_pollution_level': 'Niveau de pollution atmosphérique',
+  'setting_language': 'Paramètres de langue',
+  'en': 'Anglaise',
+  'de': 'Allemande',
+  'ru': 'russe',
+  'ro': 'Roumaine',
+  'hi': 'hindi',
+  'it': 'Italienne',
+  'fr': 'français',
+  'ja': 'Japonaise',
+  'ko': 'Coréenne',
+  'es': 'Espanol',
+  'ua': 'Ukrainienne',
+  'vi': 'Vietnamienne',
+  'pl': 'polonais',
+  'az': 'Azerbaïdjanaise',
+  'tr': 'Turque'
 };

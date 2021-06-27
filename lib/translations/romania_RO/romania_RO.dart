@@ -77,5 +77,21 @@ const Map<String, String> ro = {
   'hazardous_cautionary':
       'Toată lumea ar trebui să evite orice efort în aer liber.',
   'air_quality': 'Calitatea aerului',
-  'air_pollution_level': 'Nivelul de poluare a aerului'
+  'air_pollution_level': 'Nivelul de poluare a aerului',
+  'setting_language': 'Setările de limbă',
+  'en':'język angielski',
+  'de': 'Niemiecki',
+  'ru' :'Rosyjski',
+  'ro':'rumuński',
+  'hi':'hinduski',
+  'it':'Włoski',
+  'fr':'Francuski',
+  'ja':'język japoński',
+  'ko':'koreański',
+  'es':'hiszpański',
+  'ua':'ukraiński',
+  'vi':'wietnamski',
+  'pl':'Polskie',
+  'az':'azerbejdżański',
+  'tr':'turecki'
 };

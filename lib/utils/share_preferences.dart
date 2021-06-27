@@ -10,6 +10,7 @@ const String _PRESSURE_SETTING_KEY = 'pressure_setting_key';
 const String _DATE_SETTING_KEY = 'date_setting_key';
 const String _TIME_SETTING_KEY = 'time_setting_key';
 const String _VISIBILITY_SETTING_KEY = 'visibility_setting_key';
+const String _LANGUAGE_SETTING_KEY = 'language_setting_key';
 
 class Preferences {
   static saveListCity(List<City> cities) async {
@@ -88,5 +89,15 @@ class Preferences {
   static Future<String?> getVisibilitySetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_VISIBILITY_SETTING_KEY);
+  }
+
+  static saveLanguageSetting(String visibilitySetting) async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString(_LANGUAGE_SETTING_KEY, visibilitySetting);
+  }
+
+  static Future<String> getLanguageSetting() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(_LANGUAGE_SETTING_KEY)?? 'en';
   }
 }

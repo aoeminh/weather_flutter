@@ -75,6 +75,22 @@ const Map<String, String> de = {
   'Aktive Kinder und Erwachsene sowie Menschen mit Atemwegserkrankungen wie Asthma sollten alle Anstrengungen im Freien vermeiden; alle anderen, insbesondere Kinder, sollten die Anstrengung im Freien einschränken.',
   'hazardous_cautionary': 'Jeder sollte jede Anstrengung im Freien vermeiden.',
   'air_quality': 'Luftqualität',
-  'air_pollution_level' :'Luftverschmutzungsgrad'
+  'air_pollution_level' :'Luftverschmutzungsgrad',
+  'setting_language': 'Spracheinstellungen',
+  'en':'Englisch',
+  'de': 'Deutsche',
+  'ru' :'Russisch',
+  'ro':'rumänisch',
+  'hi':'Hindi',
+  'it':'Italienisch',
+  'fr':'French',
+  'ja':'japanisch',
+  'ko':'Koreanisch',
+  'es':'Spanisch',
+  'ua':'ukrainisch',
+  'vi':'Vietnamesisch',
+  'pl':'Polieren',
+  'az':'Aserbaidschanisch',
+  'tr':'Türkisch'
 
 };

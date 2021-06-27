@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:weather_app/ui/widgets/air_pollution_widget.dart';
 
 import '../../bloc/api_service_bloc.dart';
 import '../../bloc/base_bloc.dart';
@@ -39,6 +38,7 @@ import '../../ui/widgets/chart_widget.dart';
 import '../../ui/widgets/smarr_refresher.dart';
 import '../../ui/widgets/sun_path_widget.dart';
 import '../../utils/utils.dart';
+import '../widgets/air_pollution_widget.dart';
 import 'detail_daily_forecast.dart';
 
 const double _mainWeatherHeight = 240;
@@ -154,6 +154,9 @@ class _WeatherScreenState extends State<WeatherScreen>
     settingBloc.settingStream.listen((event) {
       if (this.mounted) {
         setState(() {
+          if(event == SettingEnum.Language){
+            getData();
+          }
           convertDataAndFormatTime();
         });
         settingBloc.saveSetting();
@@ -442,6 +445,27 @@ class _WeatherScreenState extends State<WeatherScreen>
                 'date_format'.tr,
                 settingBloc.dateEnum.value,
                 () => showSettingDialog(SettingEnum.DateEnum)),
+            InkWell(
+              onTap:() => showLanguageDialog(SettingEnum.Language),
+              child: Container(
+                padding: EdgeInsets.only(
+                    left: padding, right: paddingSmall,bottom: padding),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.language,
+                        size: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: padding),
+                    Text('setting_language'.tr, style: textTitleWhite),
+                  ],
+                ),
+              ),
+            ),
             Divider(height: 1, color: Colors.grey),
             InkWell(
               onTap: () {
@@ -452,10 +476,13 @@ class _WeatherScreenState extends State<WeatherScreen>
                     left: padding, right: paddingSmall, top: padding),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.system_update,
-                      size: _iconDrawerSize,
-                      color: Colors.white,
+                    Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.system_update,
+                        size: 22,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(width: padding),
                     Text('check_update'.tr, style: textTitleWhite),
@@ -1403,6 +1430,9 @@ class _WeatherScreenState extends State<WeatherScreen>
         title = 'date_format'.tr;
         groupValue = settingBloc.dateEnum.value;
         break;
+      case SettingEnum.Language:
+        // TODO: Handle this case.
+        break;
     }
 
     showDialog(
@@ -1438,6 +1468,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                                 value: e,
                                 groupValue: groupValue,
                                 onChanged: (String? value) {
+                                  print(value);
                                   _changeSetting(value, settingEnum);
                                 },
                               ),
@@ -1451,9 +1482,62 @@ class _WeatherScreenState extends State<WeatherScreen>
           );
         });
   }
+  showLanguageDialog(SettingEnum settingEnum) {
 
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(radius)),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: padding),
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.symmetric(vertical: padding),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'setting_language'.tr,
+                          style: textTitleBold,
+                        )),
+                    ...LanguageEnum.values.toList().map((e) {
+                      return Container(
+                          padding: EdgeInsets.symmetric(vertical: padding),
+                          child: InkWell(
+                            onTap: () {
+                              _changeLanguageSetting(e);
+                            },
+                            child: ListTile(
+                              title: Text(e.value),
+                              leading: Radio<LanguageEnum>(
+                                value: e,
+                                groupValue: settingBloc.languageEnum,
+                                onChanged: (LanguageEnum? value) {
+                                  print(value);
+                                  _changeLanguageSetting(value);
+                                },
+                              ),
+                            ),
+                          ));
+                    })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
   _changeSetting(String? value, SettingEnum settingEnum) {
     settingBloc.changeSetting(value, settingEnum);
+    Navigator.pop(context);
+  }
+
+  _changeLanguageSetting(LanguageEnum? value) {
+    settingBloc.changeLanguageSetting(value);
     Navigator.pop(context);
   }
 

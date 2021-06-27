@@ -1,4 +1,6 @@
+import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/translations/app_translation.dart';
 
 import '../model/weather_response.dart';
 import '../shared/strings.dart';
@@ -12,13 +14,31 @@ enum PressureEnum { mBar, bar, psi, inHg, mmHg }
 enum VisibilityEnum { km, mile }
 enum TimeEnum { twelve, twentyFour }
 enum DateEnum { ddMMyyyyy, mmddyyyyy, yyyymmdd }
+enum LanguageEnum {
+  en,
+  ru,
+  de,
+  ro,
+  ind,
+  it,
+  fr,
+  ja,
+  ko,
+  es,
+  ua,
+  vi,
+  pl,
+  az,
+  tr
+}
 enum SettingEnum {
   TempEnum,
   WindEnum,
   PressureEnum,
   VisibilityEnum,
   TimeEnum,
-  DateEnum
+  DateEnum,
+  Language
 }
 
 extension TempExtenstion on TempEnum {
@@ -125,7 +145,6 @@ extension VisibilityExtenstion on VisibilityEnum {
     switch (value) {
       case km:
         return VisibilityEnum.km;
-        break;
       case mile:
         return VisibilityEnum.mile;
       default:
@@ -186,6 +205,119 @@ extension DateExtenstion on DateEnum {
   }
 }
 
+extension LanguageExtention on LanguageEnum {
+  String get value {
+    switch (this) {
+      case LanguageEnum.en:
+        return 'en'.tr;
+      case LanguageEnum.ru:
+        return 'ru'.tr;
+      case LanguageEnum.de:
+        return 'de'.tr;
+      case LanguageEnum.ro:
+        return 'ro'.tr;
+      case LanguageEnum.ind:
+        return 'hi'.tr;
+      case LanguageEnum.it:
+        return 'it'.tr;
+      case LanguageEnum.fr:
+        return 'fr'.tr;
+      case LanguageEnum.ja:
+        return 'ja'.tr;
+      case LanguageEnum.ko:
+        return 'ko'.tr;
+      case LanguageEnum.es:
+        return 'es'.tr;
+      case LanguageEnum.ua:
+        return 'ua'.tr;
+      case LanguageEnum.vi:
+        return 'vi'.tr;
+      case LanguageEnum.pl:
+        return 'pl'.tr;
+      case LanguageEnum.az:
+        return 'az'.tr;
+      case LanguageEnum.tr:
+        return 'tr'.tr;
+      default:
+        return 'en'.tr;
+    }
+  }
+
+  String get languageCode {
+    switch (this) {
+      case LanguageEnum.en:
+        return 'en';
+      case LanguageEnum.ru:
+        return 'ru';
+      case LanguageEnum.de:
+        return 'de';
+      case LanguageEnum.ro:
+        return 'ro';
+      case LanguageEnum.ind:
+        return 'hi';
+      case LanguageEnum.it:
+        return 'it';
+      case LanguageEnum.fr:
+        return 'fr';
+      case LanguageEnum.ja:
+        return 'ja';
+      case LanguageEnum.ko:
+        return 'ko';
+      case LanguageEnum.es:
+        return 'es';
+      case LanguageEnum.ua:
+        return 'ua';
+      case LanguageEnum.vi:
+        return 'vi';
+      case LanguageEnum.pl:
+        return 'pl';
+      case LanguageEnum.az:
+        return 'az';
+      case LanguageEnum.tr:
+        return 'tr';
+      default:
+        return 'en';
+    }
+  }
+
+  LanguageEnum setValue(String value) {
+    switch (value) {
+      case 'en':
+        return LanguageEnum.en;
+      case 'ru':
+        return LanguageEnum.ru;
+      case 'de':
+        return LanguageEnum.de;
+      case 'ro':
+        return LanguageEnum.ro;
+      case 'hi':
+        return LanguageEnum.ind;
+      case 'it':
+        return LanguageEnum.it;
+      case 'fr':
+        return LanguageEnum.fr;
+      case 'ja':
+        return LanguageEnum.ja;
+      case 'ko':
+        return LanguageEnum.ko;
+      case 'es':
+        return LanguageEnum.es;
+      case 'ua':
+        return LanguageEnum.ua;
+      case 'vi':
+        return LanguageEnum.vi;
+      case 'pl':
+        return LanguageEnum.pl;
+      case 'az':
+        return LanguageEnum.az;
+      case 'tr':
+        return LanguageEnum.tr;
+      default:
+        return LanguageEnum.en;
+    }
+  }
+}
+
 class SettingBloc extends BlocBase {
   bool _isOnNotify = false;
   WeatherResponse? _weatherResponse;
@@ -196,6 +328,7 @@ class SettingBloc extends BlocBase {
   VisibilityEnum _visibilityEnum = VisibilityEnum.km;
   TimeEnum _timeEnum = TimeEnum.twentyFour;
   DateEnum _dateEnum = DateEnum.mmddyyyyy;
+  LanguageEnum _languageEnum = LanguageEnum.en;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   PublishSubject<SettingEnum> _settingBehavior = PublishSubject();
@@ -206,7 +339,10 @@ class SettingBloc extends BlocBase {
     _notificationSubject.add(_isOnNotify);
   }
 
-  changeSetting(String? value, SettingEnum settingEnum) {
+  changeSetting(
+    String? value,
+    SettingEnum settingEnum,
+  ) {
     switch (settingEnum) {
       case SettingEnum.TempEnum:
         _tempEnum = _tempEnum.setValue(value);
@@ -226,17 +362,26 @@ class SettingBloc extends BlocBase {
       case SettingEnum.DateEnum:
         _dateEnum = _dateEnum.setValue(value);
         break;
+      case SettingEnum.Language:
+        break;
     }
     _settingBehavior.add(settingEnum);
   }
 
-  saveSetting()async {
+  changeLanguageSetting(LanguageEnum? value) {
+    _languageEnum = value!;
+    updateLocale(value.languageCode);
+    _settingBehavior.add(SettingEnum.Language);
+  }
+
+  saveSetting() async {
     await Preferences.saveTempSetting(_tempEnum.value);
     await Preferences.saveWindSetting(_windEnum.value);
     await Preferences.savePressureSetting(_pressureEnum.value);
     await Preferences.saveVisibilitySetting(_visibilityEnum.value);
     await Preferences.saveDateSetting(_dateEnum.value);
     await Preferences.saveTimeSetting(_timeEnum.value);
+    await Preferences.saveLanguageSetting(_languageEnum.languageCode);
   }
 
   getSetting() async {
@@ -244,9 +389,21 @@ class SettingBloc extends BlocBase {
     _windEnum = _windEnum.setValue(await Preferences.getWindSetting());
     _pressureEnum =
         _pressureEnum.setValue(await Preferences.getPressureSetting());
-    _windEnum = _windEnum.setValue(await Preferences.getWindSetting());
     _dateEnum = _dateEnum.setValue(await Preferences.getDateSetting());
     _timeEnum = _timeEnum.setValue(await Preferences.getTimeSetting());
+    _visibilityEnum =
+        _visibilityEnum.setValue(await Preferences.getVisibilitySetting());
+    String languageCode = await Preferences.getLanguageSetting();
+    _languageEnum = _languageEnum.setValue(languageCode);
+    changeLanguageSetting(_languageEnum);
+  }
+
+  updateLocale(String languageCode) {
+    AppTranslation.locales.forEach((element) {
+      if (element.languageCode == languageCode) {
+        Get.updateLocale(element);
+      }
+    });
   }
 
   @override
@@ -266,6 +423,8 @@ class SettingBloc extends BlocBase {
   TimeEnum get timeEnum => _timeEnum;
 
   DateEnum get dateEnum => _dateEnum;
+
+  LanguageEnum get languageEnum => _languageEnum;
 
   bool get isOnNotification => _isOnNotify;
 

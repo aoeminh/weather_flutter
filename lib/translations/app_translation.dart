@@ -24,7 +24,7 @@ class AppTranslation extends Translations {
     'ru',
     'de',
     'ro',
-    'in',
+    'hi',
     'it',
     'fr',
     'ja',

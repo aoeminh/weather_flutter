@@ -77,5 +77,21 @@ const Map<String, String> it = {
   'hazardous_cautionary':
       'Tutti dovrebbero evitare tutti gli sforzi all\'aperto.',
   'air_quality': 'Qualità dell\'aria',
-  'air_pollution_level': 'Livello di inquinamento atmosferico'
+  'air_pollution_level': 'Livello di inquinamento atmosferico',
+  'setting_language': 'Impostazioni della lingua',
+  'en':'inglese',
+  'de': 'Tedesca',
+  'ru' :'Russa',
+  'ro':'Rumena',
+  'hi':'hindi',
+  'it':'Italiana',
+  'fr':'francese',
+  'ja':'giapponese',
+  'ko':'Coreana',
+  'es':'Spagnola',
+  'ua':'Ucraina',
+  'vi':'vietnamita',
+  'pl':'Polacca',
+  'az':'Azero',
+  'tr':'Turca'
 };

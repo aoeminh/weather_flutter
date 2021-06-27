@@ -45,7 +45,7 @@ const Map<String, String> pl = {
   'hour': 'godzina',
   'minute': 'minuta',
   'network_error':
-  'Wygląda na to, że sieć ma problemy. Upewnij się, że masz połączenie z internetem.',
+      'Wygląda na to, że sieć ma problemy. Upewnij się, że masz połączenie z internetem.',
   'check_update': 'Sprawdź aktualizacje',
   'good': 'Dobrze',
   'moderate': 'Umiarkowany',
@@ -54,27 +54,44 @@ const Map<String, String> pl = {
   'very_unhealthy': 'Bardzo niezdrowe',
   'hazardous': 'Niebezpieczny',
   'good_implications':
-  'Jakość powietrza uważana jest za zadowalającą, a zanieczyszczenie powietrza stanowi niewielkie lub żadne ryzyko',
+      'Jakość powietrza uważana jest za zadowalającą, a zanieczyszczenie powietrza stanowi niewielkie lub żadne ryzyko',
   'moderate_implications':
-  'Jakość powietrza jest akceptowalna; jednak w przypadku niektórych zanieczyszczeń może wystąpić umiarkowany problem zdrowotny dla bardzo małej liczby osób, które są niezwykle wrażliwe na zanieczyszczenie powietrza.',
+      'Jakość powietrza jest akceptowalna; jednak w przypadku niektórych zanieczyszczeń może wystąpić umiarkowany problem zdrowotny dla bardzo małej liczby osób, które są niezwykle wrażliwe na zanieczyszczenie powietrza.',
   'sensitive_implications':
-  'Członkowie wrażliwych grup mogą odczuwać skutki zdrowotne. Nie dotyczy to ogółu społeczeństwa.',
+      'Członkowie wrażliwych grup mogą odczuwać skutki zdrowotne. Nie dotyczy to ogółu społeczeństwa.',
   'unhealthy_implications':
-  'Każdy może zacząć odczuwać skutki zdrowotne; członkowie wrażliwych grup mogą doświadczyć poważniejszych skutków zdrowotnych.',
+      'Każdy może zacząć odczuwać skutki zdrowotne; członkowie wrażliwych grup mogą doświadczyć poważniejszych skutków zdrowotnych.',
   'very_unhealthy_implications':
-  'Ostrzeżenia zdrowotne o stanach zagrożenia. Cała populacja jest bardziej zagrożona.',
+      'Ostrzeżenia zdrowotne o stanach zagrożenia. Cała populacja jest bardziej zagrożona.',
   'hazardous_implications':
-  'Ostrzeżenie zdrowotne: każdy może doświadczyć poważniejszych skutków zdrowotnych.',
+      'Ostrzeżenie zdrowotne: każdy może doświadczyć poważniejszych skutków zdrowotnych.',
   'good_cautionary': 'Żaden',
   'moderate_cautionary':
-  'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny ograniczać długotrwały wysiłek na świeżym powietrzu.',
+      'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny ograniczać długotrwały wysiłek na świeżym powietrzu.',
   'sensitive_cautionary':
-  'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny ograniczać długotrwały wysiłek na świeżym powietrzu.',
+      'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny ograniczać długotrwały wysiłek na świeżym powietrzu.',
   'unhealthy_cautionary':
-  'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny unikać długotrwałego wysiłku na świeżym powietrzu; wszyscy inni, zwłaszcza dzieci, powinni ograniczać długotrwały wysiłek na świeżym powietrzu',
+      'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny unikać długotrwałego wysiłku na świeżym powietrzu; wszyscy inni, zwłaszcza dzieci, powinni ograniczać długotrwały wysiłek na świeżym powietrzu',
   'very_unhealthy_cautionary':
-  'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny unikać wszelkiego wysiłku na świeżym powietrzu; wszyscy inni, zwłaszcza dzieci, powinni ograniczać wysiłek na świeżym powietrzu.',
-  'hazardous_cautionary': 'Każdy powinien unikać wszelkiego wysiłku na świeżym powietrzu.',
+      'Aktywne dzieci i dorośli oraz osoby z chorobami układu oddechowego, takimi jak astma, powinny unikać wszelkiego wysiłku na świeżym powietrzu; wszyscy inni, zwłaszcza dzieci, powinni ograniczać wysiłek na świeżym powietrzu.',
+  'hazardous_cautionary':
+      'Każdy powinien unikać wszelkiego wysiłku na świeżym powietrzu.',
   'air_quality': 'Jakość powietrza',
   'air_pollution_level': 'Poziom zanieczyszczenia powietrza',
+  'setting_language': 'Ustawienia języka',
+  'en': 'język angielski',
+  'de': 'Niemiecki',
+  'ru': 'Rosyjski',
+  'ro': 'rumuński',
+  'hi': 'hinduski',
+  'it': 'Włoski',
+  'fr': 'Francuski',
+  'ja': 'język japoński',
+  'ko': 'koreański',
+  'es': 'hiszpański',
+  'ua': 'ukraiński',
+  'vi': 'wietnamski',
+  'pl': 'Polskie',
+  'az': 'azerbejdżański',
+  'tr': 'turecki'
 };
