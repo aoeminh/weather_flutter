@@ -154,7 +154,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     settingBloc.settingStream.listen((event) {
       if (this.mounted) {
         setState(() {
-          if(event == SettingEnum.Language){
+          if (event == SettingEnum.Language) {
             getData();
           }
           convertDataAndFormatTime();
@@ -446,10 +446,10 @@ class _WeatherScreenState extends State<WeatherScreen>
                 settingBloc.dateEnum.value,
                 () => showSettingDialog(SettingEnum.DateEnum)),
             InkWell(
-              onTap:() => showLanguageDialog(SettingEnum.Language),
+              onTap: () => showLanguageDialog(SettingEnum.Language),
               child: Container(
                 padding: EdgeInsets.only(
-                    left: padding, right: paddingSmall,bottom: padding),
+                    left: padding, right: paddingSmall, bottom: padding),
                 child: Row(
                   children: [
                     Padding(
@@ -1482,8 +1482,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           );
         });
   }
-  showLanguageDialog(SettingEnum settingEnum) {
 
+  showLanguageDialog(SettingEnum settingEnum) {
     showDialog(
         context: context,
         builder: (context) {
@@ -1531,14 +1531,15 @@ class _WeatherScreenState extends State<WeatherScreen>
           );
         });
   }
+
   _changeSetting(String? value, SettingEnum settingEnum) {
-    settingBloc.changeSetting(value, settingEnum);
     Navigator.pop(context);
+    settingBloc.changeSetting(value, settingEnum);
   }
 
   _changeLanguageSetting(LanguageEnum? value) {
-    settingBloc.changeLanguageSetting(value);
     Navigator.pop(context);
+    settingBloc.changeLanguageSetting(value);
   }
 
   Future<void> refresh() async {

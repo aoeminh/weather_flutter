@@ -39,7 +39,10 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
               color: Colors.grey,
             ),
           ),
-          title: Text('edit_location'.tr,style: textTitleH2WhiteBold,),
+          title: Text(
+            'edit_location'.tr,
+            style: textTitleH2WhiteBold,
+          ),
           actions: [
             Container(
               margin: EdgeInsets.only(right: margin),
@@ -78,33 +81,39 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
 
   _body() => isDeleteMode
       ? _listView()
-      : ReorderableListView.builder(
-          header: InkWell(
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AddCityScreen())),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                const SizedBox(
-                  width: margin,
-                ),
-                Text(
-                  'add_new_city'.tr,
-                  style: textTitleWhite,
-                )
-              ],
-            ),
+      : Theme(
+          data: Theme.of(context).copyWith(
+            canvasColor: Colors.transparent,
+            shadowColor: Colors.transparent,
           ),
-          itemBuilder: (context, index) =>
-              _buildItemCityList(_listTempCity[index]),
-          itemCount: _listTempCity.length,
-          onReorder: (oldIndex, newIndex) {
-            _reorderList(oldIndex, newIndex);
-          },
+          child: ReorderableListView.builder(
+            header: InkWell(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddCityScreen())),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(
+                    width: margin,
+                  ),
+                  Text(
+                    'add_new_city'.tr,
+                    style: textTitleWhite,
+                  )
+                ],
+              ),
+            ),
+            itemBuilder: (context, index) =>
+                _buildItemCityList(_listTempCity[index]),
+            itemCount: _listTempCity.length,
+            onReorder: (oldIndex, newIndex) {
+              _reorderList(oldIndex, newIndex);
+            },
+          ),
         );
 
   _listView() => SingleChildScrollView(

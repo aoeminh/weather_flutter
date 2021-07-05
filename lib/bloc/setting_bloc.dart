@@ -393,7 +393,7 @@ class SettingBloc extends BlocBase {
     _timeEnum = _timeEnum.setValue(await Preferences.getTimeSetting());
     _visibilityEnum =
         _visibilityEnum.setValue(await Preferences.getVisibilitySetting());
-    String languageCode = await Preferences.getLanguageSetting();
+    String languageCode = await Preferences.getLanguageSetting()?? Get.deviceLocale!.languageCode;
     _languageEnum = _languageEnum.setValue(languageCode);
     changeLanguageSetting(_languageEnum);
   }

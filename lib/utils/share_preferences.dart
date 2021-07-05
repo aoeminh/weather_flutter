@@ -96,8 +96,8 @@ class Preferences {
     await preferences.setString(_LANGUAGE_SETTING_KEY, visibilitySetting);
   }
 
-  static Future<String> getLanguageSetting() async {
+  static Future<String?> getLanguageSetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString(_LANGUAGE_SETTING_KEY)?? 'en';
+    return preferences.getString(_LANGUAGE_SETTING_KEY);
   }
 }
