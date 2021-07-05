@@ -14,6 +14,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="Free Weather Forecast">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1229024728904450~7323812204"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -36,16 +39,7 @@
             <meta-data
                 android:name="io.flutter.embedding.android.SplashScreenDrawable"
                 android:resource="@drawable/launch_background" />
-<!--                        product-->
-<!--                        <meta-data-->
-<!--                            android:name="com.google.android.gms.ads.ca-app-pub-1229024728904450~7323812204"-->
-<!--                            android:value="ca-app-pub-1229024728904450/7470245305"/>-->
 
-            <!--test-->
-
-            <meta-data
-                android:name="com.google.android.gms.ads.ca-app-pub-1229024728904450~7323812204"
-                android:value="ca-app-pub-3940256099942544/1033173712" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -24,10 +24,22 @@ class _AddCityScreenState extends State<AddCityScreen> {
   }
 
   @override
+  void dispose() {
+    appBloc.showInterstitialAd();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: _body(),
+    return WillPopScope(
+      onWillPop: () async{
+        appBloc.showInterstitialAd();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: _body(),
+      ),
     );
   }
 
@@ -105,7 +117,8 @@ class _AddCityScreenState extends State<AddCityScreen> {
               },
               child: Material(
                 child: ListTile(
-                  title: Text('${city.name} - ${city.province}/${city.country}'),
+                  title:
+                      Text('${city.name} - ${city.province}/${city.country}'),
                 ),
               ),
             );
@@ -168,7 +181,9 @@ class _AddCityScreenState extends State<AddCityScreen> {
                 text: city.name,
                 style: textTitleWhite,
                 children: <TextSpan>[
-                  TextSpan(text: ' - ${city.province}/${city.country}', style: textTitleWhite70)
+                  TextSpan(
+                      text: ' - ${city.province}/${city.country}',
+                      style: textTitleWhite70)
                 ]),
           ),
         ),

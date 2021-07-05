@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/ui/widgets/air_pollution_widget.dart';
 
 import '../../bloc/api_service_bloc.dart';
@@ -93,58 +94,6 @@ class _WeatherScreenState extends State<WeatherScreen>
   int listLocationLength = 0;
   bool isShowMore = false;
 
-  static final AdRequest request = AdRequest(
-    keywords: <String>['foo', 'bar'],
-    contentUrl: 'http://foo.com/bar.html',
-    nonPersonalizedAds: true,
-  );
-
-  InterstitialAd? _interstitialAd;
-  int _numInterstitialLoadAttempts = 0;
-  int maxFailedLoadAttempts = 3;
-  void _createInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: InterstitialAd.testAdUnitId,
-        request: request,
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            _interstitialAd = ad;
-            _numInterstitialLoadAttempts = 0;
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            _numInterstitialLoadAttempts += 1;
-            _interstitialAd = null;
-            if (_numInterstitialLoadAttempts <= maxFailedLoadAttempts) {
-              _createInterstitialAd();
-            }
-          },
-        ));
-  }
-
-  void _showInterstitialAd() {
-    if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
-    }
-    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-    );
-    _interstitialAd!.show();
-    _interstitialAd = null;
-  }
 
   @override
   void initState() {
@@ -153,6 +102,7 @@ class _WeatherScreenState extends State<WeatherScreen>
       _listenListCityChange();
       _listenChangeSetting();
       _initAnim();
+      appBloc.createInterstitialAd();
       _scrollController.addListener(() {
         _scrollSubject.add(_scrollController.offset);
       });
@@ -388,13 +338,15 @@ class _WeatherScreenState extends State<WeatherScreen>
           actions: [
             GestureDetector(
                 onTap: () {
-                  _showInterstitialAd();
                    Navigator.push(context,
                     MaterialPageRoute(builder: (context) => AddCityScreen()));
                 },
-                child: Icon(
-                  Icons.add,
-                  color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
                 ))
           ],
           title: _titleAppbar(weatherData.weatherResponse),
