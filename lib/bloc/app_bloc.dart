@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -11,16 +12,15 @@ import '../model/coordinates.dart';
 import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
 
+
+const String productIntermediaryAdsId = 'ca-app-pub-1229024728904450/7470245305';
 class AppBloc extends BlocBase {
   List<City>? _cities;
   List<City>? _suggestCities;
   BehaviorSubject<ApplicationError> _errorBehavior = BehaviorSubject();
-
-  static final AdRequest request = AdRequest(
-    keywords: <String>['foo', 'bar'],
-    contentUrl: 'http://foo.com/bar.html',
-    nonPersonalizedAds: true,
-  );
+  bool isShowAds = true;
+  Timer? _timer;
+  int _start = 120;
 
   InterstitialAd? _interstitialAd;
   int _numInterstitialLoadAttempts = 0;
@@ -85,15 +85,13 @@ class AppBloc extends BlocBase {
   void createInterstitialAd() {
     InterstitialAd.load(
         adUnitId: InterstitialAd.testAdUnitId,
-        request: request,
+        request: AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
           },
           onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
             _numInterstitialLoadAttempts += 1;
             _interstitialAd = null;
             if (_numInterstitialLoadAttempts <= maxFailedLoadAttempts) {
@@ -105,25 +103,47 @@ class AppBloc extends BlocBase {
 
   void showInterstitialAd() {
     if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    if (!isShowAds) {
       return;
     }
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
+      onAdShowedFullScreenContent: (InterstitialAd ad) {
+        isShowAds = false;
+      },
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
+        startTimer();
         ad.dispose();
         createInterstitialAd();
       },
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
         createInterstitialAd();
       },
     );
     _interstitialAd!.show();
     _interstitialAd = null;
+  }
+
+  void startTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+      _timer = null;
+    } else {
+      const oneSec = const Duration(seconds: 1);
+      new Timer.periodic(
+        oneSec,
+        (Timer timer) {
+          if (_start == 0) {
+            isShowAds = true;
+            timer.cancel();
+          } else {
+            _start--;
+          }
+        },
+      );
+    }
   }
 
   Stream<ApplicationError> get errorStream => _errorBehavior.stream;
@@ -135,6 +155,8 @@ class AppBloc extends BlocBase {
   @override
   void dispose() {
     _errorBehavior.close();
+    if (_timer != null) _timer!.cancel();
+    _numInterstitialLoadAttempts = 0;
   }
 }
 

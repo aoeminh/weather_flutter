@@ -6,7 +6,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
@@ -93,7 +92,6 @@ class _WeatherScreenState extends State<WeatherScreen>
   bool isOnNotification = false;
   int listLocationLength = 0;
   bool isShowMore = false;
-
 
   @override
   void initState() {
@@ -338,8 +336,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           actions: [
             GestureDetector(
                 onTap: () {
-                   Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddCityScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddCityScreen()));
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -490,6 +488,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                     children: [
                       InkWell(
                         onTap: () {
+                          appBloc.showInterstitialAd();
                           Navigator.pop(context);
                           Navigator.push(
                               context,
@@ -791,24 +790,27 @@ class _WeatherScreenState extends State<WeatherScreen>
       WeatherForecastListResponse weatherForecastListResponse) {
     return Column(
       children: [
-        _buildRowTitle(
-            'hour_forecast'.tr,
-            'more'.tr,
-            () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HourlyForecastScreen(
-                          weatherForecastListResponse:
-                              weatherForecastListResponse,
-                        )))),
-        GestureDetector(
-          onTap: () => Navigator.push(
+        _buildRowTitle('hour_forecast'.tr, 'more'.tr, () {
+          appBloc.showInterstitialAd();
+          Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => HourlyForecastScreen(
                         weatherForecastListResponse:
                             weatherForecastListResponse,
-                      ))),
+                      )));
+        }),
+        GestureDetector(
+          onTap: () {
+            appBloc.showInterstitialAd();
+             Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HourlyForecastScreen(
+                        weatherForecastListResponse:
+                            weatherForecastListResponse,
+                      )));
+          },
           child: Container(
             margin: EdgeInsets.all(margin),
             decoration: BoxDecoration(
@@ -869,15 +871,15 @@ class _WeatherScreenState extends State<WeatherScreen>
   _buildBodyDailyForecast(WeatherForecastDaily weatherForecastDaily) {
     return Column(
       children: [
-        _buildRowTitle(
-            'daily_forecast'.tr,
-            'more'.tr,
-            () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DailyForecastScreen(
-                          weatherForecastDaily: weatherForecastDaily,
-                        )))),
+        _buildRowTitle('daily_forecast'.tr, 'more'.tr, () {
+          appBloc.showInterstitialAd();
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DailyForecastScreen(
+                        weatherForecastDaily: weatherForecastDaily,
+                      )));
+        }),
         Container(
           height: _dailySectionHeight,
           margin: EdgeInsets.all(margin),
@@ -1019,10 +1021,22 @@ class _WeatherScreenState extends State<WeatherScreen>
   _buildBodyDetail(Daily daily, CurrentDailyWeather currentDailyWeather) {
     return Column(
       children: [
-        _buildRowTitle('detail'.tr, 'more'.tr,
-            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
+        _buildRowTitle(
+            'detail'.tr,
+            'more'.tr,
+            weatherData != null
+                ? () {
+                    appBloc.showInterstitialAd();
+                    gotoDailyDetailScreen();
+                  }
+                : () {}),
         GestureDetector(
-          onTap: weatherData != null ? () => gotoDailyDetailScreen() : () {},
+          onTap: weatherData != null
+              ? () {
+                  appBloc.showInterstitialAd();
+                  gotoDailyDetailScreen();
+                }
+              : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -1154,10 +1168,22 @@ class _WeatherScreenState extends State<WeatherScreen>
   _airPollutionBody(AirResponse airResponse) {
     return Column(
       children: [
-        _buildRowTitle('air_quality'.tr, 'more'.tr,
-            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
+        _buildRowTitle(
+            'air_quality'.tr,
+            'more'.tr,
+            weatherData != null
+                ? () {
+                    appBloc.showInterstitialAd();
+                    gotoDailyDetailScreen();
+                  }
+                : () {}),
         GestureDetector(
-            onTap: weatherData != null ? () => gotoDailyDetailScreen() : () {},
+            onTap: weatherData != null
+                ? () {
+                    appBloc.showInterstitialAd();
+                    gotoDailyDetailScreen();
+                  }
+                : () {},
             child: AirPollutionWidget(airResponse.data))
       ],
     );
@@ -1166,10 +1192,22 @@ class _WeatherScreenState extends State<WeatherScreen>
   _bodyWindAndPressure(WeatherResponse weatherResponse) {
     return Column(
       children: [
-        _buildRowTitle('${'wind'.tr} & ${'pressure'.tr}', 'more'.tr,
-            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
+        _buildRowTitle(
+            '${'wind'.tr} & ${'pressure'.tr}',
+            'more'.tr,
+            weatherData != null
+                ? () {
+                    appBloc.showInterstitialAd();
+                    gotoDailyDetailScreen();
+                  }
+                : () {}),
         GestureDetector(
-          onTap: weatherData != null ? () => gotoDailyDetailScreen() : () {},
+          onTap: weatherData != null
+              ? () {
+                  appBloc.showInterstitialAd();
+                  gotoDailyDetailScreen();
+                }
+              : () {},
           child: Container(
             margin: EdgeInsets.all(margin),
             padding: EdgeInsets.symmetric(
@@ -1320,8 +1358,15 @@ class _WeatherScreenState extends State<WeatherScreen>
   _buildSunTimeBody(WeatherResponse weatherResponse) {
     return Column(
       children: [
-        _buildRowTitle('${'sun'.tr} & ${'moon'.tr}', 'more'.tr,
-            weatherData != null ? () => gotoDailyDetailScreen() : () {}),
+        _buildRowTitle(
+            '${'sun'.tr} & ${'moon'.tr}',
+            'more'.tr,
+            weatherData != null
+                ? () {
+                    appBloc.showInterstitialAd();
+                    gotoDailyDetailScreen();
+                  }
+                : () {}),
         Container(
           margin: EdgeInsets.all(margin),
           padding: EdgeInsets.symmetric(vertical: margin, horizontal: padding),
@@ -1333,7 +1378,10 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               GestureDetector(
                   onTap: weatherData != null
-                      ? () => gotoDailyDetailScreen()
+                      ? () {
+                          appBloc.showInterstitialAd();
+                          gotoDailyDetailScreen();
+                        }
                       : () {},
                   child: RepaintBoundary(
                     child: SunPathWidget(
@@ -1468,6 +1516,7 @@ class _WeatherScreenState extends State<WeatherScreen>
 
   Future<void> refresh() async {
     getData();
+    appBloc.showInterstitialAd();
   }
 
   gotoDailyDetailScreen() => Navigator.push(

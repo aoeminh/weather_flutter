@@ -25,7 +25,6 @@ class _AddCityScreenState extends State<AddCityScreen> {
 
   @override
   void dispose() {
-    appBloc.showInterstitialAd();
     super.dispose();
   }
 
@@ -64,6 +63,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
   }
 
   _onItemSubmit(City city) {
+    appBloc.showInterstitialAd();
     pageBloc.addNewCity(city);
     Navigator.pop(context);
   }
