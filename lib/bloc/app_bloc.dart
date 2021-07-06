@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../model/application_error.dart';
@@ -10,10 +12,19 @@ import '../model/coordinates.dart';
 import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
 
+
+const String productIntermediaryAdsId = 'ca-app-pub-1229024728904450/7470245305';
 class AppBloc extends BlocBase {
   List<City>? _cities;
   List<City>? _suggestCities;
   BehaviorSubject<ApplicationError> _errorBehavior = BehaviorSubject();
+  bool isShowAds = true;
+  Timer? _timer;
+
+
+  InterstitialAd? _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  int maxFailedLoadAttempts = 3;
 
   addError(ApplicationError error) {
     _errorBehavior.add(error);
@@ -71,6 +82,74 @@ class AppBloc extends BlocBase {
     return Preferences.getListCityFromCache();
   }
 
+  void createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: productIntermediaryAdsId,
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts <= maxFailedLoadAttempts) {
+              createInterstitialAd();
+            }
+          },
+        ));
+  }
+
+  void showInterstitialAd() {
+    if (_interstitialAd == null) {
+      return;
+    }
+    if (!isShowAds) {
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) {
+        print('onAdShowedFullScreenContent');
+        isShowAds = false;
+      },
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('onAdShowedFullScreenContent');
+        startTimer();
+        ad.dispose();
+        createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+        createInterstitialAd();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
+  }
+
+  void startTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+      _timer = null;
+    } else {
+      int _start = 10;
+      const oneSec = const Duration(seconds: 1);
+      new Timer.periodic(
+        oneSec,
+        (Timer timer) {
+          if (_start == 0) {
+            print(' isShowAds = true;');
+            isShowAds = true;
+            timer.cancel();
+          } else {
+            _start--;
+          }
+        },
+      );
+    }
+  }
+
   Stream<ApplicationError> get errorStream => _errorBehavior.stream;
 
   List<City>? get cities => _cities;
@@ -80,6 +159,8 @@ class AppBloc extends BlocBase {
   @override
   void dispose() {
     _errorBehavior.close();
+    if (_timer != null) _timer!.cancel();
+    _numInterstitialLoadAttempts = 0;
   }
 }
 

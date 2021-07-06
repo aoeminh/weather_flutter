@@ -32,7 +32,8 @@ class ApiServiceBloc extends BlocBase {
             _weatherBehaviorSubject
                 .add(WeatherStateError(weatherResponse.errorCode));
           } else {
-            _weatherBehaviorSubject.add(WeatherStateSuccess(weatherResponse));
+            if (!_weatherBehaviorSubject.isClosed)
+              _weatherBehaviorSubject.add(WeatherStateSuccess(weatherResponse));
           }
         }
       } else {
@@ -54,8 +55,9 @@ class ApiServiceBloc extends BlocBase {
             _forecastBehaviorSubject
                 .add(WeatherStateError(weatherForecastListResponse.errorCode));
           } else {
-            _forecastBehaviorSubject
-                .add(WeatherForecastStateSuccess(weatherForecastListResponse));
+            if (!_forecastBehaviorSubject.isClosed)
+              _forecastBehaviorSubject.add(
+                  WeatherForecastStateSuccess(weatherForecastListResponse));
           }
         }
       } else {
@@ -77,8 +79,9 @@ class ApiServiceBloc extends BlocBase {
             _behaviorSubjectForDailyDay
                 .add(WeatherStateError(weatherForecast7Day.errorCode));
           } else {
-            _behaviorSubjectForDailyDay
-                .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
+            if (!_behaviorSubjectForDailyDay.isClosed)
+              _behaviorSubjectForDailyDay
+                  .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
           }
         }
       } else {
@@ -98,8 +101,9 @@ class ApiServiceBloc extends BlocBase {
             _behaviorSubjectAirPollution
                 .addError(WeatherStateError(airPollutionResponse.errorCode));
           } else {
-            _behaviorSubjectAirPollution
-                .add(AirPollutionStateSuccess(airPollutionResponse));
+            if (!_behaviorSubjectAirPollution.isClosed)
+              _behaviorSubjectAirPollution
+                  .add(AirPollutionStateSuccess(airPollutionResponse));
           }
         }
       } else {
@@ -119,7 +123,8 @@ class ApiServiceBloc extends BlocBase {
             _behaviorSubjectAirPollution
                 .addError(WeatherStateError(airResponse.errorCode));
           } else {
-            _behaviorSubjectAirPollution.add(AirStateSuccess(airResponse));
+            if (!_behaviorSubjectAirPollution.isClosed)
+              _behaviorSubjectAirPollution.add(AirStateSuccess(airResponse));
           }
         }
       } else {
