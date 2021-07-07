@@ -333,8 +333,8 @@ class SettingBloc extends BlocBase {
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   PublishSubject<SettingEnum> _settingBehavior = PublishSubject();
 
-  onOffNotification(bool isOn, WeatherResponse? weatherResponse) {
-    _isOnNotify = isOn;
+  onOffNotification(WeatherResponse? weatherResponse) {
+    _isOnNotify = !_isOnNotify;
     _weatherResponse = weatherResponse;
     _notificationSubject.add(_isOnNotify);
   }
