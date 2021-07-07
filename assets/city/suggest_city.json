@@ -44,6 +44,61 @@
     }
   },
   {
+    "id": 1174872,
+    "name": "Karachi",
+    "state": "",
+    "country": "PK",
+    "province": "Sind",
+    "coord": {
+      "lon": 67.082199,
+      "lat": 24.9056
+    }
+  },
+  {
+    "id": 1172451,
+    "name": "Lahore",
+    "state": "",
+    "country": "PK",
+    "province": "Punjab",
+    "coord": {
+      "lon": 74.343613,
+      "lat": 31.549721
+    }
+  },
+  {
+    "id": 1179400,
+    "name": "Faisalabad",
+    "state": "",
+    "country": "PK",
+    "province": "Punjab",
+    "coord": {
+      "lon": 73.083328,
+      "lat": 31.41667
+    }
+  },
+  {
+    "id": 1166993,
+    "name": "Rawalpindi",
+    "state": "",
+    "country": "PK",
+    "province": "Punjab",
+    "coord": {
+      "lon": 73.067902,
+      "lat": 33.6007
+    }
+  },
+  {
+    "id": 1169825,
+    "name": "Multan",
+    "state": "",
+    "country": "PK",
+    "province": "Punjab",
+    "coord": {
+      "lon": 71.475281,
+      "lat": 30.19556
+    }
+  },
+  {
     "id": 2950159,
     "name": "Berlin",
     "state": "",

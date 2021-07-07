@@ -8,6 +8,7 @@ import 'package:weather_app/model/system.dart';
 import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
+import 'package:weather_app/translations/app_translation.dart';
 
 Image getIconForecastImage(String? iconCode, {double? width, double? height}) {
   switch (iconCode) {
@@ -236,13 +237,13 @@ String formatDateAndMonth(DateTime dateTime,DateEnum dateEnum) {
 }
 
 String formatWeekDayAndTime(DateTime? dateTime, TimeEnum timeEnum) {
-  DateFormat df = new DateFormat('EEE HH:mm',Get.deviceLocale!.languageCode);
+  DateFormat df = new DateFormat('EEE HH:mm',settingBloc.languageEnum.languageCode);
   switch (timeEnum) {
     case TimeEnum.twelve:
-      df = new DateFormat('EEE HH:mm a',Get.deviceLocale!.languageCode);
+      df = new DateFormat('EEE HH:mm a',settingBloc.languageEnum.languageCode);
       break;
     case TimeEnum.twentyFour:
-      df = new DateFormat('EEE HH:mm',Get.deviceLocale!.languageCode);
+      df = new DateFormat('EEE HH:mm',settingBloc.languageEnum.languageCode);
       break;
   }
 

@@ -45,7 +45,7 @@ const Map<String, String> vi = {
   'hour': 'giờ',
   'minute': 'phút',
   'network_error':
-  'Mạng dường như đang gặp sự cố. Đảm bảo rằng bạn có kết nối internet.',
+      'Mạng dường như đang gặp sự cố. Đảm bảo rằng bạn có kết nối internet.',
   'check_update': 'Kiểm tra cập nhật',
   'good': 'Tốt',
   'moderate': 'Trung bình',
@@ -54,27 +54,44 @@ const Map<String, String> vi = {
   'very_unhealthy': 'Rất ô nhiễm',
   'hazardous': 'Nguy hại',
   'good_implications':
-  'Chất lượng không khí được coi là đạt yêu cầu và ô nhiễm không khí gây ra ít hoặc không có rủi ro',
+      'Chất lượng không khí được coi là đạt yêu cầu và ô nhiễm không khí gây ra ít hoặc không có rủi ro',
   'moderate_implications':
-  'Chất lượng không khí ở mức chấp nhận được; tuy nhiên, đối với một số chất ô nhiễm, có thể có mối quan tâm vừa phải về sức khỏe đối với một số rất nhỏ những người nhạy cảm bất thường với ô nhiễm không khí.',
+      'Chất lượng không khí ở mức chấp nhận được; tuy nhiên, đối với một số chất ô nhiễm, có thể có mối quan tâm vừa phải về sức khỏe đối với một số rất nhỏ những người nhạy cảm bất thường với ô nhiễm không khí.',
   'sensitive_implications':
-  'Thành viên của các nhóm nhạy cảm có thể bị ảnh hưởng đến sức khỏe. Công chúng nói chung không có khả năng bị ảnh hưởng.',
+      'Thành viên của các nhóm nhạy cảm có thể bị ảnh hưởng đến sức khỏe. Công chúng nói chung không có khả năng bị ảnh hưởng.',
   'unhealthy_implications':
-  'Mọi người có thể bắt đầu gặp các ảnh hưởng đến sức khỏe; thành viên của các nhóm nhạy cảm có thể bị ảnh hưởng nghiêm trọng hơn đến sức khỏe.',
+      'Mọi người có thể bắt đầu gặp các ảnh hưởng đến sức khỏe; thành viên của các nhóm nhạy cảm có thể bị ảnh hưởng nghiêm trọng hơn đến sức khỏe.',
   'very_unhealthy_implications':
-  'Cảnh báo sức khỏe của các tình trạng khẩn cấp. Toàn bộ dân số có nhiều khả năng bị ảnh hưởng hơn.',
+      'Cảnh báo sức khỏe của các tình trạng khẩn cấp. Toàn bộ dân số có nhiều khả năng bị ảnh hưởng hơn.',
   'hazardous_implications':
-  'Cảnh báo sức khỏe: mọi người có thể gặp phải những ảnh hưởng nghiêm trọng hơn đến sức khỏe.',
+      'Cảnh báo sức khỏe: mọi người có thể gặp phải những ảnh hưởng nghiêm trọng hơn đến sức khỏe.',
   'good_cautionary': 'Không ai',
   'moderate_cautionary':
-  'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên hạn chế gắng sức lâu ngoài trời.',
+      'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên hạn chế gắng sức lâu ngoài trời.',
   'sensitive_cautionary':
-  'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên hạn chế gắng sức lâu ngoài trời.',
+      'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên hạn chế gắng sức lâu ngoài trời.',
   'unhealthy_cautionary':
-  'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên tránh gắng sức lâu ngoài trời; những người khác, đặc biệt là trẻ em, nên hạn chế gắng sức ngoài trời lâu',
+      'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên tránh gắng sức lâu ngoài trời; những người khác, đặc biệt là trẻ em, nên hạn chế gắng sức ngoài trời lâu',
   'very_unhealthy_cautionary':
-  'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên tránh tất cả các hoạt động gắng sức ngoài trời; những người khác, đặc biệt là trẻ em, nên hạn chế gắng sức ngoài trời.',
-  'hazardous_cautionary': 'Mọi người nên tránh tất cả các hoạt động gắng sức ngoài trời.',
+      'Trẻ em và người lớn năng động, và những người bị bệnh hô hấp, chẳng hạn như hen suyễn, nên tránh tất cả các hoạt động gắng sức ngoài trời; những người khác, đặc biệt là trẻ em, nên hạn chế gắng sức ngoài trời.',
+  'hazardous_cautionary':
+      'Mọi người nên tránh tất cả các hoạt động gắng sức ngoài trời.',
   'air_quality': 'Chất lượng không khí',
   'air_pollution_level': 'Mức độ ô nhiễm không khí',
+  'setting_language': 'Cài đặt ngôn ngữ',
+  'en': 'Tiếng Anh',
+  'de': 'tiếng Đức',
+  'ru': 'tiếng Nga',
+  'ro': 'Tiếng Rumani',
+  'hi': 'Tiếng Hindi',
+  'it': 'Tiếng Ý',
+  'fr': 'Tiếng Pháp',
+  'ja': 'Tiếng Nhật',
+  'ko': 'Tiếng Hàn',
+  'es': 'Tiếng Tây Ban Nha',
+  'ua': 'Tiếng Ukraina',
+  'vi': 'Tiếng Việt',
+  'pl': 'Tiếng Ba Lan',
+  'az': 'Tiếng Azurbaijan',
+  'tr': 'Tiếng Thổ Nhĩ Kỳ'
 };

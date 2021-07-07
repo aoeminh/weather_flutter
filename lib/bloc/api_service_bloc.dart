@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import '../model/air_pollution_response.dart';
 import '../model/air_response.dart';
 import '../model/weather_forcast_daily.dart';
@@ -26,12 +27,13 @@ class ApiServiceBloc extends BlocBase {
         if (!_weatherBehaviorSubject.isClosed) {
           WeatherResponse weatherResponse =
               await weatherRepository.fetchWeather(lat, lon, units,
-                  lang: Get.deviceLocale!.languageCode);
+                  lang: settingBloc.languageEnum.languageCode);
           if (weatherResponse.errorCode != null) {
             _weatherBehaviorSubject
                 .add(WeatherStateError(weatherResponse.errorCode));
           } else {
-            _weatherBehaviorSubject.add(WeatherStateSuccess(weatherResponse));
+            if (!_weatherBehaviorSubject.isClosed)
+              _weatherBehaviorSubject.add(WeatherStateSuccess(weatherResponse));
           }
         }
       } else {
@@ -48,13 +50,14 @@ class ApiServiceBloc extends BlocBase {
         if (!_forecastBehaviorSubject.isClosed) {
           WeatherForecastListResponse weatherForecastListResponse =
               await weatherRepository.fetchWeatherForecast(lat, lon, units,
-                  lang: Get.deviceLocale!.languageCode);
+                  lang: settingBloc.languageEnum.languageCode);
           if (weatherForecastListResponse.errorCode != null) {
             _forecastBehaviorSubject
                 .add(WeatherStateError(weatherForecastListResponse.errorCode));
           } else {
-            _forecastBehaviorSubject
-                .add(WeatherForecastStateSuccess(weatherForecastListResponse));
+            if (!_forecastBehaviorSubject.isClosed)
+              _forecastBehaviorSubject.add(
+                  WeatherForecastStateSuccess(weatherForecastListResponse));
           }
         }
       } else {
@@ -71,13 +74,14 @@ class ApiServiceBloc extends BlocBase {
         if (!_behaviorSubjectForDailyDay.isClosed) {
           WeatherForecastDaily weatherForecast7Day = await weatherRepository
               .fetchWeatherForecast7Day(lat, lon, units, exclude,
-                  lang: Get.deviceLocale!.languageCode);
+                  lang: settingBloc.languageEnum.languageCode);
           if (weatherForecast7Day.errorCode != null) {
             _behaviorSubjectForDailyDay
                 .add(WeatherStateError(weatherForecast7Day.errorCode));
           } else {
-            _behaviorSubjectForDailyDay
-                .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
+            if (!_behaviorSubjectForDailyDay.isClosed)
+              _behaviorSubjectForDailyDay
+                  .add(WeatherForecastDailyStateSuccess(weatherForecast7Day));
           }
         }
       } else {
@@ -97,8 +101,9 @@ class ApiServiceBloc extends BlocBase {
             _behaviorSubjectAirPollution
                 .addError(WeatherStateError(airPollutionResponse.errorCode));
           } else {
-            _behaviorSubjectAirPollution
-                .add(AirPollutionStateSuccess(airPollutionResponse));
+            if (!_behaviorSubjectAirPollution.isClosed)
+              _behaviorSubjectAirPollution
+                  .add(AirPollutionStateSuccess(airPollutionResponse));
           }
         }
       } else {
@@ -118,7 +123,8 @@ class ApiServiceBloc extends BlocBase {
             _behaviorSubjectAirPollution
                 .addError(WeatherStateError(airResponse.errorCode));
           } else {
-            _behaviorSubjectAirPollution.add(AirStateSuccess(airResponse));
+            if (!_behaviorSubjectAirPollution.isClosed)
+              _behaviorSubjectAirPollution.add(AirStateSuccess(airResponse));
           }
         }
       } else {
@@ -141,5 +147,6 @@ class ApiServiceBloc extends BlocBase {
 
   Stream get weatherStream => _weatherBehaviorSubject.stream;
 
-  Stream<WeatherState> get airPollutionStream => _behaviorSubjectAirPollution.stream;
+  Stream<WeatherState> get airPollutionStream =>
+      _behaviorSubjectAirPollution.stream;
 }

@@ -51,8 +51,15 @@ class DailyForecastScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           itemBuilder: (context, index) {
             return GestureDetector(
-              onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => DetailDailyForecast(weatherForecastDaily: weatherForecastDaily,currentIndex: index,))),
-              child: _buildItemDailyForecast(weatherForecastDaily!.daily![index]),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailDailyForecast(
+                            weatherForecastDaily: weatherForecastDaily,
+                            currentIndex: index,
+                          ))),
+              child:
+                  _buildItemDailyForecast(weatherForecastDaily!.daily![index]),
             );
           },
           separatorBuilder: (context, index) => Divider(
@@ -89,7 +96,7 @@ class DailyForecastScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '${formatDateAndMonth(dateTime,settingBloc.dateEnum)}',
+          '${formatDateAndMonth(dateTime, settingBloc.dateEnum)}',
           style: textSecondaryWhiteBold,
         ),
         const SizedBox(
@@ -135,13 +142,15 @@ class DailyForecastScreen extends StatelessWidget {
                     width: iconDetailSize,
                     height: iconDetailSize,
                   ),
-                  const SizedBox(width: marginSmall,),
+                  const SizedBox(
+                    width: marginSmall,
+                  ),
                   Text(
                     'sunrise'.tr,
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise!),settingBloc.timeEnum)}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunrise!), settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],
@@ -200,13 +209,15 @@ class DailyForecastScreen extends StatelessWidget {
                     width: iconDetailSize,
                     height: iconDetailSize,
                   ),
-                  const SizedBox(width: marginSmall,),
+                  const SizedBox(
+                    width: marginSmall,
+                  ),
                   Text(
                     'sunset'.tr,
                     style: textSmallWhite70,
                   ),
                   Text(
-                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset!),settingBloc.timeEnum)}',
+                    '${formatTime(DateTime.fromMillisecondsSinceEpoch(daily.sunset!), settingBloc.timeEnum)}',
                     style: textSmallWhite,
                   )
                 ],

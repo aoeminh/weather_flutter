@@ -76,6 +76,21 @@ const Map<String, String> es_us = {
       'Los niños y adultos activos, y las personas con enfermedades respiratorias, como asma, deben evitar todo esfuerzo al aire libre; todos los demás, especialmente los niños, deben limitar el esfuerzo al aire libre.',
   'hazardous_cautionary': 'Todos deben evitar todo esfuerzo al aire libre.',
   'air_quality': 'Calidad del aire',
-  'air_pollution_level': 'Nivel de contaminación del aire'
-
+  'air_pollution_level': 'Nivel de contaminación del aire',
+  'setting_language': 'Ajustes de idioma',
+  'en': 'Inglesa',
+  'de': 'Alemana',
+  'ru': 'Rusa',
+  'ro': 'Rumana',
+  'hi': 'hindi',
+  'it': 'Italiana',
+  'fr': 'Francesa',
+  'ja': 'Japonesa',
+  'ko': 'Coreana',
+  'es': 'Española',
+  'ua': 'Ucrania',
+  'vi': 'vietnamita',
+  'pl': 'Polaca',
+  'az': 'Azerbaiyana',
+  'tr': 'Turca'
 };
