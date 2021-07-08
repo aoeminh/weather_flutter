@@ -82,6 +82,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     super.initState();
     if (this.mounted) {
       print('test1');
+      print('test2');
       _listenListCityChange();
       _listenChangeSetting();
       appBloc.createInterstitialAd();
