@@ -14,7 +14,6 @@ import '../../model/application_error.dart';
 import '../../model/city.dart';
 import '../../model/weather_response.dart';
 import '../../shared/colors.dart';
-import '../../shared/dimens.dart';
 import '../../shared/image.dart';
 import '../../shared/text_style.dart';
 import '../../utils/utils.dart';
@@ -33,7 +32,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  bool isShowingDialog = false;
   late StreamSubscription subscription;
   int? currentPage;
 
@@ -53,9 +51,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   _checkNetWork() {
     appBloc.checkNetWork().then((isNetWorkAvailable) {
-      if (isNetWorkAvailable) {
-        pageBloc.addListCity(widget.listCity!);
-      } else {
+      pageBloc.addListCity(widget.listCity!);
+      if (!isNetWorkAvailable) {
         appBloc.addError(ApplicationError.connectionError);
       }
     });
@@ -63,28 +60,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   _listenAppError() {
     appBloc.errorStream.listen((event) {
-      if (!isShowingDialog) {
-        switch (event) {
-          case ApplicationError.apiError:
-            break;
-          case ApplicationError.connectionError:
-            _showNetWorkErrorDialog();
-            break;
-          case ApplicationError.locationNotSelectedError:
-            // TODO: Handle this case.
-            break;
-        }
+      switch (event) {
+        case ApplicationError.apiError:
+          break;
+        case ApplicationError.connectionError:
+          _showNetWorkErrorDialog();
+          break;
+        case ApplicationError.locationNotSelectedError:
+          // TODO: Handle this case.
+          break;
       }
     });
   }
 
   _showNetWorkErrorDialog() {
-    _showErrorDialog(
-        content: 'network_error'.tr,
-        callback: () {
-          SystemSettings.wifi();
-          Navigator.pop(context);
-        });
+      _showErrorDialog(
+          content: 'network_error'.tr,
+          callback: () {
+            SystemSettings.wifi();
+            Navigator.pop(context);
+          });
+
   }
 
   _listenCurrentPage() {
@@ -115,43 +111,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   _showErrorDialog({String? content, VoidCallback? callback}) {
-    isShowingDialog = true;
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(radius)),
-            child: Container(
-              height: 150,
-              width: 300,
-              color: backgroundColor,
-              padding: EdgeInsets.all(padding),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    content!,
-                    style: textSecondaryWhite70,
-                  ),
-                  const SizedBox(
-                    height: marginSmall,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                        onPressed: callback,
-                        child: Text(
-                          'OK',
-                          style: textTitleOrange,
-                        )),
-                  )
-                ],
-              ),
-            ),
-          );
-        });
+    if (!Get.isDialogOpen!) {
+      Get.dialog(
+          AlertDialog(
+            backgroundColor: backgroundColor,
+            title: Text(content!,
+              style: textSecondaryWhite70,),
+            actions: [
+              TextButton(
+                  onPressed: callback,
+                  child: Text(
+                    'OK',
+                    style: textTitleOrange,
+                  )),
+            ],
+          ),
+          barrierDismissible: false);
+    }
   }
 
   _showNotification() async {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:ui';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -76,6 +77,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   bool isOnNotification = false;
   int listLocationLength = 0;
   bool isShowMore = false;
+  late StreamSubscription _subscription;
 
   @override
   void initState() {
@@ -87,6 +89,7 @@ class _WeatherScreenState extends State<WeatherScreen>
       _scrollController.addListener(() {
         _scrollSubject.add(_scrollController.offset);
       });
+      _listenNetwork();
     }
   }
 
@@ -116,7 +119,6 @@ class _WeatherScreenState extends State<WeatherScreen>
     bloc.getAirPollution(lat ?? widget.lat, lon ?? widget.lon);
   }
 
-
   _listenListCityChange() {
     pageBloc.currentCitiesStream.listen((event) {
       if (this.mounted) {
@@ -141,12 +143,35 @@ class _WeatherScreenState extends State<WeatherScreen>
     });
   }
 
+  _listenNetwork() {
+    bool isLoad = true;
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) async {
+      var connectivityResult = await (Connectivity().checkConnectivity());
+
+      if (connectivityResult != ConnectivityResult.none) {
+        if (Get.isDialogOpen!) {
+          Navigator.of(Get.overlayContext!).pop();
+        }
+        if (isLoad) {
+          isLoad = false;
+          await Future.delayed(Duration(seconds: 1));
+          getData();
+        } else {
+          isLoad = true;
+        }
+      }
+    });
+  }
+
   @override
   void dispose() {
     bloc.dispose();
     _scrollController.dispose();
     timeSubject.close();
     _scrollSubject.close();
+    _subscription.cancel();
     super.dispose();
   }
 
