@@ -91,5 +91,11 @@ const Map<String, String> ko = {
   'vi':'베트남어',
   'pl':'광택',
   'az':'아제르바이잔',
-  'tr':'터키어'
+  'tr':'터키어',
+  'total': '총',
+  'confirmed cases': '확진 자',
+  'recovered': '회복 된',
+  'deaths': '사망자',
+  'list_country':'국가 나열',
+  'inser_country_name': '국가 이름 삽입'
 };

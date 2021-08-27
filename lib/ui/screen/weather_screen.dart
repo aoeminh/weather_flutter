@@ -6,11 +6,15 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
+import 'package:weather_app/model/covid_summary_response.dart';
 import 'package:weather_app/ui/screen/page/drawer/drawer.dart';
+import 'package:weather_app/ui/screen/page/list_country_covid_screen.dart';
 import 'package:weather_app/ui/widgets/air_pollution_widget.dart';
+import 'package:weather_app/ui/widgets/covid_19.dart';
 import 'package:weather_app/ui/widgets/current_weather_widget.dart';
 import 'package:weather_app/ui/widgets/daily_forecast_widget.dart';
 import 'package:weather_app/ui/widgets/detail_weather_widget.dart';
@@ -117,6 +121,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
     bloc.fetchWeatherForecastResponse(lat ?? widget.lat, lon ?? widget.lon);
     bloc.getAirPollution(lat ?? widget.lat, lon ?? widget.lon);
+    bloc.getCovid19Summary();
   }
 
   _listenListCityChange() {
@@ -361,11 +366,15 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               _currentWeather(weatherData.weatherResponse),
               _buildHourlyForecast(weatherData.weatherForecastListResponse),
+              _buildBannerAds(),
               _buildDailyForecast(weatherData.weatherForecastDaily),
               _buildDetail(weatherData.weatherForecastDaily),
               _buildWindAndPressure(weatherData.weatherResponse),
+              _buildBannerAds1(),
               _buildAriPollution(),
-              _buildSunTime(weatherData.weatherResponse)
+              _buildCovid19(),
+              _buildSunTime(weatherData.weatherResponse),
+              // _buildBannerAds2()
             ],
           ),
         ),
@@ -519,18 +528,6 @@ class _WeatherScreenState extends State<WeatherScreen>
         : Container();
   }
 
-  _buildAriPollution() {
-    return StreamBuilder<WeatherState>(
-        stream: bloc.airPollutionStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data is AirStateSuccess) {
-            AirStateSuccess state = snapshot.data! as AirStateSuccess;
-            return _airPollutionBody(state.airResponse);
-          }
-          return Container();
-        });
-  }
-
   _bodyWindAndPressure(WeatherResponse weatherResponse) {
     return Column(
       children: [
@@ -549,6 +546,18 @@ class _WeatherScreenState extends State<WeatherScreen>
         )
       ],
     );
+  }
+
+  _buildAriPollution() {
+    return StreamBuilder<WeatherState>(
+        stream: bloc.airPollutionStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data is AirStateSuccess) {
+            AirStateSuccess state = snapshot.data! as AirStateSuccess;
+            return _airPollutionBody(state.airResponse);
+          }
+          return Container();
+        });
   }
 
   _airPollutionBody(AirResponse airResponse) {
@@ -571,6 +580,59 @@ class _WeatherScreenState extends State<WeatherScreen>
                   }
                 : () {},
             child: AirPollutionWidget(airResponse.data))
+      ],
+    );
+  }
+
+  _buildCovid19() {
+    return StreamBuilder<WeatherState>(
+        stream: bloc.covidStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data is CovidStateSuccess) {
+            print('snapshot.hasData ');
+            CovidStateSuccess state = snapshot.data! as CovidStateSuccess;
+            return _buildCovid19Body(state.covidSummaryResponse);
+          }
+          print('snapshot.hasData fails ');
+          return Container();
+        });
+  }
+
+  _buildCovid19Body(CovidSummaryResponse covidSummaryResponse) {
+    final countryCode = Get.deviceLocale!.countryCode;
+    Country? country = covidSummaryResponse.countries!.firstWhere(
+        (element) => countryCode == element.countryCode, orElse: () {
+      return covidSummaryResponse.countries!
+          .firstWhere((element) => countryCode == 'US');
+    });
+
+    return Column(
+      children: [
+        _buildRowTitle(
+            'COVID-19',
+            'more'.tr,
+            weatherData != null
+                ? () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ListCountryCovid(
+                              covidSummaryResponse: covidSummaryResponse,
+                            )))
+                : () {}),
+        GestureDetector(
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ListCountryCovid(
+                    covidSummaryResponse: covidSummaryResponse,
+                      ))),
+          child: Container(
+            height: 150,
+            child: Covid19(
+              country: country,
+            ),
+          ),
+        )
       ],
     );
   }
@@ -651,6 +713,31 @@ class _WeatherScreenState extends State<WeatherScreen>
                 currentIndex: 0,
                 weatherForecastDaily: weatherData!.weatherForecastDaily,
               )));
+
+  _buildBannerAds() => Container(
+      height: 100,
+      padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
+      child: appBloc.myBanner != null
+          ? AdWidget(ad: appBloc.myBanner!)
+          : const SizedBox());
+
+  _buildBannerAds1() => InkWell(
+
+    onTap: () => print('ssssss'),
+    child: Container(
+        height: 100,
+        padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
+        child: appBloc.myBanner1 != null
+            ? AdWidget(ad: appBloc.myBanner1!)
+            : const SizedBox()),
+  );
+
+  _buildBannerAds2() => Container(
+      height: 100,
+      padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
+      child: appBloc.myBanner2 != null
+          ? AdWidget(ad: appBloc.myBanner2!)
+          : const SizedBox());
 }
 
 class WeatherData {

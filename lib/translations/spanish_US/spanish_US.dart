@@ -92,5 +92,11 @@ const Map<String, String> es_us = {
   'vi': 'vietnamita',
   'pl': 'Polaca',
   'az': 'Azerbaiyana',
-  'tr': 'Turca'
+  'tr': 'Turca',
+  'total': 'Total',
+  'confirmed cases': 'Casos confirmados',
+  'recovered': 'Recuperada',
+  'deaths': 'Fallecidas',
+  'list_country':'Lista de países',
+  'inser_country_name': 'Inserte el nombre del país'
 };

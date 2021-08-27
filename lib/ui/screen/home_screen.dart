@@ -40,6 +40,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     currentPage = 0;
     WidgetsBinding.instance!.addObserver(this);
+    appBloc.createBannerAds();
+
     appBloc.getListCity();
     appBloc.getListSuggestCity();
     _listenConnectNetWork();
@@ -74,13 +76,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   _showNetWorkErrorDialog() {
-      _showErrorDialog(
-          content: 'network_error'.tr,
-          callback: () {
-            SystemSettings.wifi();
-            Navigator.pop(context);
-          });
-
+    _showErrorDialog(
+        content: 'network_error'.tr,
+        callback: () {
+          SystemSettings.wifi();
+          Navigator.pop(context);
+        });
   }
 
   _listenCurrentPage() {
@@ -115,8 +116,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       Get.dialog(
           AlertDialog(
             backgroundColor: backgroundColor,
-            title: Text(content!,
-              style: textSecondaryWhite70,),
+            title: Text(
+              content!,
+              style: textSecondaryWhite70,
+            ),
             actions: [
               TextButton(
                   onPressed: callback,
@@ -198,6 +201,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
+        print('resumed');
+        appBloc.showInterstitialAd();
         break;
       case AppLifecycleState.inactive:
         break;
@@ -223,5 +228,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     pageBloc.dispose();
     settingBloc.dispose();
     subscription.cancel();
+    if (appBloc.myBanner != null) appBloc.myBanner!.dispose();
+    if (appBloc.myBanner1 != null) appBloc.myBanner1!.dispose();
+    if (appBloc.myBanner2 != null) appBloc.myBanner2!.dispose();
   }
 }

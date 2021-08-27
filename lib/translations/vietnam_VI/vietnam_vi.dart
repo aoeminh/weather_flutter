@@ -93,5 +93,11 @@ const Map<String, String> vi = {
   'vi': 'Tiếng Việt',
   'pl': 'Tiếng Ba Lan',
   'az': 'Tiếng Azurbaijan',
-  'tr': 'Tiếng Thổ Nhĩ Kỳ'
+  'tr': 'Tiếng Thổ Nhĩ Kỳ',
+  'total': 'Toàn bộ',
+  'confirmed cases': 'Các trường hợp đã xác nhận',
+  'recovered': 'Phục hồi',
+  'deaths': 'Tử vong',
+  'list_country': 'Danh sách quốc gia',
+  'inser_country_name': 'Điền tên quốc gia'
 };

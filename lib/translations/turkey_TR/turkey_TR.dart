@@ -92,5 +92,11 @@ const Map<String, String> tr = {
   'vi':'Vietnam',
   'pl':'Lehçe',
   'az':'Azerice',
-  'tr':'Türk'
+  'tr':'Türk',
+  'total': 'Toplam',
+  'confirmed cases': 'Onaylanmış vakalar',
+  'recovered': 'kurtarıldı',
+  'deaths': 'Ölümler',
+  'list_country':'Ülkeyi Listele',
+  'inser_country_name': 'Ülke adını girin'
 };

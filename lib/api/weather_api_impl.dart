@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:weather_app/model/air_pollution_response.dart';
 import 'package:weather_app/model/air_response.dart';
 import 'package:weather_app/model/application_error.dart';
+import 'package:weather_app/model/covid_summary_response.dart';
 import 'package:weather_app/model/weather_forcast_daily.dart';
 
 import '../model/weather_forecast_list_response.dart';
@@ -20,6 +21,8 @@ class WeatherApiImpl extends WeatherApi {
   static final String waqiToken = "d05a139b30a73bc0f711d6a36be3522498e01c95";
   String airAQI =
       'https://api.waqi.info/feed/geo:40.78788;-74.014313/?token=d05a139b30a73bc0f711d6a36be3522498e01c95';
+
+  String covid19ApiSummary = 'https://api.covid19api.com/summary';
 
   @override
   Future<WeatherResponse> fetchWeather(double? lat, double? lon, String units,
@@ -86,6 +89,19 @@ class WeatherApiImpl extends WeatherApi {
     }
   }
 
+  @override
+  Future<CovidSummaryResponse> getCovid19Summary() async {
+    Uri uri = _buildCovid19Summary();
+    Response response = await _dio.get(uri.toString());
+    print(response.data);
+    if (response.statusCode == 200) {
+      print('getCovid ${response.data}');
+      return CovidSummaryResponse.fromJson(response.data);
+    } else {
+      return CovidSummaryResponse.withErrorCode(ApplicationError.apiError);
+    }
+  }
+
   _buildUri(double? lat, double? lon, String endpoint,
       {String? unit, String? exclude, String? lang}) {
     Map<String, dynamic> param = {
@@ -114,6 +130,13 @@ class WeatherApiImpl extends WeatherApi {
         host: 'api.waqi.info',
         path: '/feed/geo:$lat;$lon/',
         queryParameters: params);
+  }
+
+  _buildCovid19Summary() {
+    return Uri(
+        scheme: 'https',
+        host: 'api.covid19api.com',
+        path: '/summary',);
   }
 
   String convertSpecialLanguageCode(String languageCode) {

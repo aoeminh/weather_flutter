@@ -91,6 +91,12 @@ const Map<String, String> ja = {
   'vi':'ベトナム語',
   'pl':'研磨',
   'az':'アゼルバイジャン',
-  'tr':'トルコ語'
+  'tr':'トルコ語',
+  'total': '合計',
+  'confirmed cases': '感染者（数',
+  'recovered': '回復',
+  'deaths': '死亡者（数',
+  'list_country':'国のリスト',
+  'inser_country_name': '国名を挿入'
 
 };

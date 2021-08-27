@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
+import 'package:weather_app/model/covid_summary_response.dart';
 import '../model/air_pollution_response.dart';
 import '../model/air_response.dart';
 import '../model/weather_forcast_daily.dart';
@@ -19,6 +20,7 @@ class ApiServiceBloc extends BlocBase {
   BehaviorSubject<WeatherState> _behaviorSubjectForDailyDay = BehaviorSubject();
   BehaviorSubject<WeatherState> _behaviorSubjectAirPollution =
       BehaviorSubject();
+  BehaviorSubject<WeatherState> _behaviorSubjectCovid = BehaviorSubject();
 
   fetchWeather(double? lat, double? lon, {String units = 'metric'}) async {
     checkNetWork().then((isNetWorkAvailable) async {
@@ -133,12 +135,35 @@ class ApiServiceBloc extends BlocBase {
     });
   }
 
+  getCovid19Summary() async {
+    checkNetWork().then((isNetWorkAvailable) async {
+      if (isNetWorkAvailable) {
+        // screen not visible
+        if (!_behaviorSubjectCovid.isClosed) {
+          CovidSummaryResponse covidSummaryResponse =
+              await weatherRepository.getCovid19Summary();
+          if (covidSummaryResponse.errorCode != null) {
+            _behaviorSubjectCovid
+                .addError(WeatherStateError(covidSummaryResponse.errorCode));
+          } else {
+            if (!_behaviorSubjectCovid.isClosed)
+              _behaviorSubjectCovid
+                  .add(CovidStateSuccess(covidSummaryResponse));
+          }
+        }
+      } else {
+        appBloc.addError(ApplicationError.connectionError);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _weatherBehaviorSubject.close();
     _forecastBehaviorSubject.close();
     _behaviorSubjectForDailyDay.close();
     _behaviorSubjectAirPollution.close();
+    _behaviorSubjectCovid.close();
   }
 
   Stream get weatherForecastStream => _forecastBehaviorSubject.stream;
@@ -149,4 +174,6 @@ class ApiServiceBloc extends BlocBase {
 
   Stream<WeatherState> get airPollutionStream =>
       _behaviorSubjectAirPollution.stream;
+
+  Stream<WeatherState> get covidStream => _behaviorSubjectCovid.stream;
 }
