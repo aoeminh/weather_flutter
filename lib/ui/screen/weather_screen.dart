@@ -374,7 +374,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               _buildAriPollution(),
               _buildCovid19(),
               _buildSunTime(weatherData.weatherResponse),
-              // _buildBannerAds2()
+              _buildBannerAds2()
             ],
           ),
         ),
