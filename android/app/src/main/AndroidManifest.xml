@@ -16,7 +16,7 @@
         android:label="Free Weather Forecast">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-1229024728904450~7323812204"/>
+            android:value="ca-app-pub-7700641564040226~1896874443"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

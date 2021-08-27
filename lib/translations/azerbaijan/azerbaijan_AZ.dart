@@ -45,7 +45,7 @@ const Map<String, String> az = {
   'hour': 'saat',
   'minute': 'dəqiqə',
   'network_error':
-  'Şəbəkədə problem yaşanır. İnternet bağlantınız olduğundan əmin olun.',
+      'Şəbəkədə problem yaşanır. İnternet bağlantınız olduğundan əmin olun.',
   'check_update': 'Yeniləməni yoxlayın',
   'good': 'Yaxşı',
   'moderate': 'Orta',
@@ -54,43 +54,49 @@ const Map<String, String> az = {
   'very_unhealthy': 'Çox sağlam deyil',
   'hazardous': 'Təhlükəlidir',
   'good_implications':
-  'Hava keyfiyyəti qənaətbəxş hesab olunur və havanın çirklənməsi az risk təşkil edir və ya yoxdur',
+      'Hava keyfiyyəti qənaətbəxş hesab olunur və havanın çirklənməsi az risk təşkil edir və ya yoxdur',
   'moderate_implications':
-  'Hava keyfiyyəti məqbuldur; Bununla birlikdə, bəzi çirkləndiricilər üçün hava çirkliliyinə qeyri-adi dərəcədə həssas olan çox az sayda insan üçün orta dərəcədə sağlamlıq problemi ola bilər.',
+      'Hava keyfiyyəti məqbuldur; Bununla birlikdə, bəzi çirkləndiricilər üçün hava çirkliliyinə qeyri-adi dərəcədə həssas olan çox az sayda insan üçün orta dərəcədə sağlamlıq problemi ola bilər.',
   'sensitive_implications':
-  'Həssas qrupların üzvləri sağlamlığa təsir göstərə bilər. Geniş ictimaiyyətin təsirə məruz qalması ehtimalı yoxdur.',
+      'Həssas qrupların üzvləri sağlamlığa təsir göstərə bilər. Geniş ictimaiyyətin təsirə məruz qalması ehtimalı yoxdur.',
   'unhealthy_implications':
-  'Hər kəs sağlamlığa təsir göstərməyə başlaya bilər; həssas qrupların üzvləri sağlamlığa daha ciddi təsir göstərə bilər.',
+      'Hər kəs sağlamlığa təsir göstərməyə başlaya bilər; həssas qrupların üzvləri sağlamlığa daha ciddi təsir göstərə bilər.',
   'very_unhealthy_implications':
-  'Təcili vəziyyətlər haqqında sağlamlıq xəbərdarlıqları. Bütün əhalinin təsirlənmə ehtimalı daha yüksəkdir.',
+      'Təcili vəziyyətlər haqqında sağlamlıq xəbərdarlıqları. Bütün əhalinin təsirlənmə ehtimalı daha yüksəkdir.',
   'hazardous_implications':
-  'Sağlamlıq xəbərdarlığı: hər kəsin sağlamlığa daha ciddi təsirləri ola bilər.',
+      'Sağlamlıq xəbərdarlığı: hər kəsin sağlamlığa daha ciddi təsirləri ola bilər.',
   'good_cautionary': 'Yoxdur',
   'moderate_cautionary':
-  'Aktiv uşaqlar və böyüklər və astma kimi tənəffüs yoluxucu xəstəlikləri olan insanlar uzun müddət açıq havada çalışmanı məhdudlaşdırmalıdırlar.',
+      'Aktiv uşaqlar və böyüklər və astma kimi tənəffüs yoluxucu xəstəlikləri olan insanlar uzun müddət açıq havada çalışmanı məhdudlaşdırmalıdırlar.',
   'sensitive_cautionary':
-  'Aktiv uşaqlar və böyüklər və astma kimi tənəffüs yoluxucu xəstəlikləri olan insanlar uzun müddət açıq havada çalışmanı məhdudlaşdırmalıdırlar.',
+      'Aktiv uşaqlar və böyüklər və astma kimi tənəffüs yoluxucu xəstəlikləri olan insanlar uzun müddət açıq havada çalışmanı məhdudlaşdırmalıdırlar.',
   'unhealthy_cautionary':
-  'Aktiv uşaqlar və böyüklər və astma kimi tənəffüs yoluxucu xəstəlikləri olan insanlar uzun müddət açıq havada çalışmaqdan çəkinməlidirlər; hər kəs, xüsusən də uşaqlar, uzun müddətli açıq səyləri məhdudlaşdırmalıdır',
+      'Aktiv uşaqlar və böyüklər və astma kimi tənəffüs yoluxucu xəstəlikləri olan insanlar uzun müddət açıq havada çalışmaqdan çəkinməlidirlər; hər kəs, xüsusən də uşaqlar, uzun müddətli açıq səyləri məhdudlaşdırmalıdır',
   'very_unhealthy_cautionary':
-  'Active children and adults, and people with respiratory disease, such as asthma, should avoid all outdoor exertion; everyone else, especially children, should limit outdoor exertion.',
+      'Active children and adults, and people with respiratory disease, such as asthma, should avoid all outdoor exertion; everyone else, especially children, should limit outdoor exertion.',
   'hazardous_cautionary': 'Hər kəs açıq havada çalışmaqdan çəkinməlidir.',
   'air_quality': 'Havanın keyfiyyəti',
   'air_pollution_level': 'Hava çirklənmə səviyyəsi',
   'setting_language': 'Dil parametrləri',
-  'en':'İngilis dili',
+  'en': 'İngilis dili',
   'de': 'Alman',
-  'ru' :'Rus',
-  'ro':'Rumıniya',
-  'hi':'Hind',
-  'it':'İtalyan',
-  'fr':'Fransız dili',
-  'ja':'Yapon',
-  'ko':'Koreya',
-  'es':'İspan',
-  'ua':'Ukrayna',
-  'vi':'Vyetnam',
-  'pl':'Polşa',
-  'az':'Azərbaycan dili',
-  'tr':'Türk'
+  'ru': 'Rus',
+  'ro': 'Rumıniya',
+  'hi': 'Hind',
+  'it': 'İtalyan',
+  'fr': 'Fransız dili',
+  'ja': 'Yapon',
+  'ko': 'Koreya',
+  'es': 'İspan',
+  'ua': 'Ukrayna',
+  'vi': 'Vyetnam',
+  'pl': 'Polşa',
+  'az': 'Azərbaycan dili',
+  'tr': 'Türk',
+  'total': 'Ümumi',
+  'confirmed cases': 'Test müsbət nəticələnmiş şəxslər',
+  'recovered': 'Bərpa edildi',
+  'deaths': 'Ölüm halları',
+  'list_country':'Siyahı Ölkəsi',
+  'inser_country_name': 'Ölkə adını daxil edin'
 };

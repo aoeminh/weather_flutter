@@ -92,5 +92,11 @@ const Map<String, String> en = {
   'vi':'Vietnamese',
   'pl':'Polish',
   'az':'Azerbaijani',
-  'tr':'Turkish'
+  'tr':'Turkish',
+  'total': 'Total',
+  'confirmed cases': 'Confirmed cases',
+  'recovered': 'Recovered',
+  'deaths': 'Deaths',
+  'list_country':'List Country',
+  'inser_country_name': 'Insert country name'
 };

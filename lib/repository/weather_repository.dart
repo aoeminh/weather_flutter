@@ -1,3 +1,5 @@
+import 'package:weather_app/model/covid_summary_response.dart';
+
 import '../api/weather_api.dart';
 import '../api/weather_api_impl.dart';
 import '../model/air_pollution_response.dart';
@@ -29,4 +31,7 @@ class WeatherRepository {
 
   Future<AirResponse> getAirPollution(double? lat, double? lon) =>
       _weatherApi.getAirPollution(lat, lon);
+
+  Future<CovidSummaryResponse> getCovid19Summary() =>
+      _weatherApi.getCovid19Summary();
 }

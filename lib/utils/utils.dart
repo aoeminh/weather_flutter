@@ -197,53 +197,54 @@ String getTimeLabel(DateTime dateTime) {
   return "${hourText.toString()}:00";
 }
 
-String formatDateAndWeekDay(DateTime dateTime,DateEnum dateEnum) {
+String formatDateAndWeekDay(DateTime dateTime, DateEnum dateEnum) {
   DateFormat df;
 
-  switch(dateEnum){
+  switch (dateEnum) {
     case DateEnum.ddMMyyyyy:
-      df = new DateFormat('EEE dd/M',Get.deviceLocale!.languageCode);
+      df = new DateFormat('EEE dd/M', Get.deviceLocale!.languageCode);
       break;
     case DateEnum.mmddyyyyy:
-      df = new DateFormat('EEE M/dd',Get.deviceLocale!.languageCode);
+      df = new DateFormat('EEE M/dd', Get.deviceLocale!.languageCode);
       break;
     case DateEnum.yyyymmdd:
-      df = new DateFormat('EEE M/dd',Get.deviceLocale!.languageCode);
+      df = new DateFormat('EEE M/dd', Get.deviceLocale!.languageCode);
       break;
     default:
-      df = new DateFormat('EEE dd/M',Get.deviceLocale!.languageCode);
+      df = new DateFormat('EEE dd/M', Get.deviceLocale!.languageCode);
   }
   String date = df.format(dateTime);
   return date;
 }
 
-String formatDateAndMonth(DateTime dateTime,DateEnum dateEnum) {
+String formatDateAndMonth(DateTime dateTime, DateEnum dateEnum) {
   DateFormat df;
-  switch(dateEnum){
+  switch (dateEnum) {
     case DateEnum.ddMMyyyyy:
-      df = new DateFormat('dd/M',Get.deviceLocale!.languageCode);
+      df = new DateFormat('dd/M', Get.deviceLocale!.languageCode);
       break;
     case DateEnum.mmddyyyyy:
-      df = new DateFormat('M/dd',Get.deviceLocale!.languageCode);
+      df = new DateFormat('M/dd', Get.deviceLocale!.languageCode);
       break;
     case DateEnum.yyyymmdd:
-      df = new DateFormat('M/dd',Get.deviceLocale!.languageCode);
+      df = new DateFormat('M/dd', Get.deviceLocale!.languageCode);
       break;
     default:
-      df = new DateFormat('dd/M',Get.deviceLocale!.languageCode);
+      df = new DateFormat('dd/M', Get.deviceLocale!.languageCode);
   }
   String date = df.format(dateTime);
   return date;
 }
 
 String formatWeekDayAndTime(DateTime? dateTime, TimeEnum timeEnum) {
-  DateFormat df = new DateFormat('EEE HH:mm',settingBloc.languageEnum.languageCode);
+  DateFormat df =
+      new DateFormat('EEE HH:mm', settingBloc.languageEnum.languageCode);
   switch (timeEnum) {
     case TimeEnum.twelve:
-      df = new DateFormat('EEE HH:mm a',settingBloc.languageEnum.languageCode);
+      df = new DateFormat('EEE HH:mm a', settingBloc.languageEnum.languageCode);
       break;
     case TimeEnum.twentyFour:
-      df = new DateFormat('EEE HH:mm',settingBloc.languageEnum.languageCode);
+      df = new DateFormat('EEE HH:mm', settingBloc.languageEnum.languageCode);
       break;
   }
 
@@ -255,10 +256,10 @@ String formatTime(DateTime dateTime, TimeEnum timeEnum) {
   late DateFormat df;
   switch (timeEnum) {
     case TimeEnum.twelve:
-      df = new DateFormat('h:mm a',Get.deviceLocale!.languageCode);
+      df = new DateFormat('h:mm a', Get.deviceLocale!.languageCode);
       break;
     case TimeEnum.twentyFour:
-      df = new DateFormat('HH:mm',Get.deviceLocale!.languageCode);
+      df = new DateFormat('HH:mm', Get.deviceLocale!.languageCode);
       break;
   }
   String date = df.format(dateTime);
@@ -266,7 +267,7 @@ String formatTime(DateTime dateTime, TimeEnum timeEnum) {
 }
 
 String formatWeekday(DateTime dateTime) {
-  final df = new DateFormat('EEE',Get.deviceLocale!.languageCode);
+  final df = new DateFormat('EEE', Get.deviceLocale!.languageCode);
   String date = df.format(dateTime);
   return date;
 }
@@ -460,4 +461,9 @@ int convertTimezoneToNumber(String timezone) {
   String value = timezone.substring(0, timezone.indexOf(':'));
   int valueInt = (int.parse(value) - 7);
   return valueInt;
+}
+
+String formatNumber(int number) {
+  var format = NumberFormat("#,###", "en_US");
+  return format.format(number);
 }

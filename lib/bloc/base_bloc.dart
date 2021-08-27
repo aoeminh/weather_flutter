@@ -1,3 +1,5 @@
+import 'package:weather_app/model/covid_summary_response.dart';
+
 import '../model/air_pollution_response.dart';
 import '../model/air_response.dart';
 import '../model/application_error.dart';
@@ -59,4 +61,10 @@ class AirStateSuccess extends WeatherState {
   final AirResponse airResponse;
 
   AirStateSuccess(this.airResponse);
+}
+
+class CovidStateSuccess extends WeatherState {
+  final CovidSummaryResponse covidSummaryResponse;
+
+  CovidStateSuccess(this.covidSummaryResponse);
 }

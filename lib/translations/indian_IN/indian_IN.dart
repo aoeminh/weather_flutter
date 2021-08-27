@@ -92,5 +92,11 @@ const Map<String, String> indian = {
   'vi':'वियतनामी',
   'pl':'पोलिश',
   'az':'आज़रबाइजानी',
-  'tr':'तुर्की'
+  'tr':'तुर्की',
+  'total': 'कुल',
+  'confirmed cases': 'वे केस जिनकी पुष्टि हो चुकी है',
+  'recovered': 'बरामद',
+  'deaths': 'मौतें',
+  'list_country':'सूची देश',
+  'inser_country_name': 'देश का नाम डालें'
 };

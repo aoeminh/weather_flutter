@@ -14,7 +14,6 @@ import '../../model/application_error.dart';
 import '../../model/city.dart';
 import '../../model/weather_response.dart';
 import '../../shared/colors.dart';
-import '../../shared/dimens.dart';
 import '../../shared/image.dart';
 import '../../shared/text_style.dart';
 import '../../utils/utils.dart';
@@ -33,7 +32,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  bool isShowingDialog = false;
   late StreamSubscription subscription;
   int? currentPage;
 
@@ -42,6 +40,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     currentPage = 0;
     WidgetsBinding.instance!.addObserver(this);
+    appBloc.createBannerAds();
+
     appBloc.getListCity();
     appBloc.getListSuggestCity();
     _listenConnectNetWork();
@@ -53,9 +53,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   _checkNetWork() {
     appBloc.checkNetWork().then((isNetWorkAvailable) {
-      if (isNetWorkAvailable) {
-        pageBloc.addListCity(widget.listCity!);
-      } else {
+      pageBloc.addListCity(widget.listCity!);
+      if (!isNetWorkAvailable) {
         appBloc.addError(ApplicationError.connectionError);
       }
     });
@@ -63,17 +62,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   _listenAppError() {
     appBloc.errorStream.listen((event) {
-      if (!isShowingDialog) {
-        switch (event) {
-          case ApplicationError.apiError:
-            break;
-          case ApplicationError.connectionError:
-            _showNetWorkErrorDialog();
-            break;
-          case ApplicationError.locationNotSelectedError:
-            // TODO: Handle this case.
-            break;
-        }
+      switch (event) {
+        case ApplicationError.apiError:
+          break;
+        case ApplicationError.connectionError:
+          _showNetWorkErrorDialog();
+          break;
+        case ApplicationError.locationNotSelectedError:
+          // TODO: Handle this case.
+          break;
       }
     });
   }
@@ -115,43 +112,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   _showErrorDialog({String? content, VoidCallback? callback}) {
-    isShowingDialog = true;
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(radius)),
-            child: Container(
-              height: 150,
-              width: 300,
-              color: backgroundColor,
-              padding: EdgeInsets.all(padding),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    content!,
-                    style: textSecondaryWhite70,
-                  ),
-                  const SizedBox(
-                    height: marginSmall,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                        onPressed: callback,
-                        child: Text(
-                          'OK',
-                          style: textTitleOrange,
-                        )),
-                  )
-                ],
-              ),
+    if (!Get.isDialogOpen!) {
+      Get.dialog(
+          AlertDialog(
+            backgroundColor: backgroundColor,
+            title: Text(
+              content!,
+              style: textSecondaryWhite70,
             ),
-          );
-        });
+            actions: [
+              TextButton(
+                  onPressed: callback,
+                  child: Text(
+                    'OK',
+                    style: textTitleOrange,
+                  )),
+            ],
+          ),
+          barrierDismissible: false);
+    }
   }
 
   _showNotification() async {
@@ -222,6 +201,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
+        print('resumed');
+        appBloc.showInterstitialAd();
         break;
       case AppLifecycleState.inactive:
         break;
@@ -247,5 +228,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     pageBloc.dispose();
     settingBloc.dispose();
     subscription.cancel();
+    if (appBloc.myBanner != null) appBloc.myBanner!.dispose();
+    if (appBloc.myBanner1 != null) appBloc.myBanner1!.dispose();
+    if (appBloc.myBanner2 != null) appBloc.myBanner2!.dispose();
   }
 }
