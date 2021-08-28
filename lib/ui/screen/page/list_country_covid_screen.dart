@@ -69,7 +69,7 @@ class _ListCountryCovidState extends State<ListCountryCovid> {
                 setState(() {});
               },
               decoration: InputDecoration(
-                hintText: 'inser_country_name'.tr,
+                hintText: 'insert_country_name'.tr,
                 fillColor: Colors.white,
               ),
             ),

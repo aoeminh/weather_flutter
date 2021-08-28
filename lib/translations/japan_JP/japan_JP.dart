@@ -97,6 +97,6 @@ const Map<String, String> ja = {
   'recovered': '回復',
   'deaths': '死亡者（数',
   'list_country':'国のリスト',
-  'inser_country_name': '国名を挿入'
+  'insert_country_name': '国名を挿入'
 
 };

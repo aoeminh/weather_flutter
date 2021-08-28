@@ -374,7 +374,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               _buildAriPollution(),
               _buildCovid19(),
               _buildSunTime(weatherData.weatherResponse),
-              // _buildBannerAds2()
+              _buildBannerAds2()
             ],
           ),
         ),
@@ -721,16 +721,12 @@ class _WeatherScreenState extends State<WeatherScreen>
           ? AdWidget(ad: appBloc.myBanner!)
           : const SizedBox());
 
-  _buildBannerAds1() => InkWell(
-
-    onTap: () => print('ssssss'),
-    child: Container(
-        height: 100,
-        padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
-        child: appBloc.myBanner1 != null
-            ? AdWidget(ad: appBloc.myBanner1!)
-            : const SizedBox()),
-  );
+  _buildBannerAds1() => Container(
+      height: 100,
+      padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
+      child: appBloc.myBanner1 != null
+          ? AdWidget(ad: appBloc.myBanner1!)
+          : const SizedBox());
 
   _buildBannerAds2() => Container(
       height: 100,

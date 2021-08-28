@@ -99,5 +99,5 @@ const Map<String, String> ru = {
   'recovered': 'Восстановлен',
   'deaths': 'Летальные исходы',
   'list_country':'Список стран',
-  'inser_country_name': 'Вставить название страны'
+  'insert_country_name': 'Вставить название страны'
 };

@@ -97,5 +97,5 @@ const Map<String, String> ko = {
   'recovered': '회복 된',
   'deaths': '사망자',
   'list_country':'국가 나열',
-  'inser_country_name': '국가 이름 삽입'
+  'insert_country_name': '국가 이름 삽입'
 };

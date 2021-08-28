@@ -98,5 +98,5 @@ const Map<String, String> az = {
   'recovered': 'Bərpa edildi',
   'deaths': 'Ölüm halları',
   'list_country':'Siyahı Ölkəsi',
-  'inser_country_name': 'Ölkə adını daxil edin'
+  'insert_country_name': 'Ölkə adını daxil edin'
 };

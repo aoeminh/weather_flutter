@@ -99,5 +99,5 @@ const Map<String, String> it = {
   'recovered': 'Recuperata',
   'deaths': 'Morta',
   'list_country':'Elenco Paese',
-  'inser_country_name': 'Inserisci il nome del paese'
+  'insert_country_name': 'Inserisci il nome del paese'
 };

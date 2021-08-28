@@ -99,5 +99,5 @@ const Map<String, String> vi = {
   'recovered': 'Phục hồi',
   'deaths': 'Tử vong',
   'list_country': 'Danh sách quốc gia',
-  'inser_country_name': 'Điền tên quốc gia'
+  'insert_country_name': 'Điền tên quốc gia'
 };

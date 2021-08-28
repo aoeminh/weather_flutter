@@ -98,5 +98,5 @@ const Map<String, String> indian = {
   'recovered': 'बरामद',
   'deaths': 'मौतें',
   'list_country':'सूची देश',
-  'inser_country_name': 'देश का नाम डालें'
+  'insert_country_name': 'देश का नाम डालें'
 };
