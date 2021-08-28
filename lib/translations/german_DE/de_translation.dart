@@ -97,6 +97,6 @@ const Map<String, String> de = {
   'recovered': 'Wiederhergestellt',
   'deaths': 'Todesfälle',
   'list_country':'Land auflisten',
-  'inser_country_name': 'Ländernamen einfügen'
+  'insert_country_name': 'Ländernamen einfügen'
 
 };
