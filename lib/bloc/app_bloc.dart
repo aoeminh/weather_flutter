@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/shared/constant.dart';
 
 import '../model/application_error.dart';
 import '../model/city.dart';
@@ -14,11 +15,7 @@ import '../model/coordinates.dart';
 import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
 
-const String productIntermediaryAdsId =
-    'ca-app-pub-7700641564040226/1108506577';
-const String productBannerAdsId = 'ca-app-pub-7700641564040226/7941153010';
-const String productBannerAdsId1 = 'ca-app-pub-7700641564040226/5938995573';
-const String productBannerAdsId2 = 'ca-app-pub-7700641564040226/2146541486';
+
 const _timeReShowAds = 60;
 
 class AppBloc extends BlocBase {
