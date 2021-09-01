@@ -84,6 +84,47 @@ const mIconHazy = '$mImgPath'
 const mIconRainy = '$mImgPath'
     'icon_rainy.png';
 
+String mIconRainyy(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_rainy_$tail.png';
+
+String mIconSnoww(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_snow_$tail.png';
+
+String mIconThunderstormm(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_thunderstorm_$tail.png';
+
+String mIconHazyy(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_hazy_$tail.png';
+
+String mIconFewCloudsNightt(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_fewclouds_night_$tail.png';
+
+String mIconFewCloudsDayy(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_fewclouds_day_$tail.png';
+
+String mIconClearsNightt(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_clear_night_$tail.png';
+
+String mIconClearss(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_clear_$tail.png';
+
+
+String mIconBrokenCloudss(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_brokenclouds_$tail.png';
+
+String mIconFogg(String tail, String iconType) => '$mImgPath'
+    '$iconType'
+    'ani_icon_fog_$tail.png';
+
 const mIconSnow = '$mImgPath'
     'icon_snow.png';
 

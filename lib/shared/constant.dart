@@ -15,3 +15,6 @@ const String productIntermediaryAdsId =
 const String productBannerAdsId = 'ca-app-pub-3940256099942544/6300978111';
 const String productBannerAdsId1 = 'ca-app-pub-3940256099942544/2934735716';
 const String productBannerAdsId2 = 'ca-app-pub-3940256099942544/6300978111';
+
+const imageQuantity = 29;
+const durationAnim = 50;

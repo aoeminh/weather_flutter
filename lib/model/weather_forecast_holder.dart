@@ -136,20 +136,6 @@ class WeatherForecastHolder {
     return minValue;
   }
 
-  void setupWeatherCode(List<WeatherForecastResponse> forecastList) {
-    // int index = (forecastList.length / 2).floor();
-    // _weatherCode = forecastList[index].overallWeatherData[0].id;
-    // _weatherCodeAsset = WeatherHelper.getWeatherIcon(_weatherCode);
-  }
-
-  // String getLocationName(BuildContext context) {
-  //   if (city != null && city.name != null && city.name.length > 0) {
-  //     return city.name;
-  //   } else {
-  //     // return ApplicationLocalization.of(context).getText("your_location");
-  //   }
-  // }
-
   ChartData setupChartData(
       ChartDataType chartDataType, double width, double height) {
     return ChartData(this, forecastList!, chartDataType, width, height);

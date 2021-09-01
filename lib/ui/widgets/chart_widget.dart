@@ -84,7 +84,8 @@ class _ChartWidgetState extends State<ChartWidget> {
   Future<List<ImageInfo>> getListIcon(List<String?> iconCode) async {
     List<ImageInfo> list = [];
     for (String? code in iconCode) {
-      ImageInfo image = await getImageInfo(context, getIconForecastUrl(code));
+      ImageInfo image = await getImageInfo(
+          context, getIconForecastUrl(code, settingBloc.iconEnum));
       list.add(image);
     }
     return list;
@@ -128,7 +129,8 @@ class _ChartWidgetState extends State<ChartWidget> {
                 ImageInfoWeather(humidity, weatherIcons)),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            ImageInfoWeather imageInfoWeather = snapshot.data as ImageInfoWeather;
+            ImageInfoWeather imageInfoWeather =
+                snapshot.data as ImageInfoWeather;
             return Container(
               margin: EdgeInsets.only(top: 25),
               child: CustomPaint(
@@ -194,8 +196,8 @@ class _ChartPainter extends CustomPainter {
     }
     _drawDateTimes(canvas);
     for (int index = 0; index < points!.length; index++) {
-      Offset textOffset = Offset(
-          points![index].x - marginLeftTemp, points![index].y - marginBottomTemp);
+      Offset textOffset = Offset(points![index].x - marginLeftTemp,
+          points![index].y - marginBottomTemp);
       _drawLine(canvas, index);
       if (index == maxTempIndex) {
         _drawTempText(canvas, textOffset, pointLabels![index], true,

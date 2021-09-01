@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/weather_forcast_daily.dart';
+import 'package:weather_app/shared/constant.dart';
 import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
@@ -26,11 +30,22 @@ class DetailDailyForecast extends StatefulWidget {
   _DetailDailyForecastState createState() => _DetailDailyForecastState();
 }
 
-class _DetailDailyForecastState extends State<DetailDailyForecast>
-    with SingleTickerProviderStateMixin {
+class _DetailDailyForecastState extends State<DetailDailyForecast> {
+  Timer? timer;
+  int index = 0;
+  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
+
   @override
   void initState() {
     super.initState();
+    startAnim();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    behaviorSubject.close();
+    timer!.cancel();
   }
 
   @override
@@ -153,10 +168,22 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Image.asset(
-                getIconForecastUrl(daily.weather![0].icon),
-                width: _iconStatusSize,
-                height: _iconStatusSize,
+              StreamBuilder<int>(
+                stream: behaviorSubject.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return getIconForecastImage(daily.weather![0].icon,
+                        width: _iconStatusSize,
+                        height: _iconStatusSize,
+                        index: snapshot.data,
+                        iconType: settingBloc.iconEnum);
+                  }
+                  return getIconForecastImage(daily.weather![0].icon,
+                      width: _iconStatusSize,
+                      height: _iconStatusSize,
+                      index: 0,
+                      iconType: settingBloc.iconEnum);
+                },
               ),
               const SizedBox(
                 width: margin,
@@ -302,5 +329,16 @@ class _DetailDailyForecastState extends State<DetailDailyForecast>
         ],
       ),
     );
+  }
+
+  startAnim() {
+    timer = Timer.periodic(Duration(milliseconds: durationAnim), (timer) {
+      if (index < 29) {
+        index += 1;
+      } else {
+        index = 0;
+      }
+      behaviorSubject.add(index);
+    });
   }
 }

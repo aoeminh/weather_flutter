@@ -44,6 +44,7 @@ import '../../ui/widgets/sun_path_widget.dart';
 import '../../utils/utils.dart';
 import '../widgets/air_pollution_widget.dart';
 import 'detail_daily_forecast.dart';
+import 'icon_setting_screen.dart';
 
 const double _mainWeatherHeight = 240;
 
@@ -69,18 +70,12 @@ class _WeatherScreenState extends State<WeatherScreen>
   final ApiServiceBloc bloc = ApiServiceBloc();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
-  WeatherResponse? weatherResponse;
-  WeatherForecastListResponse? weatherForecastListResponse;
-  WeatherForecastDaily? weatherForecastDaily;
   WeatherData? weatherData;
   BehaviorSubject<DateTime> timeSubject = BehaviorSubject();
   BehaviorSubject<double> _scrollSubject = BehaviorSubject.seeded(0);
   ScrollController _scrollController = ScrollController();
   int currentTime = 0;
   double differentTime = 0;
-  bool isOnNotification = false;
-  int listLocationLength = 0;
-  bool isShowMore = false;
   late StreamSubscription _subscription;
 
   @override
@@ -354,6 +349,18 @@ class _WeatherScreenState extends State<WeatherScreen>
                     Icons.add,
                     color: Colors.white,
                   ),
+                )),
+            GestureDetector(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => IconSettingScreen()));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                  ),
                 ))
           ],
           title: _titleAppbar(weatherData.weatherResponse),
@@ -366,15 +373,15 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               _currentWeather(weatherData.weatherResponse),
               _buildHourlyForecast(weatherData.weatherForecastListResponse),
-              _buildBannerAds(),
+              // _buildBannerAds(),
               _buildDailyForecast(weatherData.weatherForecastDaily),
               _buildDetail(weatherData.weatherForecastDaily),
               _buildWindAndPressure(weatherData.weatherResponse),
-              _buildBannerAds1(),
+              // _buildBannerAds1(),
               _buildAriPollution(),
               _buildCovid19(),
               _buildSunTime(weatherData.weatherResponse),
-              _buildBannerAds2()
+              // _buildBannerAds2()
             ],
           ),
         ),

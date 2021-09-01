@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:weather_app/shared/constant.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../model/weather_forecast_list_response.dart';
 import '../../model/weather_forecast_response.dart';
@@ -18,7 +21,6 @@ const double iconDetailSize = 20;
 class HourlyForecastScreen extends StatefulWidget {
   final WeatherForecastListResponse? weatherForecastListResponse;
 
-
   const HourlyForecastScreen({Key? key, this.weatherForecastListResponse})
       : super(key: key);
 
@@ -28,23 +30,34 @@ class HourlyForecastScreen extends StatefulWidget {
 
 class _HourlyForecastState extends State<HourlyForecastScreen> {
   final ItemScrollController itemScrollController = ItemScrollController();
-  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
-  BehaviorSubject<int> dateBehaviorSubject =BehaviorSubject.seeded(0);
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
+  BehaviorSubject<int> dateBehaviorSubject = BehaviorSubject.seeded(0);
+  Timer? timer;
+  int index = 0;
+  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
 
   @override
   void initState() {
     super.initState();
-    itemPositionsListener.itemPositions.addListener(()=> {
-      if(dateBehaviorSubject.value != itemPositionsListener.itemPositions.value.first.index){
-        dateBehaviorSubject.add(itemPositionsListener.itemPositions.value.first.index)
-      }
-    });
+    itemPositionsListener.itemPositions.addListener(() => {
+          if (dateBehaviorSubject.value !=
+              itemPositionsListener.itemPositions.value.first.index)
+            {
+              dateBehaviorSubject
+                  .add(itemPositionsListener.itemPositions.value.first.index)
+            }
+        });
+
+    startAnim();
   }
 
   @override
   void dispose() {
     super.dispose();
     dateBehaviorSubject.close();
+    behaviorSubject.close();
+    timer!.cancel();
   }
 
   @override
@@ -60,7 +73,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
               child: Icon(Icons.arrow_back_rounded)),
           backgroundColor: Colors.black,
         ),
-        body:  _buildBody());
+        body: _buildBody());
   }
 
   _buildBody() {
@@ -73,10 +86,12 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: margin),
               child: ScrollablePositionedList.separated(
-                  itemBuilder: (context, index) =>
-                      _buildItem(widget.weatherForecastListResponse!.list![index]),
-                  separatorBuilder: (context, index) => const Divider(color: Colors.grey,),
-                  itemCount: widget.weatherForecastListResponse!.list!.length,
+                itemBuilder: (context, index) => _buildItem(
+                    widget.weatherForecastListResponse!.list![index]),
+                separatorBuilder: (context, index) => const Divider(
+                  color: Colors.grey,
+                ),
+                itemCount: widget.weatherForecastListResponse!.list!.length,
                 itemScrollController: itemScrollController,
                 itemPositionsListener: itemPositionsListener,
               ),
@@ -87,32 +102,35 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
     );
   }
 
-  _buildDateHeader(){
+  _buildDateHeader() {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           StreamBuilder<int>(
             stream: dateBehaviorSubject.stream,
-            builder: (context, snapshot){
-              if(snapshot.hasData){
-                DateTime dateTime = widget.weatherForecastListResponse!.list![snapshot.data!].dateTime;
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                DateTime dateTime = widget.weatherForecastListResponse!
+                    .list![snapshot.data!].dateTime;
                 return Container(
                     margin: EdgeInsets.all(padding),
-
-                    child: Text('${formatDateAndWeekDay(dateTime,settingBloc.dateEnum)}',style: textTitleWhite,));
-              }else{
+                    child: Text(
+                      '${formatDateAndWeekDay(dateTime, settingBloc.dateEnum)}',
+                      style: textTitleWhite,
+                    ));
+              } else {
                 return Container();
               }
             },
           ),
-          const Divider(color: Colors.grey,)
+          const Divider(
+            color: Colors.grey,
+          )
         ],
       ),
     );
-
   }
-
 
   _buildItem(WeatherForecastResponse weatherForecastResponse) => Container(
         child: Container(
@@ -140,15 +158,28 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          "${formatTime(weatherForecastResponse.dateTime,settingBloc.timeEnum)}",
+          "${formatTime(weatherForecastResponse.dateTime, settingBloc.timeEnum)}",
           style: textSecondaryWhite,
         ),
         _marginVertical(),
-        Image.asset(
-          getIconForecastUrl(
-              weatherForecastResponse.overallWeatherData[0].icon),
-          width: iconWeatherSize,
-          height: iconWeatherSize,
+        StreamBuilder<int>(
+          stream: behaviorSubject.stream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return getIconForecastImage(
+                  weatherForecastResponse.overallWeatherData[0].icon,
+                  width: iconWeatherSize,
+                  height: iconWeatherSize,
+                  index: snapshot.data,
+                  iconType: settingBloc.iconEnum);
+            }
+            return getIconForecastImage(
+                weatherForecastResponse.overallWeatherData[0].icon,
+                width: iconWeatherSize,
+                height: iconWeatherSize,
+                index: 0,
+                iconType: settingBloc.iconEnum);
+          },
         )
       ],
     );
@@ -162,7 +193,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
           height: margin,
         ),
         _buildRowDetails(mIconSettingWind, 'wind'.tr,
-            '${formatWind(weatherForecastResponse.wind.speed,settingBloc.windEnum.value)}'),
+            '${formatWind(weatherForecastResponse.wind.speed, settingBloc.windEnum.value)}'),
         const Divider(
           color: Colors.grey,
         ),
@@ -243,4 +274,15 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
   _marginVertical() => SizedBox(
         height: margin,
       );
+
+  startAnim() {
+    timer = Timer.periodic(Duration(milliseconds: durationAnim), (timer) {
+      if (index < 29) {
+        index += 1;
+      } else {
+        index = 0;
+      }
+      behaviorSubject.add(index);
+    });
+  }
 }

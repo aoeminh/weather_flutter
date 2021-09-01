@@ -31,6 +31,9 @@ enum LanguageEnum {
   az,
   tr
 }
+
+enum IconEnum { p1, p2, p3 }
+
 enum SettingEnum {
   TempEnum,
   WindEnum,
@@ -38,7 +41,8 @@ enum SettingEnum {
   VisibilityEnum,
   TimeEnum,
   DateEnum,
-  Language
+  Language,
+  Icon
 }
 
 extension TempExtenstion on TempEnum {
@@ -318,6 +322,34 @@ extension LanguageExtention on LanguageEnum {
   }
 }
 
+extension IconExtention on IconEnum {
+  String get value {
+    switch (this) {
+      case IconEnum.p1:
+        return '';
+      case IconEnum.p2:
+        return 'p2_';
+      case IconEnum.p3:
+        return 'p3_';
+      default:
+        return 'p2_';
+    }
+  }
+
+  IconEnum setValue(String? value) {
+    switch (value) {
+      case '':
+        return IconEnum.p1;
+      case 'p2_':
+        return IconEnum.p2;
+      case 'p3_':
+        return IconEnum.p3;
+      default:
+        return IconEnum.p3;
+    }
+  }
+}
+
 class SettingBloc extends BlocBase {
   bool _isOnNotify = false;
   WeatherResponse? _weatherResponse;
@@ -329,6 +361,7 @@ class SettingBloc extends BlocBase {
   TimeEnum _timeEnum = TimeEnum.twentyFour;
   DateEnum _dateEnum = DateEnum.mmddyyyyy;
   LanguageEnum _languageEnum = LanguageEnum.en;
+  IconEnum _iconEnum = IconEnum.p2;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   PublishSubject<SettingEnum> _settingBehavior = PublishSubject();
@@ -364,6 +397,9 @@ class SettingBloc extends BlocBase {
         break;
       case SettingEnum.Language:
         break;
+      case SettingEnum.Icon:
+        _iconEnum = _iconEnum.setValue(value);
+        break;
     }
     _settingBehavior.add(settingEnum);
   }
@@ -382,6 +418,7 @@ class SettingBloc extends BlocBase {
     await Preferences.saveDateSetting(_dateEnum.value);
     await Preferences.saveTimeSetting(_timeEnum.value);
     await Preferences.saveLanguageSetting(_languageEnum.languageCode);
+    await Preferences.saveIconSetting(_iconEnum.value);
   }
 
   getSetting() async {
@@ -393,7 +430,10 @@ class SettingBloc extends BlocBase {
     _timeEnum = _timeEnum.setValue(await Preferences.getTimeSetting());
     _visibilityEnum =
         _visibilityEnum.setValue(await Preferences.getVisibilitySetting());
-    String languageCode = await Preferences.getLanguageSetting()?? Get.deviceLocale!.languageCode;
+    _iconEnum = _iconEnum.setValue(await Preferences.getIconSetting());
+
+    String languageCode = await Preferences.getLanguageSetting() ??
+        Get.deviceLocale!.languageCode;
     _languageEnum = _languageEnum.setValue(languageCode);
     changeLanguageSetting(_languageEnum);
   }
@@ -425,6 +465,8 @@ class SettingBloc extends BlocBase {
   DateEnum get dateEnum => _dateEnum;
 
   LanguageEnum get languageEnum => _languageEnum;
+
+  IconEnum get iconEnum => _iconEnum;
 
   bool get isOnNotification => _isOnNotify;
 

@@ -11,6 +11,7 @@ const String _DATE_SETTING_KEY = 'date_setting_key';
 const String _TIME_SETTING_KEY = 'time_setting_key';
 const String _VISIBILITY_SETTING_KEY = 'visibility_setting_key';
 const String _LANGUAGE_SETTING_KEY = 'language_setting_key';
+const String _ICON_SETTING_KEY = 'icon_setting_key';
 
 class Preferences {
   static saveListCity(List<City> cities) async {
@@ -91,13 +92,23 @@ class Preferences {
     return preferences.getString(_VISIBILITY_SETTING_KEY);
   }
 
-  static saveLanguageSetting(String visibilitySetting) async {
+  static saveLanguageSetting(String languageSetting) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString(_LANGUAGE_SETTING_KEY, visibilitySetting);
+    await preferences.setString(_LANGUAGE_SETTING_KEY, languageSetting);
   }
 
   static Future<String?> getLanguageSetting() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(_LANGUAGE_SETTING_KEY);
+  }
+
+  static saveIconSetting(String iconSetting) async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString(_ICON_SETTING_KEY, iconSetting);
+  }
+
+  static Future<String?> getIconSetting() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(_ICON_SETTING_KEY);
   }
 }

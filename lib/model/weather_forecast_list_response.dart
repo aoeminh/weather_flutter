@@ -49,6 +49,7 @@ class WeatherForecastListResponse {
     List<WeatherForecastResponse> list =
         weatherForecastListResponse.list!.map((e) {
       return e.copyWith(
+        dateTime: DateTime.fromMillisecondsSinceEpoch((e.dt! + differentTime * oneHourMilli).toInt()),
           dt: (e.dt! + differentTime * oneHourMilli).toInt(),
           wind: e.wind,
           mainWeatherData: e.mainWeatherData);

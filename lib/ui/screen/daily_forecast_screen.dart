@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/shared/constant.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../model/daily.dart';
 import '../../model/weather_forcast_daily.dart';
@@ -18,11 +22,33 @@ const Color secondaryColor = Colors.white54;
 const double iconWeatherSize = 30;
 const double iconDetailSize = 20;
 
-class DailyForecastScreen extends StatelessWidget {
+class DailyForecastScreen extends StatefulWidget {
   final WeatherForecastDaily? weatherForecastDaily;
 
   const DailyForecastScreen({Key? key, this.weatherForecastDaily})
       : super(key: key);
+
+  @override
+  _DailyForecastScreenState createState() => _DailyForecastScreenState();
+}
+
+class _DailyForecastScreenState extends State<DailyForecastScreen> {
+  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
+  int index = 0;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    startAnim();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    behaviorSubject.close();
+    timer!.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,18 +81,18 @@ class DailyForecastScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => DetailDailyForecast(
-                            weatherForecastDaily: weatherForecastDaily,
+                            weatherForecastDaily: widget.weatherForecastDaily,
                             currentIndex: index,
                           ))),
-              child:
-                  _buildItemDailyForecast(weatherForecastDaily!.daily![index]),
+              child: _buildItemDailyForecast(
+                  widget.weatherForecastDaily!.daily![index]),
             );
           },
           separatorBuilder: (context, index) => Divider(
                 height: 1,
                 color: Colors.grey,
               ),
-          itemCount: weatherForecastDaily!.daily!.length),
+          itemCount: widget.weatherForecastDaily!.daily!.length),
     );
   }
 
@@ -121,10 +147,24 @@ class DailyForecastScreen extends StatelessWidget {
             )),
         Expanded(
             flex: 1,
-            child: Image.asset(
-              getIconForecastUrl(daily.weather![0].icon),
-              width: iconWeatherSize,
-              height: iconWeatherSize,
+            child: StreamBuilder<int>(
+              stream: behaviorSubject.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return getIconForecastImage(
+                      widget.weatherForecastDaily!.daily![0].weather![0].icon,
+                      width: iconWeatherSize,
+                      height: iconWeatherSize,
+                      index: snapshot.data,
+                      iconType: settingBloc.iconEnum);
+                }
+                return getIconForecastImage(
+                    widget.weatherForecastDaily!.daily![0].weather![0].icon,
+                    width: iconWeatherSize,
+                    height: iconWeatherSize,
+                    index: 0,
+                    iconType: settingBloc.iconEnum);
+              },
             )),
         Expanded(
           flex: 3,
@@ -188,10 +228,24 @@ class DailyForecastScreen extends StatelessWidget {
             )),
         Expanded(
             flex: 1,
-            child: Image.asset(
-              getIconForecastUrl(daily.weather![0].icon),
-              width: iconWeatherSize,
-              height: iconWeatherSize,
+            child: StreamBuilder<int>(
+              stream: behaviorSubject.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return getIconForecastImage(
+                      widget.weatherForecastDaily!.daily![0].weather![0].icon,
+                      width: iconWeatherSize,
+                      height: iconWeatherSize,
+                      index: snapshot.data,
+                      iconType: settingBloc.iconEnum);
+                }
+                return getIconForecastImage(
+                    widget.weatherForecastDaily!.daily![0].weather![0].icon,
+                    width: iconWeatherSize,
+                    height: iconWeatherSize,
+                    index: 0,
+                    iconType: settingBloc.iconEnum);
+              },
             )),
         Expanded(
           flex: 3,
@@ -242,5 +296,16 @@ class DailyForecastScreen extends StatelessWidget {
             ))
       ],
     );
+  }
+
+  startAnim() {
+    timer = Timer.periodic(Duration(milliseconds: durationAnim), (timer) {
+      if (index < 29) {
+        index += 1;
+      } else {
+        index = 0;
+      }
+      behaviorSubject.add(index);
+    });
   }
 }

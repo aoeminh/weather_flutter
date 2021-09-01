@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:weather_app/bloc/setting_bloc.dart';
 import '../../bloc/app_bloc.dart';
 import '../../model/weather_forcast_daily.dart';
 import '../../shared/colors.dart';
@@ -13,13 +17,35 @@ import '../../utils/utils.dart';
 const double _dailySectionHeight = 520;
 const double _oneHour = 3600000;
 
-class DailyForecastWidget extends StatelessWidget {
+class DailyForecastWidget extends StatefulWidget {
   final WeatherForecastDaily? weatherForecastDaily;
   final double? differentTime;
 
   const DailyForecastWidget(
       {Key? key, this.weatherForecastDaily, this.differentTime})
       : super(key: key);
+
+  @override
+  _DailyForecastWidgetState createState() => _DailyForecastWidgetState();
+}
+
+class _DailyForecastWidgetState extends State<DailyForecastWidget> {
+  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
+  int index = 0;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    startAnim();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer!.cancel();
+    behaviorSubject.close();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +62,14 @@ class DailyForecastWidget extends StatelessWidget {
           Container(
               padding: EdgeInsets.all(paddingLarge),
               child: Text(
-                "${weatherForecastDaily!.daily![0].weather![0].description}",
+                "${widget.weatherForecastDaily!.daily![0].weather![0].description}",
                 style: textTitleH1White,
               )),
           Divider(
             height: 1,
             color: Colors.white,
           ),
-          Expanded(child: _buildDailyRow(weatherForecastDaily!))
+          Expanded(child: _buildDailyRow(widget.weatherForecastDaily!))
         ],
       ),
     );
@@ -66,7 +92,7 @@ class DailyForecastWidget extends StatelessWidget {
               DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!));
           String weekday = DateTime.fromMillisecondsSinceEpoch(
                           (DateTime.now().millisecondsSinceEpoch +
-                                  differentTime! * _oneHour)
+                                  widget.differentTime! * _oneHour)
                               .toInt())
                       .day ==
                   DateTime.fromMillisecondsSinceEpoch(data.daily![index].dt!)
@@ -109,10 +135,25 @@ class DailyForecastWidget extends StatelessWidget {
                   ),
                   Expanded(
                       flex: 1,
-                      child: getIconForecastImage(
-                          data.daily![index].weather![0].icon,
-                          width: 30,
-                          height: 30)),
+                      child: StreamBuilder<int>(
+                        stream: behaviorSubject.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return getIconForecastImage(
+                                data.daily![index].weather![0].icon,
+                                width: 30,
+                                height: 30,
+                                index: snapshot.data,
+                                iconType: settingBloc.iconEnum);
+                          }
+                          return getIconForecastImage(
+                              data.daily![index].weather![0].icon,
+                              width: 30,
+                              height: 30,
+                              index: 0,
+                              iconType: settingBloc.iconEnum);
+                        },
+                      )),
                   Expanded(
                       flex: 4,
                       child: Container(
@@ -153,5 +194,16 @@ class DailyForecastWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  startAnim() {
+    timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (index < 29) {
+        index += 1;
+      } else {
+        index = 0;
+      }
+      behaviorSubject.add(index);
+    });
   }
 }
