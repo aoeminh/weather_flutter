@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     currentPage = 0;
     WidgetsBinding.instance!.addObserver(this);
-    appBloc.createBannerAds();
+    // appBloc.createBannerAds();
 
     appBloc.getListCity();
     appBloc.getListSuggestCity();
