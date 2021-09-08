@@ -366,15 +366,15 @@ class _WeatherScreenState extends State<WeatherScreen>
             children: [
               _currentWeather(weatherData.weatherResponse),
               _buildHourlyForecast(weatherData.weatherForecastListResponse),
-              _buildBannerAds(),
+              // _buildBannerAds(),
               _buildDailyForecast(weatherData.weatherForecastDaily),
               _buildDetail(weatherData.weatherForecastDaily),
               _buildWindAndPressure(weatherData.weatherResponse),
-              _buildBannerAds1(),
+              // _buildBannerAds1(),
               _buildAriPollution(),
               _buildCovid19(),
               _buildSunTime(weatherData.weatherResponse),
-              _buildBannerAds2()
+              // _buildBannerAds2()
             ],
           ),
         ),

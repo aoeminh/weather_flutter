@@ -166,30 +166,30 @@ class AppBloc extends BlocBase {
   }
 
   void showInterstitialAd() {
-    if (_interstitialAd == null) {
-      return;
-    }
-    if (!isShowAds) {
-      return;
-    }
-    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) {
-        print('onAdShowedFullScreenContent');
-        isShowAds = false;
-      },
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('onAdShowedFullScreenContent');
-        startTimer();
-        ad.dispose();
-        createInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        ad.dispose();
-        createInterstitialAd();
-      },
-    );
-    _interstitialAd!.show();
-    _interstitialAd = null;
+    // if (_interstitialAd == null) {
+    //   return;
+    // }
+    // if (!isShowAds) {
+    //   return;
+    // }
+    // _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+    //   onAdShowedFullScreenContent: (InterstitialAd ad) {
+    //     print('onAdShowedFullScreenContent');
+    //     isShowAds = false;
+    //   },
+    //   onAdDismissedFullScreenContent: (InterstitialAd ad) {
+    //     print('onAdShowedFullScreenContent');
+    //     startTimer();
+    //     ad.dispose();
+    //     createInterstitialAd();
+    //   },
+    //   onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+    //     ad.dispose();
+    //     createInterstitialAd();
+    //   },
+    // );
+    // _interstitialAd!.show();
+    // _interstitialAd = null;
   }
 
   void startTimer() {
