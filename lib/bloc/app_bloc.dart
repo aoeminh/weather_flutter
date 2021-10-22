@@ -90,31 +90,31 @@ class AppBloc extends BlocBase {
   }
 
   void createBannerAds() async {
-    AnchoredAdaptiveBannerAdSize? width =
-        await AdSize.getAnchoredAdaptiveBannerAdSize(Orientation.portrait,
-            (MediaQuery.of(Get.context!).size.width.truncate() - 20).toInt());
-    myBanner = myBanner ??
-        BannerAd(
-          adUnitId: productBannerAdsId,
-          size: width ?? AdSize.leaderboard,
-          request: AdRequest(),
-          listener: createBannerAdCallback(),
-        );
-    myBanner1 = myBanner1 ??
-        BannerAd(
-          adUnitId: productBannerAdsId1,
-          size: width ?? AdSize.leaderboard,
-          request: AdRequest(),
-          listener: createBannerAdCallback(),
-        );
-
-    myBanner2 = myBanner2 ??
-        BannerAd(
-          adUnitId: productBannerAdsId2,
-          size: width ?? AdSize.leaderboard,
-          request: AdRequest(),
-          listener: createBannerAdCallback(),
-        );
+    // AnchoredAdaptiveBannerAdSize? width =
+    //     await AdSize.getAnchoredAdaptiveBannerAdSize(Orientation.portrait,
+    //         (MediaQuery.of(Get.context!).size.width.truncate() - 20).toInt());
+    // myBanner = myBanner ??
+    //     BannerAd(
+    //       adUnitId: productBannerAdsId,
+    //       size: width ?? AdSize.leaderboard,
+    //       request: AdRequest(),
+    //       listener: createBannerAdCallback(),
+    //     );
+    // myBanner1 = myBanner1 ??
+    //     BannerAd(
+    //       adUnitId: productBannerAdsId1,
+    //       size: width ?? AdSize.leaderboard,
+    //       request: AdRequest(),
+    //       listener: createBannerAdCallback(),
+    //     );
+    //
+    // myBanner2 = myBanner2 ??
+    //     BannerAd(
+    //       adUnitId: productBannerAdsId2,
+    //       size: width ?? AdSize.leaderboard,
+    //       request: AdRequest(),
+    //       listener: createBannerAdCallback(),
+    //     );
 
     // myBanner!.load();
     // myBanner1!.load();
