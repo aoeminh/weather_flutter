@@ -85,7 +85,7 @@ class _ChartWidgetState extends State<ChartWidget> {
     List<ImageInfo> list = [];
     for (String? code in iconCode) {
       ImageInfo image = await getImageInfo(
-          context, getIconForecastUrl(code, settingBloc.iconEnum));
+          context, getIconForecastUrl(code));
       list.add(image);
     }
     return list;

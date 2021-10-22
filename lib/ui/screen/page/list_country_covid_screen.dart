@@ -28,7 +28,7 @@ class _ListCountryCovidState extends State<ListCountryCovid> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        appBloc.showInterstitialAd();
+
         return true;
       },
       child: Scaffold(

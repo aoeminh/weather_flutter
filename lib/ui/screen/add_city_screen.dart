@@ -32,7 +32,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async{
-        appBloc.showInterstitialAd();
+
         return true;
       },
       child: Scaffold(

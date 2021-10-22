@@ -30,21 +30,21 @@ class DailyForecastWidget extends StatefulWidget {
 }
 
 class _DailyForecastWidgetState extends State<DailyForecastWidget> {
-  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
-  int index = 0;
-  Timer? timer;
+  // BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
+  // int index = 0;
+  // Timer? timer;
 
   @override
   void initState() {
     super.initState();
-    startAnim();
+    // startAnim();
   }
 
   @override
   void dispose() {
     super.dispose();
-    timer!.cancel();
-    behaviorSubject.close();
+    // timer!.cancel();
+    // behaviorSubject.close();
   }
 
   @override
@@ -135,25 +135,10 @@ class _DailyForecastWidgetState extends State<DailyForecastWidget> {
                   ),
                   Expanded(
                       flex: 1,
-                      child: StreamBuilder<int>(
-                        stream: behaviorSubject.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return getIconForecastImage(
-                                data.daily![index].weather![0].icon,
-                                width: 30,
-                                height: 30,
-                                index: snapshot.data,
-                                iconType: settingBloc.iconEnum);
-                          }
-                          return getIconForecastImage(
-                              data.daily![index].weather![0].icon,
-                              width: 30,
-                              height: 30,
-                              index: 0,
-                              iconType: settingBloc.iconEnum);
-                        },
-                      )),
+                      child: getIconForecastImage(
+                          data.daily![index].weather![0].icon,
+                          width: 30,
+                          height: 30)),
                   Expanded(
                       flex: 4,
                       child: Container(
@@ -196,14 +181,14 @@ class _DailyForecastWidgetState extends State<DailyForecastWidget> {
     );
   }
 
-  startAnim() {
-    timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      if (index < 29) {
-        index += 1;
-      } else {
-        index = 0;
-      }
-      behaviorSubject.add(index);
-    });
-  }
+  // startAnim() {
+  //   timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //     if (index < 29) {
+  //       index += 1;
+  //     } else {
+  //       index = 0;
+  //     }
+  //     behaviorSubject.add(index);
+  //   });
+  // }
 }

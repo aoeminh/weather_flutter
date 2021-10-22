@@ -49,7 +49,7 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
             }
         });
 
-    startAnim();
+    // startAnim();
   }
 
   @override
@@ -162,24 +162,11 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
           style: textSecondaryWhite,
         ),
         _marginVertical(),
-        StreamBuilder<int>(
-          stream: behaviorSubject.stream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return getIconForecastImage(
-                  weatherForecastResponse.overallWeatherData[0].icon,
-                  width: iconWeatherSize,
-                  height: iconWeatherSize,
-                  index: snapshot.data,
-                  iconType: settingBloc.iconEnum);
-            }
-            return getIconForecastImage(
-                weatherForecastResponse.overallWeatherData[0].icon,
-                width: iconWeatherSize,
-                height: iconWeatherSize,
-                index: 0,
-                iconType: settingBloc.iconEnum);
-          },
+        Image.asset(
+          getIconForecastUrl(
+              weatherForecastResponse.overallWeatherData[0].icon),
+          width: iconWeatherSize,
+          height: iconWeatherSize,
         )
       ],
     );

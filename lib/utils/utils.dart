@@ -9,31 +9,29 @@ import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 
-Image getIconForecastImage(String? iconCode,
-    {double? width, double? height, int? index, IconEnum? iconType}) {
-  String indexStr = getImageByIndex(index!);
+Image getIconForecastImage(String? iconCode, {double? width, double? height}) {
   switch (iconCode) {
     case mClear:
       return Image.asset(
-        mIconClearss(indexStr, iconType!.value),
+        mIconClears,
         width: width,
         height: height,
       );
     case mClearN:
       return Image.asset(
-        mIconClearsNightt(indexStr, iconType!.value),
+        mIconClearsNight,
         width: width,
         height: height,
       );
     case mFewClouds:
       return Image.asset(
-        mIconFewCloudsDayy(indexStr, iconType!.value),
+        mIconFewCloudsDay,
         width: width,
         height: height,
       );
     case mFewCloudsN:
       return Image.asset(
-        mIconFewCloudsNightt(indexStr, iconType!.value),
+        mIconFewCloudsNight,
         width: width,
         height: height,
       );
@@ -42,7 +40,7 @@ Image getIconForecastImage(String? iconCode,
     case mBrokenClouds:
     case mBrokenCloudsN:
       return Image.asset(
-        mIconBrokenCloudss(indexStr, iconType!.value),
+        mIconBrokenClouds,
         width: width,
         height: height,
       );
@@ -51,46 +49,45 @@ Image getIconForecastImage(String? iconCode,
     case mRain:
     case mRainN:
       return Image.asset(
-        mIconRainyy(indexStr, iconType!.value),
+        mIconRainy,
         width: width,
         height: height,
       );
     case mthunderstorm:
     case mthunderstormN:
       return Image.asset(
-        mIconThunderstormm(indexStr, iconType!.value),
+        mIconThunderstorm,
         width: width,
         height: height,
       );
     case mSnow:
     case mSnowN:
       return Image.asset(
-        mIconSnoww(indexStr, iconType!.value),
+        mIconSnow,
         width: width,
         height: height,
       );
     case mist:
     case mistN:
       return Image.asset(
-        mIconFogg(indexStr, iconType!.value),
+        mIconFog,
         width: width,
         height: height,
       );
     default:
       return Image.asset(
-        mIconClearss(indexStr, iconType!.value),
+        mIconClears,
         width: width,
         height: height,
       );
   }
 }
 
-String getIconForecastUrl(String? iconCode,IconEnum? iconType) {
-  String indexStr = getImageByIndex(0);
+String getIconForecastUrl(String? iconCode) {
 
   switch (iconCode) {
     case mClear:
-      return mIconClearss(indexStr,iconType!.value);
+      return mIconClears;
     case mClearN:
       return mIconClearsNight;
     case mFewClouds:
@@ -106,7 +103,7 @@ String getIconForecastUrl(String? iconCode,IconEnum? iconType) {
     case mShowerRainN:
     case mRain:
     case mRainN:
-      return mIconRainyy(indexStr,iconType!.value);
+      return mIconRainy;
     case mthunderstorm:
     case mthunderstormN:
       return mIconThunderstorm;
@@ -240,7 +237,6 @@ String formatDateAndMonth(DateTime dateTime, DateEnum dateEnum) {
 }
 
 String formatWeekDayAndTime(DateTime? dateTime, TimeEnum timeEnum) {
-
   DateFormat df =
       new DateFormat('EEE HH:mm', settingBloc.languageEnum.languageCode);
   switch (timeEnum) {

@@ -143,16 +143,16 @@ class _IconSettingScreenState extends State<IconSettingScreen> {
       );
 
   static List<String> listIcon(String tail, String iconType) => [
-        mIconRainyy(tail, iconType),
-        mIconSnoww(tail, iconType),
-        mIconThunderstormm(tail, iconType),
-        mIconHazyy(tail, iconType),
-        mIconFewCloudsNightt(tail, iconType),
-        mIconFewCloudsDayy(tail, iconType),
-        mIconClearsNightt(tail, iconType),
-        mIconClearss(tail, iconType),
-        mIconBrokenCloudss(tail, iconType),
-        mIconFogg(tail, iconType),
+        // mIconRainyy(tail, iconType),
+        // mIconSnoww(tail, iconType),
+        // mIconThunderstormm(tail, iconType),
+        // mIconHazyy(tail, iconType),
+        // mIconFewCloudsNightt(tail, iconType),
+        // mIconFewCloudsDayy(tail, iconType),
+        // mIconClearsNightt(tail, iconType),
+        // mIconClearss(tail, iconType),
+        // mIconBrokenCloudss(tail, iconType),
+        // mIconFogg(tail, iconType),
       ];
 
   startAnim() {

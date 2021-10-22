@@ -147,24 +147,10 @@ class _DailyForecastScreenState extends State<DailyForecastScreen> {
             )),
         Expanded(
             flex: 1,
-            child: StreamBuilder<int>(
-              stream: behaviorSubject.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return getIconForecastImage(
-                      widget.weatherForecastDaily!.daily![0].weather![0].icon,
-                      width: iconWeatherSize,
-                      height: iconWeatherSize,
-                      index: snapshot.data,
-                      iconType: settingBloc.iconEnum);
-                }
-                return getIconForecastImage(
-                    widget.weatherForecastDaily!.daily![0].weather![0].icon,
-                    width: iconWeatherSize,
-                    height: iconWeatherSize,
-                    index: 0,
-                    iconType: settingBloc.iconEnum);
-              },
+            child: Image.asset(
+              getIconForecastUrl(daily.weather![0].icon),
+              width: iconWeatherSize,
+              height: iconWeatherSize,
             )),
         Expanded(
           flex: 3,
@@ -228,24 +214,10 @@ class _DailyForecastScreenState extends State<DailyForecastScreen> {
             )),
         Expanded(
             flex: 1,
-            child: StreamBuilder<int>(
-              stream: behaviorSubject.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return getIconForecastImage(
-                      widget.weatherForecastDaily!.daily![0].weather![0].icon,
-                      width: iconWeatherSize,
-                      height: iconWeatherSize,
-                      index: snapshot.data,
-                      iconType: settingBloc.iconEnum);
-                }
-                return getIconForecastImage(
-                    widget.weatherForecastDaily!.daily![0].weather![0].icon,
-                    width: iconWeatherSize,
-                    height: iconWeatherSize,
-                    index: 0,
-                    iconType: settingBloc.iconEnum);
-              },
+            child: Image.asset(
+              getIconForecastUrl(daily.weather![0].icon),
+              width: iconWeatherSize,
+              height: iconWeatherSize,
             )),
         Expanded(
           flex: 3,

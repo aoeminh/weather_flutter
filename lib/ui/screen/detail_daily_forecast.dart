@@ -38,7 +38,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast> {
   @override
   void initState() {
     super.initState();
-    startAnim();
+    // startAnim();
   }
 
   @override
@@ -168,22 +168,10 @@ class _DetailDailyForecastState extends State<DetailDailyForecast> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              StreamBuilder<int>(
-                stream: behaviorSubject.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return getIconForecastImage(daily.weather![0].icon,
-                        width: _iconStatusSize,
-                        height: _iconStatusSize,
-                        index: snapshot.data,
-                        iconType: settingBloc.iconEnum);
-                  }
-                  return getIconForecastImage(daily.weather![0].icon,
-                      width: _iconStatusSize,
-                      height: _iconStatusSize,
-                      index: 0,
-                      iconType: settingBloc.iconEnum);
-                },
+              Image.asset(
+                getIconForecastUrl(daily.weather![0].icon),
+                width: _iconStatusSize,
+                height: _iconStatusSize,
               ),
               const SizedBox(
                 width: margin,

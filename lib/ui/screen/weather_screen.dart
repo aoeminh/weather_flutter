@@ -340,6 +340,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           actions: [
             GestureDetector(
                 onTap: () {
+                  appBloc.showInterstitialAd();
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => AddCityScreen()));
                 },
@@ -350,18 +351,18 @@ class _WeatherScreenState extends State<WeatherScreen>
                     color: Colors.white,
                   ),
                 )),
-            GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => IconSettingScreen()));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.settings,
-                    color: Colors.white,
-                  ),
-                ))
+            // GestureDetector(
+            //     onTap: () {
+            //       Navigator.push(context,
+            //           MaterialPageRoute(builder: (context) => IconSettingScreen()));
+            //     },
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(8.0),
+            //       child: Icon(
+            //         Icons.settings,
+            //         color: Colors.white,
+            //       ),
+            //     ))
           ],
           title: _titleAppbar(weatherData.weatherResponse),
         ),
@@ -619,20 +620,26 @@ class _WeatherScreenState extends State<WeatherScreen>
             'COVID-19',
             'more'.tr,
             weatherData != null
-                ? () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ListCountryCovid(
-                              covidSummaryResponse: covidSummaryResponse,
-                            )))
+                ? () {
+                    appBloc.showInterstitialAd();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ListCountryCovid(
+                                  covidSummaryResponse: covidSummaryResponse,
+                                )));
+                  }
                 : () {}),
         GestureDetector(
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ListCountryCovid(
-                    covidSummaryResponse: covidSummaryResponse,
-                      ))),
+          onTap: () {
+            appBloc.showInterstitialAd();
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ListCountryCovid(
+                          covidSummaryResponse: covidSummaryResponse,
+                        )));
+          },
           child: Container(
             height: 150,
             child: Covid19(
