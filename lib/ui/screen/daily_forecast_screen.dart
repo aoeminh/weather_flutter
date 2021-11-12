@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:weather_app/shared/constant.dart';
+
 import '../../bloc/setting_bloc.dart';
 import '../../model/daily.dart';
 import '../../model/weather_forcast_daily.dart';
@@ -14,7 +11,6 @@ import '../../shared/image.dart';
 import '../../shared/strings.dart';
 import '../../shared/text_style.dart';
 import '../../utils/utils.dart';
-
 import 'detail_daily_forecast.dart';
 
 const Color primaryColor = Colors.white;
@@ -33,21 +29,14 @@ class DailyForecastScreen extends StatefulWidget {
 }
 
 class _DailyForecastScreenState extends State<DailyForecastScreen> {
-  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
-  int index = 0;
-  Timer? timer;
-
   @override
   void initState() {
     super.initState();
-    startAnim();
   }
 
   @override
   void dispose() {
     super.dispose();
-    behaviorSubject.close();
-    timer!.cancel();
   }
 
   @override
@@ -268,16 +257,5 @@ class _DailyForecastScreenState extends State<DailyForecastScreen> {
             ))
       ],
     );
-  }
-
-  startAnim() {
-    timer = Timer.periodic(Duration(milliseconds: durationAnim), (timer) {
-      if (index < 29) {
-        index += 1;
-      } else {
-        index = 0;
-      }
-      behaviorSubject.add(index);
-    });
   }
 }

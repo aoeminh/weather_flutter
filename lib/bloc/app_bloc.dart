@@ -145,7 +145,7 @@ class AppBloc extends BlocBase {
 
   void createInterstitialAd() {
     InterstitialAd.load(
-        adUnitId: productIntermediaryAdsId,
+        adUnitId: InterstitialAd.testAdUnitId,
         request: AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {

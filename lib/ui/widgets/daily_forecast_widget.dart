@@ -37,7 +37,6 @@ class _DailyForecastWidgetState extends State<DailyForecastWidget> {
   @override
   void initState() {
     super.initState();
-    // startAnim();
   }
 
   @override

@@ -1,18 +1,15 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/daily.dart';
 import 'package:weather_app/model/weather_forcast_daily.dart';
-import 'package:weather_app/shared/constant.dart';
+import 'package:weather_app/shared/colors.dart';
 import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 import 'package:weather_app/shared/text_style.dart';
 import 'package:weather_app/utils/utils.dart';
-import 'package:weather_app/shared/colors.dart';
 
 const double _iconStatusSize = 50;
 const double _iconLowHighSize = 20;
@@ -31,10 +28,6 @@ class DetailDailyForecast extends StatefulWidget {
 }
 
 class _DetailDailyForecastState extends State<DetailDailyForecast> {
-  Timer? timer;
-  int index = 0;
-  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
-
   @override
   void initState() {
     super.initState();
@@ -44,8 +37,6 @@ class _DetailDailyForecastState extends State<DetailDailyForecast> {
   @override
   void dispose() {
     super.dispose();
-    behaviorSubject.close();
-    timer!.cancel();
   }
 
   @override
@@ -317,16 +308,5 @@ class _DetailDailyForecastState extends State<DetailDailyForecast> {
         ],
       ),
     );
-  }
-
-  startAnim() {
-    timer = Timer.periodic(Duration(milliseconds: durationAnim), (timer) {
-      if (index < 29) {
-        index += 1;
-      } else {
-        index = 0;
-      }
-      behaviorSubject.add(index);
-    });
   }
 }

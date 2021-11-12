@@ -159,6 +159,29 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ),
               ),
             ),
+            InkWell(
+              onTap: () {
+                launch(appUrl);
+              },
+              child: Container(
+                padding: EdgeInsets.only(
+                    left: padding, right: paddingSmall, top: padding),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.rate_review,
+                        size: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: padding),
+                    Text('Rate us!', style: textTitleWhite),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       );

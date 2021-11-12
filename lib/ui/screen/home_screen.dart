@@ -134,9 +134,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   _showNotification() async {
+    // AndroidBitmap bitmap =
     WeatherResponse weatherResponse = settingBloc.weatherResponse!;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('id', 'name', 'description',
+        AndroidNotificationDetails('id', 'name',channelDescription: 'channelDescription',
             importance: Importance.defaultImportance,
             autoCancel: false,
             color: Colors.blue,

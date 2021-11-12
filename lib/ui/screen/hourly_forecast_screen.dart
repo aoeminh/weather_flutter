@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:weather_app/shared/constant.dart';
 import '../../bloc/setting_bloc.dart';
 import '../../model/weather_forecast_list_response.dart';
 import '../../model/weather_forecast_response.dart';
@@ -33,9 +32,6 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
   BehaviorSubject<int> dateBehaviorSubject = BehaviorSubject.seeded(0);
-  Timer? timer;
-  int index = 0;
-  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
 
   @override
   void initState() {
@@ -56,8 +52,6 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
   void dispose() {
     super.dispose();
     dateBehaviorSubject.close();
-    behaviorSubject.close();
-    timer!.cancel();
   }
 
   @override
@@ -261,15 +255,4 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
   _marginVertical() => SizedBox(
         height: margin,
       );
-
-  startAnim() {
-    timer = Timer.periodic(Duration(milliseconds: durationAnim), (timer) {
-      if (index < 29) {
-        index += 1;
-      } else {
-        index = 0;
-      }
-      behaviorSubject.add(index);
-    });
-  }
 }
