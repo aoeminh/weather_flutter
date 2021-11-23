@@ -41,6 +41,7 @@ class AppBloc extends BlocBase {
         keyAds = productIntermediaryAdsId;
       }
       createInterstitialAd();
+      print('keyAds ${event.snapshot.value}');
     });
   }
 
@@ -102,7 +103,7 @@ class AppBloc extends BlocBase {
 
   void createInterstitialAd() {
     InterstitialAd.load(
-        adUnitId: keyAds ?? '',
+        adUnitId: InterstitialAd.testAdUnitId,
         request: AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
