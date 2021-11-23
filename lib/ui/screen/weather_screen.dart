@@ -6,7 +6,6 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
@@ -44,7 +43,6 @@ import '../../ui/widgets/sun_path_widget.dart';
 import '../../utils/utils.dart';
 import '../widgets/air_pollution_widget.dart';
 import 'detail_daily_forecast.dart';
-import 'icon_setting_screen.dart';
 
 const double _mainWeatherHeight = 240;
 
@@ -111,6 +109,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   getData({double? lat, double? lon}) {
+    appBloc.getAdKey();
     bloc.fetchWeatherForecast7Day(
         lat ?? widget.lat, lon ?? widget.lon, _exclude7DayForecast);
     bloc.fetchWeather(lat ?? widget.lat, lon ?? widget.lon);
@@ -728,26 +727,6 @@ class _WeatherScreenState extends State<WeatherScreen>
                 weatherForecastDaily: weatherData!.weatherForecastDaily,
               )));
 
-  _buildBannerAds() => Container(
-      height: 100,
-      padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
-      child: appBloc.myBanner != null
-          ? AdWidget(ad: appBloc.myBanner!)
-          : const SizedBox());
-
-  _buildBannerAds1() => Container(
-      height: 100,
-      padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
-      child: appBloc.myBanner1 != null
-          ? AdWidget(ad: appBloc.myBanner1!)
-          : const SizedBox());
-
-  _buildBannerAds2() => Container(
-      height: 100,
-      padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding),
-      child: appBloc.myBanner2 != null
-          ? AdWidget(ad: appBloc.myBanner2!)
-          : const SizedBox());
 }
 
 class WeatherData {

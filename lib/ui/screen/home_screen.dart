@@ -229,8 +229,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     pageBloc.dispose();
     settingBloc.dispose();
     subscription.cancel();
-    if (appBloc.myBanner != null) appBloc.myBanner!.dispose();
-    if (appBloc.myBanner1 != null) appBloc.myBanner1!.dispose();
-    if (appBloc.myBanner2 != null) appBloc.myBanner2!.dispose();
+
   }
 }

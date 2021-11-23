@@ -9,12 +9,13 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/shared/constant.dart';
 
+import '../main.dart';
 import '../model/application_error.dart';
 import '../model/city.dart';
 import '../model/coordinates.dart';
 import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
-
+import 'package:firebase_database/firebase_database.dart';
 
 const _timeReShowAds = 60;
 
@@ -27,11 +28,21 @@ class AppBloc extends BlocBase {
 
   InterstitialAd? _interstitialAd;
   int _numInterstitialLoadAttempts = 0;
-  int maxFailedLoadAttempts = 3;
+  int maxFailedLoadAttempts = 10;
+  String? keyAds;
 
-  BannerAd? myBanner;
-  BannerAd? myBanner1;
-  BannerAd? myBanner2;
+  final DatabaseReference db = FirebaseDatabase(app: firebaseApp).reference();
+
+  getAdKey() {
+    db.onChildAdded.listen((event) {
+      if (event.snapshot.value.toString().trim().isNotEmpty) {
+        keyAds = event.snapshot.value;
+      }else{
+        keyAds = productIntermediaryAdsId;
+      }
+      createInterstitialAd();
+    });
+  }
 
   addError(ApplicationError error) {
     _errorBehavior.add(error);
@@ -89,63 +100,9 @@ class AppBloc extends BlocBase {
     return Preferences.getListCityFromCache();
   }
 
-  void createBannerAds() async {
-    // AnchoredAdaptiveBannerAdSize? width =
-    //     await AdSize.getAnchoredAdaptiveBannerAdSize(Orientation.portrait,
-    //         (MediaQuery.of(Get.context!).size.width.truncate() - 20).toInt());
-    // myBanner = myBanner ??
-    //     BannerAd(
-    //       adUnitId: productBannerAdsId,
-    //       size: width ?? AdSize.leaderboard,
-    //       request: AdRequest(),
-    //       listener: createBannerAdCallback(),
-    //     );
-    // myBanner1 = myBanner1 ??
-    //     BannerAd(
-    //       adUnitId: productBannerAdsId1,
-    //       size: width ?? AdSize.leaderboard,
-    //       request: AdRequest(),
-    //       listener: createBannerAdCallback(),
-    //     );
-    //
-    // myBanner2 = myBanner2 ??
-    //     BannerAd(
-    //       adUnitId: productBannerAdsId2,
-    //       size: width ?? AdSize.leaderboard,
-    //       request: AdRequest(),
-    //       listener: createBannerAdCallback(),
-    //     );
-
-    // myBanner!.load();
-    // myBanner1!.load();
-    // myBanner2!.load();
-  }
-
-  BannerAdListener createBannerAdCallback() => BannerAdListener(
-        // Called when an ad is successfully received.
-        onAdLoaded: (Ad ad) => print('Ad loaded.'),
-        // Called when an ad request failed.
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          // Dispose the ad here to free resources.
-          ad.dispose();
-          print('Ad failed to load: $error');
-        },
-        // Called when an ad opens an overlay that covers the screen.
-        onAdOpened: (Ad ad) {
-          isShowAds = false;
-          print('Ad opened.');
-        },
-        // Called when an ad removes an overlay that covers the screen.
-        onAdClosed: (Ad ad) {
-          startTimer();
-        },
-        // Called when an impression occurs on the ad.
-        onAdImpression: (Ad ad) => print('Ad impression.'),
-      );
-
   void createInterstitialAd() {
     InterstitialAd.load(
-        adUnitId: InterstitialAd.testAdUnitId,
+        adUnitId: keyAds ?? '',
         request: AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {

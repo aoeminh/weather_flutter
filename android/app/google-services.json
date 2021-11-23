@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "787636777900",
+    "firebase_url": "https://weather-app-e4c9c-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "weather-app-e4c9c",
     "storage_bucket": "weather-app-e4c9c.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "787636777900-ftp3he9o07s5r5jfhv69cv7sc4738euk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "minh.quy.weather_app",
+            "certificate_hash": "9b1e492f222d50c457985a9499f55676ec95273e"
+          }
+        },
         {
           "client_id": "787636777900-0lo9li46h4slb9hsaqbubu057fjjv948.apps.googleusercontent.com",
           "client_type": 3
@@ -29,10 +38,18 @@
             {
               "client_id": "787636777900-0lo9li46h4slb9hsaqbubu057fjjv948.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "787636777900-vt4fjnu5akoibu8k2qhdl43gddn4l0v7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "minh.quy.weatherApp"
+              }
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-1229024728904450~7323812204"
     }
   ],
   "configuration_version": "1"
