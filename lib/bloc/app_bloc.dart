@@ -30,6 +30,7 @@ class AppBloc extends BlocBase {
   int _numInterstitialLoadAttempts = 0;
   int maxFailedLoadAttempts = 10;
   String? keyAds;
+  Position? currentLocation;
 
   final DatabaseReference db = FirebaseDatabase(app: firebaseApp).reference();
 
@@ -66,9 +67,9 @@ class AppBloc extends BlocBase {
             'Location permissions are denied (actual value: $permission).');
       }
     }
-    var position = await Geolocator.getCurrentPosition();
+     currentLocation = await Geolocator.getCurrentPosition();
     return City(
-        coordinates: Coordinates(position.longitude, position.latitude));
+        coordinates: Coordinates(currentLocation!.longitude, currentLocation!.latitude));
     // add the first city
   }
 

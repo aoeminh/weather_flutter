@@ -14,10 +14,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   firebaseApp = await Firebase.initializeApp();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    runApp(MyApp());
-  });
   initializeDateFormatting();
   runApp(MyApp());
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,

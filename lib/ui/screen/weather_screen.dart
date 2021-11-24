@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
@@ -19,6 +20,7 @@ import 'package:weather_app/ui/widgets/daily_forecast_widget.dart';
 import 'package:weather_app/ui/widgets/detail_weather_widget.dart';
 import 'package:weather_app/ui/widgets/hourly_forecast_widget.dart';
 import 'package:weather_app/ui/widgets/pressure_and_wind.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../bloc/api_service_bloc.dart';
 import '../../bloc/base_bloc.dart';
@@ -43,6 +45,7 @@ import '../../ui/widgets/sun_path_widget.dart';
 import '../../utils/utils.dart';
 import '../widgets/air_pollution_widget.dart';
 import 'detail_daily_forecast.dart';
+import 'page/radar_screen.dart';
 
 const double _mainWeatherHeight = 240;
 
@@ -67,7 +70,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     with TickerProviderStateMixin {
   final ApiServiceBloc bloc = ApiServiceBloc();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
+  new GlobalKey<RefreshIndicatorState>();
   WeatherData? weatherData;
   BehaviorSubject<DateTime> timeSubject = BehaviorSubject();
   BehaviorSubject<double> _scrollSubject = BehaviorSubject.seeded(0);
@@ -87,6 +90,7 @@ class _WeatherScreenState extends State<WeatherScreen>
         _scrollSubject.add(_scrollController.offset);
       });
       _listenNetwork();
+
     }
   }
 
@@ -95,16 +99,19 @@ class _WeatherScreenState extends State<WeatherScreen>
       currentTime = dateTime.millisecondsSinceEpoch;
       Timer.periodic(
           Duration(milliseconds: 1000),
-          (t) => {
-                if (!timeSubject.isClosed) {_addTime()}
-              });
+              (t) =>
+          {
+            if (!timeSubject.isClosed) {_addTime()}
+          });
     }
   }
 
   _addTime() {
     currentTime += 1000;
     timeSubject.add(DateTime.fromMillisecondsSinceEpoch(
-        (DateTime.now().millisecondsSinceEpoch + differentTime * oneHourMilli)
+        (DateTime
+            .now()
+            .millisecondsSinceEpoch + differentTime * oneHourMilli)
             .toInt()));
   }
 
@@ -212,59 +219,65 @@ class _WeatherScreenState extends State<WeatherScreen>
         // keep old data when request fail
         return weatherData != null
             ? Scaffold(
-                backgroundColor: Colors.transparent,
-                body: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(bgSplash), fit: BoxFit.fill)),
-                    ),
-                    StreamBuilder<double>(
-                        stream: _scrollSubject.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  height: MediaQuery.of(context).size.height,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ImageFiltered(
-                                    imageFilter: ImageFilter.blur(
-                                        sigmaY: (snapshot.data! *
-                                            _ratioBlurImageBg),
-                                        sigmaX: (snapshot.data! *
-                                            _ratioBlurImageBg)),
-                                    child: Image.asset(
-                                      getBgImagePath(weatherData!
-                                          .weatherResponse!
-                                          .overallWeatherData![0]
-                                          .icon),
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  color: Colors.black.withOpacity(
-                                      snapshot.data! * _ratioBlurBg),
-                                ),
-                              ],
-                            );
-                          }
-                          return Container();
-                        }),
-                    _body(weatherData!)
-                  ],
-                ),
-                drawer: DrawerWidget(
-                  weatherData!,
-                ),
-              )
-            : Container(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(bgSplash), fit: BoxFit.fill)),
-              );
+              ),
+              StreamBuilder<double>(
+                  stream: _scrollSubject.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Stack(
+                        children: [
+                          Container(
+                            height: MediaQuery
+                                .of(context)
+                                .size
+                                .height,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
+                            child: ImageFiltered(
+                              imageFilter: ImageFilter.blur(
+                                  sigmaY: (snapshot.data! *
+                                      _ratioBlurImageBg),
+                                  sigmaX: (snapshot.data! *
+                                      _ratioBlurImageBg)),
+                              child: Image.asset(
+                                getBgImagePath(weatherData!
+                                    .weatherResponse!
+                                    .overallWeatherData![0]
+                                    .icon),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            color: Colors.black.withOpacity(
+                                snapshot.data! * _ratioBlurBg),
+                          ),
+                        ],
+                      );
+                    }
+                    return Container();
+                  }),
+              _body(weatherData!)
+            ],
+          ),
+          drawer: DrawerWidget(
+            weatherData!,
+          ),
+        )
+            : Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(bgSplash), fit: BoxFit.fill)),
+        );
       },
     );
   }
@@ -272,9 +285,9 @@ class _WeatherScreenState extends State<WeatherScreen>
   convertDataAndFormatTime() {
     WeatherResponse weatherResponse = weatherData!.weatherResponse!;
     WeatherForecastListResponse weatherForecastListResponse =
-        weatherData!.weatherForecastListResponse!;
+    weatherData!.weatherForecastListResponse!;
     WeatherForecastDaily weatherForecastDaily =
-        weatherData!.weatherForecastDaily!;
+    weatherData!.weatherForecastDaily!;
     weatherData = weatherData!.copyWith(
         weatherResponse: weatherResponse.copyWithSettingData(
             settingBloc.tempEnum,
@@ -292,13 +305,17 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   double _getDifferentTime(double timezoneOffset) {
-    return (timezoneOffset - DateTime.now().timeZoneOffset.inMilliseconds) /
+    return (timezoneOffset - DateTime
+        .now()
+        .timeZoneOffset
+        .inMilliseconds) /
         _oneHour;
   }
 
   String getTimezone(String timezone) {
     print(
-        '${timezone.substring(timezone.indexOf('/') + 1, timezone.length).toLowerCase()}');
+        '${timezone.substring(timezone.indexOf('/') + 1, timezone.length)
+            .toLowerCase()}');
     return timezone
         .substring(timezone.indexOf('/') + 1, timezone.length)
         .toLowerCase();
@@ -307,7 +324,8 @@ class _WeatherScreenState extends State<WeatherScreen>
   _body(WeatherData weatherData) {
     return NestedScrollView(
       controller: _scrollController,
-      headerSliverBuilder: (context, innerBoxScrolled) => [
+      headerSliverBuilder: (context, innerBoxScrolled) =>
+      [
         SliverAppBar(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
@@ -370,24 +388,27 @@ class _WeatherScreenState extends State<WeatherScreen>
         refreshIndicatorKey: _refreshIndicatorKey,
         children: Container(
           child: Column(
-            children: [
+              children: [
               _currentWeather(weatherData.weatherResponse),
-              _buildHourlyForecast(weatherData.weatherForecastListResponse),
-              // _buildBannerAds(),
-              _buildDailyForecast(weatherData.weatherForecastDaily),
-              _buildDetail(weatherData.weatherForecastDaily),
-              _buildWindAndPressure(weatherData.weatherResponse),
-              // _buildBannerAds1(),
-              _buildAriPollution(),
-              _buildCovid19(),
-              _buildSunTime(weatherData.weatherResponse),
-              // _buildBannerAds2()
-            ],
-          ),
+          _buildHourlyForecast(weatherData.weatherForecastListResponse),
+          // _buildBannerAds(),
+          _buildDailyForecast(weatherData.weatherForecastDaily),
+          _buildDetail(weatherData.weatherForecastDaily),
+          _buildWindAndPressure(weatherData.weatherResponse),
+          // _buildBannerAds1(),
+          _buildAriPollution(),
+          _buildCovid19(),
+          _buildSunTime(weatherData.weatherResponse),
+          InkWell(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Radar())),
+              child: Text("Radar"))
+          // _buildBannerAds2()
+          ],
         ),
-        onRefresh: refresh,
       ),
-    );
+      onRefresh: refresh,
+    ),);
   }
 
   _titleAppbar(WeatherResponse? weatherResponse) {
@@ -405,7 +426,8 @@ class _WeatherScreenState extends State<WeatherScreen>
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Text(
-                    '${formatWeekDayAndTime(snapshot.data, settingBloc.timeEnum)}',
+                    '${formatWeekDayAndTime(
+                        snapshot.data, settingBloc.timeEnum)}',
                     style: textSecondaryWhite70);
               }
               return Text('');
@@ -429,8 +451,8 @@ class _WeatherScreenState extends State<WeatherScreen>
     return weatherForecastListResponse != null
         ? _buildBodyHourlyForecast(weatherForecastListResponse)
         : Container(
-            height: _mainWeatherHeight,
-          );
+      height: _mainWeatherHeight,
+    );
   }
 
   _buildBodyHourlyForecast(
@@ -442,9 +464,10 @@ class _WeatherScreenState extends State<WeatherScreen>
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => HourlyForecastScreen(
+                  builder: (context) =>
+                      HourlyForecastScreen(
                         weatherForecastListResponse:
-                            weatherForecastListResponse,
+                        weatherForecastListResponse,
                       )));
         }),
         HourlyForecastWidget(
@@ -490,7 +513,8 @@ class _WeatherScreenState extends State<WeatherScreen>
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => DailyForecastScreen(
+                  builder: (context) =>
+                      DailyForecastScreen(
                         weatherForecastDaily: weatherForecastDaily,
                       )));
         }),
@@ -505,7 +529,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   _buildDetail(WeatherForecastDaily? weatherForecastDaily) {
     return weatherForecastDaily != null
         ? _buildBodyDetail(
-            weatherForecastDaily.daily![0], weatherForecastDaily.current!)
+        weatherForecastDaily.daily![0], weatherForecastDaily.current!)
         : Container();
   }
 
@@ -517,9 +541,9 @@ class _WeatherScreenState extends State<WeatherScreen>
             'more'.tr,
             weatherData != null
                 ? () {
-                    appBloc.showInterstitialAd();
-                    gotoDailyDetailScreen();
-                  }
+              appBloc.showInterstitialAd();
+              gotoDailyDetailScreen();
+            }
                 : () {}),
         DetailWeatherWidget(
           weatherData: weatherData,
@@ -543,9 +567,9 @@ class _WeatherScreenState extends State<WeatherScreen>
             'more'.tr,
             weatherData != null
                 ? () {
-                    appBloc.showInterstitialAd();
-                    gotoDailyDetailScreen();
-                  }
+              appBloc.showInterstitialAd();
+              gotoDailyDetailScreen();
+            }
                 : () {}),
         PressureAndWind(
           weatherData: weatherData,
@@ -575,16 +599,16 @@ class _WeatherScreenState extends State<WeatherScreen>
             'more'.tr,
             weatherData != null
                 ? () {
-                    appBloc.showInterstitialAd();
-                    gotoDailyDetailScreen();
-                  }
+              appBloc.showInterstitialAd();
+              gotoDailyDetailScreen();
+            }
                 : () {}),
         GestureDetector(
             onTap: weatherData != null
                 ? () {
-                    appBloc.showInterstitialAd();
-                    gotoDailyDetailScreen();
-                  }
+              appBloc.showInterstitialAd();
+              gotoDailyDetailScreen();
+            }
                 : () {},
             child: AirPollutionWidget(airResponse.data))
       ],
@@ -608,7 +632,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   _buildCovid19Body(CovidSummaryResponse covidSummaryResponse) {
     final countryCode = Get.deviceLocale!.countryCode;
     Country? country = covidSummaryResponse.countries!.firstWhere(
-        (element) => countryCode == element.countryCode, orElse: () {
+            (element) => countryCode == element.countryCode, orElse: () {
       return covidSummaryResponse.countries!
           .firstWhere((element) => countryCode == 'US');
     });
@@ -620,14 +644,15 @@ class _WeatherScreenState extends State<WeatherScreen>
             'more'.tr,
             weatherData != null
                 ? () {
-                    appBloc.showInterstitialAd();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ListCountryCovid(
-                                  covidSummaryResponse: covidSummaryResponse,
-                                )));
-                  }
+              appBloc.showInterstitialAd();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ListCountryCovid(
+                            covidSummaryResponse: covidSummaryResponse,
+                          )));
+            }
                 : () {}),
         GestureDetector(
           onTap: () {
@@ -635,7 +660,8 @@ class _WeatherScreenState extends State<WeatherScreen>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ListCountryCovid(
+                    builder: (context) =>
+                        ListCountryCovid(
                           covidSummaryResponse: covidSummaryResponse,
                         )));
           },
@@ -664,9 +690,9 @@ class _WeatherScreenState extends State<WeatherScreen>
             'more'.tr,
             weatherData != null
                 ? () {
-                    appBloc.showInterstitialAd();
-                    gotoDailyDetailScreen();
-                  }
+              appBloc.showInterstitialAd();
+              gotoDailyDetailScreen();
+            }
                 : () {}),
         Container(
           margin: EdgeInsets.all(margin),
@@ -680,9 +706,9 @@ class _WeatherScreenState extends State<WeatherScreen>
               GestureDetector(
                   onTap: weatherData != null
                       ? () {
-                          appBloc.showInterstitialAd();
-                          gotoDailyDetailScreen();
-                        }
+                    appBloc.showInterstitialAd();
+                    gotoDailyDetailScreen();
+                  }
                       : () {},
                   child: RepaintBoundary(
                     child: SunPathWidget(
@@ -697,11 +723,15 @@ class _WeatherScreenState extends State<WeatherScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system!.sunrise!), settingBloc.timeEnum)}',
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(
+                          weatherResponse.system!.sunrise!),
+                          settingBloc.timeEnum)}',
                       style: textSecondaryWhite70,
                     ),
                     Text(
-                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(weatherResponse.system!.sunset!), settingBloc.timeEnum)}',
+                      '${formatTime(DateTime.fromMillisecondsSinceEpoch(
+                          weatherResponse.system!.sunset!),
+                          settingBloc.timeEnum)}',
                       style: textSecondaryWhite70,
                     ),
                   ],
@@ -719,13 +749,15 @@ class _WeatherScreenState extends State<WeatherScreen>
     appBloc.showInterstitialAd();
   }
 
-  gotoDailyDetailScreen() => Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => DetailDailyForecast(
-                currentIndex: 0,
-                weatherForecastDaily: weatherData!.weatherForecastDaily,
-              )));
+  gotoDailyDetailScreen() =>
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  DetailDailyForecast(
+                    currentIndex: 0,
+                    weatherForecastDaily: weatherData!.weatherForecastDaily,
+                  )));
 
 }
 
@@ -735,21 +767,19 @@ class WeatherData {
   final WeatherForecastDaily? weatherForecastDaily;
   final WeatherStateError? error;
 
-  WeatherData(
-      {this.weatherResponse,
-      this.weatherForecastListResponse,
-      this.weatherForecastDaily,
-      this.error});
+  WeatherData({this.weatherResponse,
+    this.weatherForecastListResponse,
+    this.weatherForecastDaily,
+    this.error});
 
-  WeatherData copyWith(
-      {WeatherResponse? weatherResponse,
-      WeatherForecastListResponse? weatherForecastListResponse,
-      WeatherForecastDaily? weatherForecastDaily,
-      WeatherStateError? error}) {
+  WeatherData copyWith({WeatherResponse? weatherResponse,
+    WeatherForecastListResponse? weatherForecastListResponse,
+    WeatherForecastDaily? weatherForecastDaily,
+    WeatherStateError? error}) {
     return WeatherData(
         weatherResponse: weatherResponse ?? this.weatherResponse,
         weatherForecastListResponse:
-            weatherForecastListResponse ?? this.weatherForecastListResponse,
+        weatherForecastListResponse ?? this.weatherForecastListResponse,
         weatherForecastDaily: weatherForecastDaily ?? this.weatherForecastDaily,
         error: error ?? this.error);
   }
