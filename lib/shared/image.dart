@@ -215,3 +215,6 @@ const icEmojiAqi5 = '$mImgPath'
 
 const icEmojiAqi6 = '$mImgPath'
     'emoji_aqi_6.png';
+
+const mcRadar = '$mImgPath'
+    'img_radar.png';
