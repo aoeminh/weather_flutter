@@ -1,18 +1,17 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
+
 import '../../bloc/app_bloc.dart';
 import '../../model/weather_forcast_daily.dart';
 import '../../shared/colors.dart';
 import '../../shared/dimens.dart';
 import '../../shared/strings.dart';
 import '../../shared/text_style.dart';
-import '../screen/detail_daily_forecast.dart';
 import '../../utils/utils.dart';
+import '../screen/detail_daily_forecast.dart';
 
 const double _dailySectionHeight = 520;
 const double _oneHour = 3600000;
@@ -137,7 +136,8 @@ class _DailyForecastWidgetState extends State<DailyForecastWidget> {
                       child: getIconForecastImage(
                           data.daily![index].weather![0].icon,
                           width: 30,
-                          height: 30)),
+                          height: 30,
+                          prefix: settingBloc.iconEnum.value)),
                   Expanded(
                       flex: 4,
                       child: Container(
@@ -180,14 +180,14 @@ class _DailyForecastWidgetState extends State<DailyForecastWidget> {
     );
   }
 
-  // startAnim() {
-  //   timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-  //     if (index < 29) {
-  //       index += 1;
-  //     } else {
-  //       index = 0;
-  //     }
-  //     behaviorSubject.add(index);
-  //   });
-  // }
+// startAnim() {
+//   timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+//     if (index < 29) {
+//       index += 1;
+//     } else {
+//       index = 0;
+//     }
+//     behaviorSubject.add(index);
+//   });
+// }
 }

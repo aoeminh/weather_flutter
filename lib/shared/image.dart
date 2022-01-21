@@ -218,3 +218,30 @@ const icEmojiAqi6 = '$mImgPath'
 
 const mcRadar = '$mImgPath'
     'img_radar.png';
+
+String mIconClears1(String prefix) => '$mImgPath'
+    '${prefix}icon_clear.png';
+
+String mIconClearsNight1(String prefix) => '$mImgPath'
+    '${prefix}icon_clear_night.png';
+
+String mIconFewCloudsDay1(String prefix) => '$mImgPath'
+    '${prefix}icon_fewclouds_day.png';
+
+String mIconFewCloudsNight1(String prefix) => '$mImgPath'
+    '${prefix}icon_fewclouds_night.png';
+
+String mIconBrokenClouds1(String prefix) => '$mImgPath'
+    '${prefix}icon_brokenclouds.png';
+
+String mIconRainy1(String prefix) => '$mImgPath'
+    '${prefix}icon_rainy.png';
+
+String mIconThunderstorm1(String prefix) => '$mImgPath'
+    '${prefix}icon_thunderstorm.png';
+
+String mIconSnow1(String prefix) => '$mImgPath'
+    '${prefix}icon_snow.png';
+
+String mIconFog1(String prefix) => '$mImgPath'
+    '${prefix}icon_fog.png';

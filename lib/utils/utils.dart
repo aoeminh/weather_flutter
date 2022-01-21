@@ -9,29 +9,30 @@ import 'package:weather_app/model/weather_forecast_response.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 
-Image getIconForecastImage(String? iconCode, {double? width, double? height}) {
+Image getIconForecastImage(String? iconCode,
+    {double? width, double? height, String prefix = ''}) {
   switch (iconCode) {
     case mClear:
       return Image.asset(
-        mIconClears,
+        mIconClears1(prefix),
         width: width,
         height: height,
       );
     case mClearN:
       return Image.asset(
-        mIconClearsNight,
+        mIconClearsNight1(prefix),
         width: width,
         height: height,
       );
     case mFewClouds:
       return Image.asset(
-        mIconFewCloudsDay,
+        mIconFewCloudsDay1(prefix),
         width: width,
         height: height,
       );
     case mFewCloudsN:
       return Image.asset(
-        mIconFewCloudsNight,
+        mIconFewCloudsNight1(prefix),
         width: width,
         height: height,
       );
@@ -40,7 +41,7 @@ Image getIconForecastImage(String? iconCode, {double? width, double? height}) {
     case mBrokenClouds:
     case mBrokenCloudsN:
       return Image.asset(
-        mIconBrokenClouds,
+        mIconBrokenClouds1(prefix),
         width: width,
         height: height,
       );
@@ -49,72 +50,71 @@ Image getIconForecastImage(String? iconCode, {double? width, double? height}) {
     case mRain:
     case mRainN:
       return Image.asset(
-        mIconRainy,
+        mIconRainy1(prefix),
         width: width,
         height: height,
       );
     case mthunderstorm:
     case mthunderstormN:
       return Image.asset(
-        mIconThunderstorm,
+        mIconThunderstorm1(prefix),
         width: width,
         height: height,
       );
     case mSnow:
     case mSnowN:
       return Image.asset(
-        mIconSnow,
+        mIconSnow1(prefix),
         width: width,
         height: height,
       );
     case mist:
     case mistN:
       return Image.asset(
-        mIconFog,
+        mIconFog1(prefix),
         width: width,
         height: height,
       );
     default:
       return Image.asset(
-        mIconClears,
+        mIconClears1(prefix),
         width: width,
         height: height,
       );
   }
 }
 
-String getIconForecastUrl(String? iconCode) {
-
+String getIconForecastUrl(String? iconCode, {String prefix = 'p2_'}) {
   switch (iconCode) {
     case mClear:
-      return mIconClears;
+      return mIconClears1(prefix);
     case mClearN:
       return mIconClearsNight;
     case mFewClouds:
     case mClouds:
-      return mIconFewCloudsDay;
+      return mIconFewCloudsDay1(prefix);
     case mFewCloudsN:
     case mCloudsN:
-      return mIconFewCloudsNight;
+      return mIconFewCloudsNight1(prefix);
     case mBrokenClouds:
     case mBrokenCloudsN:
-      return mIconBrokenClouds;
+      return mIconBrokenClouds1(prefix);
     case mShowerRain:
     case mShowerRainN:
     case mRain:
     case mRainN:
-      return mIconRainy;
+      return mIconRainy1(prefix);
     case mthunderstorm:
     case mthunderstormN:
-      return mIconThunderstorm;
+      return mIconThunderstorm1(prefix);
     case mSnow:
     case mSnowN:
-      return mIconSnow;
+      return mIconSnow1(prefix);
     case mist:
     case mistN:
-      return mIconFog;
+      return mIconFog1(prefix);
     default:
-      return mIconClears;
+      return mIconClears1(prefix);
   }
 }
 

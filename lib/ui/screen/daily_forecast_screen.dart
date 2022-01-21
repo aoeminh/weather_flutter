@@ -137,9 +137,10 @@ class _DailyForecastScreenState extends State<DailyForecastScreen> {
         Expanded(
             flex: 1,
             child: Image.asset(
-              getIconForecastUrl(daily.weather![0].icon),
+              getIconForecastUrl(daily.weather![0].icon,prefix: settingBloc.iconEnum.value),
               width: iconWeatherSize,
               height: iconWeatherSize,
+
             )),
         Expanded(
           flex: 3,
@@ -204,7 +205,7 @@ class _DailyForecastScreenState extends State<DailyForecastScreen> {
         Expanded(
             flex: 1,
             child: Image.asset(
-              getIconForecastUrl(daily.weather![0].icon),
+              getIconForecastUrl(daily.weather![0].icon,prefix: settingBloc.iconEnum.value),
               width: iconWeatherSize,
               height: iconWeatherSize,
             )),

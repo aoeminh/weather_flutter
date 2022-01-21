@@ -1,18 +1,18 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rxdart/rxdart.dart';
+import "package:scrollable_positioned_list/scrollable_positioned_list.dart";
+
 import '../../bloc/setting_bloc.dart';
 import '../../model/weather_forecast_list_response.dart';
 import '../../model/weather_forecast_response.dart';
 import '../../shared/colors.dart';
 import '../../shared/dimens.dart';
 import '../../shared/image.dart';
-import '../../utils/utils.dart';
-import '../../shared/text_style.dart';
 import '../../shared/strings.dart';
-import "package:scrollable_positioned_list/scrollable_positioned_list.dart";
-import 'package:rxdart/rxdart.dart';
+import '../../shared/text_style.dart';
+import '../../utils/utils.dart';
 
 const double iconWeatherSize = 40;
 const double iconDetailSize = 20;
@@ -158,7 +158,9 @@ class _HourlyForecastState extends State<HourlyForecastScreen> {
         _marginVertical(),
         Image.asset(
           getIconForecastUrl(
-              weatherForecastResponse.overallWeatherData[0].icon),
+            weatherForecastResponse.overallWeatherData[0].icon,
+            prefix: settingBloc.iconEnum.value,
+          ),
           width: iconWeatherSize,
           height: iconWeatherSize,
         )

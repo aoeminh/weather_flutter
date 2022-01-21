@@ -160,7 +160,7 @@ class _DetailDailyForecastState extends State<DetailDailyForecast> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Image.asset(
-                getIconForecastUrl(daily.weather![0].icon),
+                getIconForecastUrl(daily.weather![0].icon,prefix: settingBloc.iconEnum.value),
                 width: _iconStatusSize,
                 height: _iconStatusSize,
               ),
