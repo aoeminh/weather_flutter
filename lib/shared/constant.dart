@@ -4,7 +4,7 @@ const int sevenHourMilli = oneHourMilli*7;
 
 // product
 const String productIntermediaryAdsId =
-    'ca-app-pub-7700641564040226/4975467884';
+    'ca-app-pub-7700641564040226/1084118472';
 // const String productBannerAdsId = 'ca-app-pub-7700641564040226/7941153010';
 // const String productBannerAdsId1 = 'ca-app-pub-7700641564040226/5938995573';
 // const String productBannerAdsId2 = 'ca-app-pub-7700641564040226/2146541486';

@@ -7,7 +7,6 @@ import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/shared/constant.dart';
 import 'package:weather_app/shared/dimens.dart';
-import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/utils/utils.dart';
 
 const double _itemHeight = 150;
@@ -37,7 +36,6 @@ class _IconSettingScreenState extends State<IconSettingScreen> {
       }
     });
 
-    startAnim();
   }
 
   @override

@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/shared/constant.dart';
@@ -15,7 +14,6 @@ import '../model/city.dart';
 import '../model/coordinates.dart';
 import '../utils/share_preferences.dart';
 import 'base_bloc.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 const _timeReShowAds = 60;
 
@@ -38,7 +36,7 @@ class AppBloc extends BlocBase {
     db.onChildAdded.listen((event) {
       if (event.snapshot.value.toString().trim().isNotEmpty) {
         keyAds = event.snapshot.value;
-      }else{
+      } else {
         keyAds = productIntermediaryAdsId;
       }
       createInterstitialAd();
@@ -67,9 +65,10 @@ class AppBloc extends BlocBase {
             'Location permissions are denied (actual value: $permission).');
       }
     }
-     currentLocation = await Geolocator.getCurrentPosition();
+    currentLocation = await Geolocator.getCurrentPosition();
     return City(
-        coordinates: Coordinates(currentLocation!.longitude, currentLocation!.latitude));
+        coordinates:
+            Coordinates(currentLocation!.longitude, currentLocation!.latitude));
     // add the first city
   }
 
@@ -105,6 +104,7 @@ class AppBloc extends BlocBase {
   void createInterstitialAd() {
     InterstitialAd.load(
         adUnitId: InterstitialAd.testAdUnitId,
+        // adUnitId: keyAds ?? '',
         request: AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
