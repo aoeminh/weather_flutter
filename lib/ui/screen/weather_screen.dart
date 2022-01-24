@@ -43,6 +43,7 @@ import '../../ui/widgets/sun_path_widget.dart';
 import '../../utils/utils.dart';
 import '../widgets/air_pollution_widget.dart';
 import 'detail_daily_forecast.dart';
+import 'icon_setting_screen.dart';
 import 'page/radar_screen.dart';
 
 const double _mainWeatherHeight = 240;
@@ -351,18 +352,19 @@ class _WeatherScreenState extends State<WeatherScreen>
                     color: Colors.white,
                   ),
                 )),
-            // GestureDetector(
-            //     onTap: () {
-            //       Navigator.push(context,
-            //           MaterialPageRoute(builder: (context) => IconSettingScreen()));
-            //     },
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(8.0),
-            //       child: Icon(
-            //         Icons.settings,
-            //         color: Colors.white,
-            //       ),
-            //     ))
+            GestureDetector(
+                onTap: () {
+                  appBloc.showInterstitialAd();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => IconSettingScreen()));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                  ),
+                ))
           ],
           title: _titleAppbar(weatherData.weatherResponse),
         ),
@@ -598,19 +600,18 @@ class _WeatherScreenState extends State<WeatherScreen>
         stream: bloc.covidStream,
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data is CovidStateSuccess) {
-            print('snapshot.hasData ');
             CovidStateSuccess state = snapshot.data! as CovidStateSuccess;
             return _buildCovid19Body(state.covidSummaryResponse);
           }
-          print('snapshot.hasData fails ');
           return Container();
         });
   }
 
   _buildCovid19Body(CovidSummaryResponse covidSummaryResponse) {
+   print(' weatherData.weatherForecastListResponse.city ${ weatherData!.weatherForecastListResponse!.city!.country}');
     final countryCode = Get.deviceLocale!.countryCode;
     Country? country = covidSummaryResponse.countries!.firstWhere(
-        (element) => countryCode == element.countryCode, orElse: () {
+        (element) => weatherData!.weatherForecastListResponse!.city!.country == element.countryCode, orElse: () {
       return covidSummaryResponse.countries!
           .firstWhere((element) => countryCode == 'US');
     });
@@ -719,6 +720,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   _radar() => Column(
         children: [
           _buildRowTitle('Radar', 'more'.tr, () {
+            appBloc.showInterstitialAd();
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -728,13 +730,16 @@ class _WeatherScreenState extends State<WeatherScreen>
                         )));
           }),
           InkWell(
-            onTap: () => Navigator.push(
+            onTap: () {
+              appBloc.showInterstitialAd();
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => Radar(
                           lat: widget.lat,
                           lon: widget.lon,
-                        ))),
+                        )));
+            },
             child: Container(
               margin: EdgeInsets.all(margin),
               height: 200,
