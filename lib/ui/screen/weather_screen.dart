@@ -355,8 +355,10 @@ class _WeatherScreenState extends State<WeatherScreen>
             GestureDetector(
                 onTap: () {
                   appBloc.showInterstitialAd();
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => IconSettingScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => IconSettingScreen()));
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -383,8 +385,8 @@ class _WeatherScreenState extends State<WeatherScreen>
               // _buildBannerAds1(),
               _buildAriPollution(),
               _radar(),
-              _buildCovid19(),
               _buildSunTime(weatherData.weatherResponse),
+              _buildCovid19(),
               // _buildBannerAds2()
             ],
           ),
@@ -608,10 +610,13 @@ class _WeatherScreenState extends State<WeatherScreen>
   }
 
   _buildCovid19Body(CovidSummaryResponse covidSummaryResponse) {
-   print(' weatherData.weatherForecastListResponse.city ${ weatherData!.weatherForecastListResponse!.city!.country}');
+    print(
+        ' weatherData.weatherForecastListResponse.city ${weatherData!.weatherForecastListResponse!.city!.country}');
     final countryCode = Get.deviceLocale!.countryCode;
     Country? country = covidSummaryResponse.countries!.firstWhere(
-        (element) => weatherData!.weatherForecastListResponse!.city!.country == element.countryCode, orElse: () {
+        (element) =>
+            weatherData!.weatherForecastListResponse!.city!.country ==
+            element.countryCode, orElse: () {
       return covidSummaryResponse.countries!
           .firstWhere((element) => countryCode == 'US');
     });
@@ -733,12 +738,12 @@ class _WeatherScreenState extends State<WeatherScreen>
             onTap: () {
               appBloc.showInterstitialAd();
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Radar(
-                          lat: widget.lat,
-                          lon: widget.lon,
-                        )));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Radar(
+                            lat: widget.lat,
+                            lon: widget.lon,
+                          )));
             },
             child: Container(
               margin: EdgeInsets.all(margin),

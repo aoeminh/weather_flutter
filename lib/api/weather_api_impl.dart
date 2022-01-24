@@ -29,6 +29,7 @@ class WeatherApiImpl extends WeatherApi {
       {String lang = 'en'}) async {
     Uri uri = _buildUri(lat, lon, _apiWeatherEndpoint, unit: units, lang: lang);
     Response response = await _dio.get(uri.toString());
+    print(response.data);
     if (response.statusCode == 200) {
       return WeatherResponse.fromJson(response.data);
     } else {
@@ -43,6 +44,7 @@ class WeatherApiImpl extends WeatherApi {
     Uri uri = _buildUri(lat, lon, _apiWeatherForecastEndpoint,
         unit: units, lang: lang);
     Response response = await _dio.get(uri.toString());
+    print(response.data);
     if (response.statusCode == 200) {
       return WeatherForecastListResponse.fromJson(response.data);
     } else {
@@ -58,6 +60,7 @@ class WeatherApiImpl extends WeatherApi {
     Uri uri = _buildUri(lat, lon, _apiWeatherForecast7Day,
         unit: units, exclude: exclude, lang: lang);
     Response response = await _dio.get(uri.toString());
+    print(response.data);
     if (response.statusCode == 200) {
       return WeatherForecastDaily.fromJson(response.data);
     } else {

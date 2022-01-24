@@ -7,11 +7,12 @@ import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/shared/constant.dart';
 import 'package:weather_app/shared/dimens.dart';
+import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/utils/utils.dart';
 
 const double _itemHeight = 150;
 const double _iconSize = 20;
-const int _itemCount = 10;
+const int _itemCount = 9;
 
 class IconSettingScreen extends StatefulWidget {
   const IconSettingScreen({Key? key}) : super(key: key);
@@ -21,10 +22,6 @@ class IconSettingScreen extends StatefulWidget {
 }
 
 class _IconSettingScreenState extends State<IconSettingScreen> {
-  Timer? timer;
-  int index = 0;
-  BehaviorSubject<int> behaviorSubject = BehaviorSubject.seeded(0);
-
   @override
   void initState() {
     super.initState();
@@ -35,14 +32,11 @@ class _IconSettingScreenState extends State<IconSettingScreen> {
         settingBloc.saveSetting();
       }
     });
-
   }
 
   @override
   void dispose() {
     super.dispose();
-    behaviorSubject.close();
-    timer!.cancel();
   }
 
   @override
@@ -118,49 +112,24 @@ class _IconSettingScreenState extends State<IconSettingScreen> {
             mainAxisSpacing: _iconSize,
             crossAxisSpacing: _iconSize),
         itemBuilder: (context, index) {
-          return StreamBuilder<int>(
-            stream: behaviorSubject.stream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                String tail = getImageByIndex(snapshot.data!);
-                return Image.asset(
-                  listIcon(tail, iconEnum.value)[index],
-                  width: _iconSize,
-                  height: _iconSize,
-                );
-              }
-              return Image.asset(
-                listIcon('00', iconEnum.value)[index],
-                width: _iconSize,
-                height: _iconSize,
-              );
-            },
+          return Image.asset(
+            iconPaths(iconEnum)[index],
+            width: _iconSize,
+            height: _iconSize,
           );
         },
         itemCount: _itemCount,
       );
-
-  static List<String> listIcon(String tail, String iconType) => [
-        // mIconRainyy(tail, iconType),
-        // mIconSnoww(tail, iconType),
-        // mIconThunderstormm(tail, iconType),
-        // mIconHazyy(tail, iconType),
-        // mIconFewCloudsNightt(tail, iconType),
-        // mIconFewCloudsDayy(tail, iconType),
-        // mIconClearsNightt(tail, iconType),
-        // mIconClearss(tail, iconType),
-        // mIconBrokenCloudss(tail, iconType),
-        // mIconFogg(tail, iconType),
-      ];
-
-  startAnim() {
-    timer = Timer.periodic(Duration(milliseconds: durationAnim), (timer) {
-      if (index < imageQuantity) {
-        index += 1;
-      } else {
-        index = 0;
-      }
-      behaviorSubject.add(index);
-    });
-  }
 }
+
+List<String> iconPaths(IconEnum iconEnum) => [
+      mIconClears1(iconEnum.value),
+      mIconClearsNight1(iconEnum.value),
+      mIconFewCloudsDay1(iconEnum.value),
+      mIconFewCloudsNight1(iconEnum.value),
+      mIconBrokenClouds1(iconEnum.value),
+      mIconRainy1(iconEnum.value),
+      mIconThunderstorm1(iconEnum.value),
+      mIconSnow1(iconEnum.value),
+      mIconFog1(iconEnum.value),
+    ];

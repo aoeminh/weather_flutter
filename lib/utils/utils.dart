@@ -89,7 +89,7 @@ String getIconForecastUrl(String? iconCode, {String prefix = 'p2_'}) {
     case mClear:
       return mIconClears1(prefix);
     case mClearN:
-      return mIconClearsNight;
+      return mIconClearsNight1(prefix);
     case mFewClouds:
     case mClouds:
       return mIconFewCloudsDay1(prefix);

@@ -64,7 +64,9 @@ class _ChartWidgetState extends State<ChartWidget> {
     }
     streamSubscription = settingBloc.settingStream.listen((event) {
       if (this.mounted) {
-        setState(() {});
+        setState(() {
+          init();
+        });
       }
     });
   }

@@ -28,7 +28,6 @@ class _ListCountryCovidState extends State<ListCountryCovid> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-
         return true;
       },
       child: Scaffold(
@@ -43,7 +42,6 @@ class _ListCountryCovidState extends State<ListCountryCovid> {
         leading: InkWell(
             onTap: () {
               appBloc.showInterstitialAd();
-
               Navigator.pop(context);
             },
             child: Icon(

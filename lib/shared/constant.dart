@@ -1,6 +1,7 @@
+import 'image.dart';
 
 const int oneHourMilli = 3600000;
-const int sevenHourMilli = oneHourMilli*7;
+const int sevenHourMilli = oneHourMilli * 7;
 
 // product
 const String productIntermediaryAdsId =

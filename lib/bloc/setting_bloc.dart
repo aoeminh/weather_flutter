@@ -361,7 +361,7 @@ class SettingBloc extends BlocBase {
   TimeEnum _timeEnum = TimeEnum.twentyFour;
   DateEnum _dateEnum = DateEnum.mmddyyyyy;
   LanguageEnum _languageEnum = LanguageEnum.en;
-  IconEnum _iconEnum = IconEnum.p2;
+  IconEnum _iconEnum = IconEnum.p1;
 
   BehaviorSubject<bool> _notificationSubject = BehaviorSubject();
   PublishSubject<SettingEnum> _settingBehavior = PublishSubject();

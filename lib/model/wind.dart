@@ -3,12 +3,14 @@ import '../utils/types_helper.dart';
 class Wind {
   final double speed;
   final double deg;
+  final double? gust;
 
-  Wind(this.speed, this.deg);
+  Wind(this.speed, this.deg, {this.gust});
 
   Wind.fromJson(Map<String, dynamic> json)
       : speed = TypesHelper.toDouble(json["speed"]),
-        deg = TypesHelper.toDouble(json["deg"]);
+        deg = TypesHelper.toDouble(json["deg"]),
+        gust = TypesHelper.toDouble(json["gust"]);
 
   Map<String, dynamic> toJson() => {
         "speed": speed,
