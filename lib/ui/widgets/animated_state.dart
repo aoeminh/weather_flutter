@@ -6,7 +6,7 @@ import 'package:rxdart/rxdart.dart';
 abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     with TickerProviderStateMixin {
   AnimationController? controller;
-  late BehaviorSubject<double> _streamController;
+  late BehaviorSubject<double> _streamController =BehaviorSubject<double>();
 
   Widget build(BuildContext context);
 
@@ -18,7 +18,6 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
     if (controller != null) controller!.dispose();
     if (this.mounted) controller = _getAnimationController(this, duration);
     Animation animation = _getCurvedAnimation(controller!, curve);
-    _streamController = BehaviorSubject<double>();
 
     Animation<double> tween = _getTween(start, end, animation);
     var valueListener = () {

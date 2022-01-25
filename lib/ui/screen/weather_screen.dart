@@ -201,6 +201,15 @@ class _WeatherScreenState extends State<WeatherScreen>
           _videoPlayerController.initialize().then((value) {
             isPlayerInit = true;
             _videoPlayerController.play().then((value) {});
+          }, onError: (error) {
+            _videoPlayerController = VideoPlayerController.asset(
+                getBgVideoPath(a.weatherResponse.overallWeatherData![0].icon));
+            _videoPlayerController.initialize().then((value) {
+              isPlayerInit = true;
+              _videoPlayerController.play().then((value) {});
+              _videoPlayerController.setLooping(true);
+              _videoPlayerController.setPlaybackSpeed(0.8);
+            });
           });
 
           _videoPlayerController.setLooping(true);
