@@ -41,7 +41,8 @@ abstract class AnimatedState<T extends StatefulWidget> extends State<T>
 
   static Animation<double> _getTween(
       double start, double end, Animation animation) {
-    return Tween(begin: start, end: end).animate(animation as Animation<double>);
+    return Tween(begin: start, end: end)
+        .animate(animation as Animation<double>);
   }
 
   @override

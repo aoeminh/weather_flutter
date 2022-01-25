@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
 import 'package:weather_app/model/system.dart';
 import 'package:weather_app/model/weather_forecast_response.dart';
+import 'package:weather_app/shared/constant.dart';
 import 'package:weather_app/shared/image.dart';
 import 'package:weather_app/shared/strings.dart';
 
@@ -118,37 +119,38 @@ String getIconForecastUrl(String? iconCode, {String prefix = 'p2_'}) {
   }
 }
 
-String getBgImagePath(String? iconCode) {
+String getBgVideoPath(String? iconCode) {
   switch (iconCode) {
     case mClear:
-      return mBgClear;
+      return 'assets/bg_video/video_bg_clear.mp4';
     case mClearN:
-      return mBgClearN;
-    case mFewClouds:
+      return 'assets/bg_video/video_bg_clear_n.mp4';
     case mClouds:
-      return mBgAFewCloudy;
-    case mFewCloudsN:
     case mCloudsN:
-      return mBgAFewCloudyN;
+      return 'assets/bg_video/video_bg_cloudy.mp4';
+    case mFewClouds:
+      return 'assets/bg_video/video_bg_few_cloudy.mp4';
+    case mFewCloudsN:
+      return 'assets/bg_video/video_bg_few_cloudy_n.mp4';
     case mBrokenClouds:
     case mBrokenCloudsN:
-      return mBgCloudy;
+      return 'assets/bg_video/video_bg_cloudy.mp4';
     case mShowerRain:
     case mShowerRainN:
     case mRain:
     case mRainN:
-      return mBgRain;
+      return 'assets/bg_video/video_bg_rain.mp4';
     case mthunderstorm:
     case mthunderstormN:
-      return mBgStorm;
+      return 'assets/bg_video/video_bg_storm.mp4';
     case mSnow:
     case mSnowN:
-      return mBgSnow;
+      return 'assets/bg_video/video_bg_snow.mp4';
     case mist:
     case mistN:
-      return mBgHazy;
+      return 'assets/bg_video/video_bg_hazy.mp4';
     default:
-      return mBgClear;
+      return 'assets/bg_video/video_bg_clear.mp4';
   }
 }
 
@@ -183,6 +185,40 @@ String getBgAppbarPath(String? iconCode) {
       return bgAppbarHazy;
     default:
       return bgAppbarClear;
+  }
+}
+
+Color getBgColor(String? iconCode) {
+  switch (iconCode) {
+    case mClear:
+      return bgColorClear;
+    case mClearN:
+      return bgColorClearNight;
+    case mFewClouds:
+    case mClouds:
+      return bgColorFewCloudDay;
+    case mFewCloudsN:
+    case mCloudsN:
+      return bgColorFewCloudNight;
+    case mBrokenClouds:
+    case mBrokenCloudsN:
+      return bgColorBrokenCloud;
+    case mShowerRain:
+    case mShowerRainN:
+    case mRain:
+    case mRainN:
+      return bgColorRainy;
+    case mthunderstorm:
+    case mthunderstormN:
+      return bgColorThunderstorm;
+    case mSnow:
+    case mSnowN:
+      return bgColorSnow;
+    case mist:
+    case mistN:
+      return bgColorFog;
+    default:
+      return bgColorFog;
   }
 }
 

@@ -89,7 +89,7 @@ class _PressureAndWindState extends State<PressureAndWind>
                                   child: _child);
                             },
                             child: Image.asset(
-                              mIconWindPath,
+                              mIconWindPath1,
                               width: _iconWindPathSize,
                               height: _iconWindPathSize,
                             )),
@@ -112,7 +112,7 @@ class _PressureAndWindState extends State<PressureAndWind>
                                   child: _child);
                             },
                             child: Image.asset(
-                              mIconWindPath,
+                              mIconWindPath1,
                               width: _iconWindPathSmallSize,
                               height: _iconWindPathSmallSize,
                             )),

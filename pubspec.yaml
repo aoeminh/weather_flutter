@@ -42,7 +42,7 @@ dependencies:
   google_mobile_ads: ^0.13.6
   firebase_database: ^8.1.0
   webview_flutter: ^2.3.1
-
+  video_player: ^2.2.11
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
@@ -66,6 +66,18 @@ flutter:
     - assets/city/cities.json
     - assets/city/timezone.json
     - assets/city/suggest_city.json
+    - assets/bg_video/video_bg_clear.mp4
+    - assets/bg_video/video_bg_clear_n.mp4
+    - assets/bg_video/video_bg_cloudy.mp4
+    - assets/bg_video/video_bg_few_cloudy.mp4
+    - assets/bg_video/video_bg_few_cloudy_n.mp4
+    - assets/bg_video/video_bg_fog.mp4
+    - assets/bg_video/video_bg_hazy.mp4
+    - assets/bg_video/video_bg_storm.mp4
+    - assets/bg_video/video_bg_snow.mp4
+    - assets/bg_video/widgettips.mp4
+    - assets/bg_video/video_bg_rain.mp4
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

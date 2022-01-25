@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:rxdart/subjects.dart';
+import 'package:video_player/video_player.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/model/covid_summary_response.dart';
 import 'package:weather_app/ui/screen/page/drawer/drawer.dart';
@@ -50,7 +51,7 @@ const double _mainWeatherHeight = 240;
 
 const String _exclude7DayForecast = 'minutely,hourly';
 
-const double _ratioBlurBg = 1 / 150;
+const double _ratioBlurBg = 2 / 150;
 const double _ratioBlurImageBg = 1 / 10;
 const double _oneHour = 3600000;
 
@@ -77,6 +78,9 @@ class _WeatherScreenState extends State<WeatherScreen>
   int currentTime = 0;
   double differentTime = 0;
   late StreamSubscription _subscription;
+  late VideoPlayerController _videoPlayerController;
+  bool startedPlaying = false;
+  bool isPlayerInit = false;
 
   @override
   void initState() {
@@ -170,6 +174,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   void dispose() {
     bloc.dispose();
     _scrollController.dispose();
+    if (isPlayerInit) _videoPlayerController.dispose();
     timeSubject.close();
     _scrollSubject.close();
     _subscription.cancel();
@@ -192,6 +197,15 @@ class _WeatherScreenState extends State<WeatherScreen>
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
           differentTime = _getDifferentTime(c.weatherResponse.timezoneOffset!);
+          _videoPlayerController = VideoPlayerController.asset(
+              getBgVideoPath(a.weatherResponse.overallWeatherData![0].icon));
+          _videoPlayerController.initialize().then((value) {
+            isPlayerInit = true;
+            _videoPlayerController.play().then((value) {});
+          });
+
+          _videoPlayerController.setLooping(true);
+          _videoPlayerController.setPlaybackSpeed(0.8);
           return WeatherData(
               weatherResponse: WeatherResponse.formatWithTimezone(
                   a.weatherResponse, differentTime),
@@ -228,26 +242,30 @@ class _WeatherScreenState extends State<WeatherScreen>
                           if (snapshot.hasData) {
                             return Stack(
                               children: [
-                                Container(
-                                  height: MediaQuery.of(context).size.height,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ImageFiltered(
-                                    imageFilter: ImageFilter.blur(
-                                        sigmaY: (snapshot.data! *
-                                            _ratioBlurImageBg),
-                                        sigmaX: (snapshot.data! *
-                                            _ratioBlurImageBg)),
-                                    child: Image.asset(
-                                      getBgImagePath(weatherData!
-                                          .weatherResponse!
-                                          .overallWeatherData![0]
-                                          .icon),
-                                      fit: BoxFit.fill,
+                                Column(
+                                  children: [
+                                    Container(
+                                        height:
+                                            MediaQuery.of(context).size.height -
+                                                230,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: VideoPlayer(
+                                            _videoPlayerController)),
+                                    Expanded(
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        color: getBgColor(weatherData!
+                                            .weatherResponse!
+                                            .overallWeatherData![0]
+                                            .icon),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                                 Container(
-                                  color: Colors.black.withOpacity(
+                                  color: Colors.black38.withOpacity(
                                       snapshot.data! * _ratioBlurBg),
                                 ),
                               ],
@@ -318,20 +336,13 @@ class _WeatherScreenState extends State<WeatherScreen>
           pinned: true,
           flexibleSpace: Stack(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(getBgAppbarPath(weatherData
-                            .weatherResponse!.overallWeatherData![0].icon)),
-                        fit: BoxFit.fill)),
-              ),
               StreamBuilder<double>(
                   stream: _scrollSubject.stream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Container(
-                        color: Colors.black
-                            .withOpacity(snapshot.data! * _ratioBlurBg),
+                        color: Colors.black38
+                            .withOpacity(snapshot.data! * 1 / 200),
                       );
                     }
                     return Container();
@@ -371,27 +382,37 @@ class _WeatherScreenState extends State<WeatherScreen>
           title: _titleAppbar(weatherData.weatherResponse),
         ),
       ],
-      body: SmartRefresher(
-        refreshIndicatorKey: _refreshIndicatorKey,
-        children: Container(
-          child: Column(
-            children: [
-              _currentWeather(weatherData.weatherResponse),
-              _buildHourlyForecast(weatherData.weatherForecastListResponse),
-              // _buildBannerAds(),
-              _buildDailyForecast(weatherData.weatherForecastDaily),
-              _buildDetail(weatherData.weatherForecastDaily),
-              _buildWindAndPressure(weatherData.weatherResponse),
-              // _buildBannerAds1(),
-              _buildAriPollution(),
-              _radar(),
-              _buildSunTime(weatherData.weatherResponse),
-              _buildCovid19(),
-              // _buildBannerAds2()
-            ],
+      body: Column(
+        children: [
+          Container(
+            height: AppBar().preferredSize.height,
           ),
-        ),
-        onRefresh: refresh,
+          Expanded(
+            child: SmartRefresher(
+              refreshIndicatorKey: _refreshIndicatorKey,
+              children: Container(
+                child: Column(
+                  children: [
+                    _currentWeather(weatherData.weatherResponse),
+                    _buildHourlyForecast(
+                        weatherData.weatherForecastListResponse),
+                    // _buildBannerAds(),
+                    _buildDailyForecast(weatherData.weatherForecastDaily),
+                    _buildDetail(weatherData.weatherForecastDaily),
+                    _buildWindAndPressure(weatherData.weatherResponse),
+                    // _buildBannerAds1(),
+                    _buildAriPollution(),
+                    _radar(),
+                    _buildSunTime(weatherData.weatherResponse),
+                    _buildCovid19(),
+                    // _buildBannerAds2()
+                  ],
+                ),
+              ),
+              onRefresh: refresh,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -400,9 +421,14 @@ class _WeatherScreenState extends State<WeatherScreen>
     return Column(
       children: [
         const SizedBox(
-          height: marginSmall,
+          height: margin,
         ),
-        weatherResponse != null ? Text('${weatherResponse.name}') : Container(),
+        weatherResponse != null
+            ? Text(
+                '${weatherResponse.name}',
+                style: TextStyle(fontSize: 16),
+              )
+            : Container(),
         const SizedBox(
           height: marginSmall,
         ),
@@ -411,8 +437,9 @@ class _WeatherScreenState extends State<WeatherScreen>
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Text(
-                    '${formatWeekDayAndTime(snapshot.data, settingBloc.timeEnum)}',
-                    style: textSecondaryWhite70);
+                  '${formatWeekDayAndTime(snapshot.data, settingBloc.timeEnum)}',
+                  style: textSecondaryWhite70.copyWith(fontSize: 12),
+                );
               }
               return Text('');
             }),
