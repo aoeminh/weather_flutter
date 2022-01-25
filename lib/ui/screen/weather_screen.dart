@@ -3,7 +3,6 @@ import 'dart:core';
 import 'dart:ui';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart' as rx;
@@ -51,7 +50,7 @@ const double _mainWeatherHeight = 240;
 
 const String _exclude7DayForecast = 'minutely,hourly';
 
-const double _ratioBlurBg = 2 / 150;
+const double _ratioBlurBg = 1 / 100;
 const double _ratioBlurImageBg = 1 / 10;
 const double _oneHour = 3600000;
 
@@ -372,7 +371,8 @@ class _WeatherScreenState extends State<WeatherScreen>
                           builder: (context) => IconSettingScreen()));
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(
+                      left: 8, top: 8, right: 16, bottom: 8),
                   child: Icon(
                     Icons.settings,
                     color: Colors.white,
