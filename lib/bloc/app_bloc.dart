@@ -67,8 +67,11 @@ class AppBloc extends BlocBase {
     }
     currentLocation = await Geolocator.getCurrentPosition();
     return City(
-        coordinates:
-            Coordinates(currentLocation!.longitude, currentLocation!.latitude));
+        coordinates: Coordinates(
+            double.tryParse(currentLocation!.longitude.toStringAsFixed(4)) ??
+                currentLocation!.longitude,
+            double.tryParse(currentLocation!.latitude.toStringAsFixed(4)) ??
+                currentLocation!.latitude));
     // add the first city
   }
 

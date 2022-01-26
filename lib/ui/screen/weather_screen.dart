@@ -77,7 +77,7 @@ class _WeatherScreenState extends State<WeatherScreen>
   int currentTime = 0;
   double differentTime = 0;
   late StreamSubscription _subscription;
-  late VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   bool startedPlaying = false;
   bool isPlayerInit = false;
 
@@ -173,7 +173,10 @@ class _WeatherScreenState extends State<WeatherScreen>
   void dispose() {
     bloc.dispose();
     _scrollController.dispose();
-    if (isPlayerInit) _videoPlayerController.dispose();
+    if (isPlayerInit) {
+      _videoPlayerController!.dispose();
+      _videoPlayerController = null;
+    }
     timeSubject.close();
     _scrollSubject.close();
     _subscription.cancel();
@@ -198,22 +201,22 @@ class _WeatherScreenState extends State<WeatherScreen>
           differentTime = _getDifferentTime(c.weatherResponse.timezoneOffset!);
           _videoPlayerController = VideoPlayerController.asset(
               getBgVideoPath(a.weatherResponse.overallWeatherData![0].icon));
-          _videoPlayerController.initialize().then((value) {
+          _videoPlayerController!.initialize().then((value) {
             isPlayerInit = true;
-            _videoPlayerController.play().then((value) {});
+            _videoPlayerController!.play().then((value) {});
           }, onError: (error) {
             _videoPlayerController = VideoPlayerController.asset(
                 getBgVideoPath(a.weatherResponse.overallWeatherData![0].icon));
-            _videoPlayerController.initialize().then((value) {
+            _videoPlayerController!.initialize().then((value) {
               isPlayerInit = true;
-              _videoPlayerController.play().then((value) {});
-              _videoPlayerController.setLooping(true);
-              _videoPlayerController.setPlaybackSpeed(0.8);
+              _videoPlayerController!.play().then((value) {});
+              _videoPlayerController!.setLooping(true);
+              _videoPlayerController!.setPlaybackSpeed(0.8);
             });
           });
 
-          _videoPlayerController.setLooping(true);
-          _videoPlayerController.setPlaybackSpeed(0.8);
+          _videoPlayerController!.setLooping(true);
+          _videoPlayerController!.setPlaybackSpeed(0.8);
           return WeatherData(
               weatherResponse: WeatherResponse.formatWithTimezone(
                   a.weatherResponse, differentTime),
@@ -259,7 +262,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                                         width:
                                             MediaQuery.of(context).size.width,
                                         child: VideoPlayer(
-                                            _videoPlayerController)),
+                                            _videoPlayerController!)),
                                     Expanded(
                                       child: Container(
                                         width:

@@ -1,4 +1,3 @@
-
 import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/model/city.dart';
 
@@ -18,9 +17,12 @@ class PageBloc extends BlocBase {
   }
 
   addNewCity(City city) {
-    int index = _currentCities.indexWhere((element) =>
-        (city.coordinates!.latitude == element.coordinates!.latitude &&
-            city.coordinates!.longitude == element.coordinates!.longitude));
+    int index = _currentCities.indexWhere((element) {
+      return ((city.coordinates!.latitude == element.coordinates!.latitude &&
+              city.coordinates!.longitude == element.coordinates!.longitude) ||
+          (city.name == element.name && city.country == element.country));
+    });
+
     if (index == -1) {
       _currentCities.add(city);
       _behaviorSubjectCity.add(_currentCities);
@@ -38,7 +40,7 @@ class PageBloc extends BlocBase {
   removeItemWhenFirstLoadApp(City? city) {
     if (isFirstLoad) {
       int index = _currentCities.indexWhere((element) => element.name == null);
-      if(index != -1){
+      if (index != -1) {
         _currentCities.removeAt(index);
         _currentCities.add(City(
             coordinates: city!.coordinates,
@@ -53,7 +55,10 @@ class PageBloc extends BlocBase {
   }
 
   editCurrentCityList(List<City> list) {
-    list.forEach((element) {print('latitude ${element.coordinates!.latitude} longitude ${element.coordinates!.longitude}');});
+    list.forEach((element) {
+      print(
+          'latitude ${element.coordinates!.latitude} longitude ${element.coordinates!.longitude}');
+    });
     _currentCities = list;
     appBloc.saveListCity(_currentCities);
     _behaviorSubjectCity.add(_currentCities);
@@ -74,7 +79,7 @@ class PageBloc extends BlocBase {
             country: e.country,
             id: e.id,
             coordinates:
-                Coordinates(e.coordinates!.longitude,e.coordinates!.latitude)))
+                Coordinates(e.coordinates!.longitude, e.coordinates!.latitude)))
         .toList();
   }
 

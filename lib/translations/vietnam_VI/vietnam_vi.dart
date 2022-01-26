@@ -20,7 +20,7 @@ const Map<String, String> vi = {
   'rise': 'Mọc',
   'set': 'lặn',
   'edit_location': 'Chỉnh sửa địa điểm',
-  'add_new_city': 'Thêm thành phó',
+  'add_new_city': 'Thêm thành phố',
   'hour_forecast': 'Dự báo hàng giờ',
   'app_name': 'Free Weather Forecast',
   'notification': 'Thông báo',

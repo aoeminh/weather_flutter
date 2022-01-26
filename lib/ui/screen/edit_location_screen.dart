@@ -22,7 +22,12 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
   @override
   void initState() {
     super.initState();
+
     _listTempCity = pageBloc.copyCurrentCityList(pageBloc.currentCityList);
+    _listTempCity.forEach((element) {
+      print('element latitude ${element.coordinates!.latitude} longitude ${element.coordinates!.longitude}');
+    });
+
   }
 
   @override

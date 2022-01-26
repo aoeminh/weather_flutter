@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:weather_app/translations/app_translation.dart';
 import 'package:weather_app/ui/screen/splash_screen.dart';
@@ -12,6 +13,9 @@ late final FirebaseApp firebaseApp;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+  }
   MobileAds.instance.initialize();
   firebaseApp = await Firebase.initializeApp();
   initializeDateFormatting();
