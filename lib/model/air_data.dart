@@ -7,7 +7,7 @@ class AirData {
   AirData(this.aqi, this.iaqi);
 
   AirData.fromJson(Map<String, dynamic> json)
-      : aqi = json['aqi'],
+      : aqi = json['aqi'] is int ? json['aqi'] : 0,
         iaqi = Iaqi.fromJson(json['iaqi']);
 
   Map<String, dynamic> toJson() {

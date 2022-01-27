@@ -52,7 +52,6 @@ class _MapScreenState extends State<MapScreen> {
                       initialCameraPosition: _kInitialPosition!,
                       mapType: MapType.hybrid,
                       zoomControlsEnabled: false,
-                      mapToolbarEnabled: false,
                       onCameraIdle: _onCamIdle,
                       onCameraMove: _onCamMove,
                     ),

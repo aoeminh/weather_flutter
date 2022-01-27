@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:core';
-import 'dart:ui';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +50,6 @@ const double _mainWeatherHeight = 240;
 const String _exclude7DayForecast = 'minutely,hourly';
 
 const double _ratioBlurBg = 1 / 100;
-const double _ratioBlurImageBg = 1 / 10;
 const double _oneHour = 3600000;
 
 class WeatherScreen extends StatefulWidget {
@@ -199,24 +197,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             b is WeatherForecastStateSuccess &&
             c is WeatherForecastDailyStateSuccess) {
           differentTime = _getDifferentTime(c.weatherResponse.timezoneOffset!);
-          _videoPlayerController = VideoPlayerController.asset(
-              getBgVideoPath(a.weatherResponse.overallWeatherData![0].icon));
-          _videoPlayerController!.initialize().then((value) {
-            isPlayerInit = true;
-            _videoPlayerController!.play().then((value) {});
-          }, onError: (error) {
-            _videoPlayerController = VideoPlayerController.asset(
-                getBgVideoPath(a.weatherResponse.overallWeatherData![0].icon));
-            _videoPlayerController!.initialize().then((value) {
-              isPlayerInit = true;
-              _videoPlayerController!.play().then((value) {});
-              _videoPlayerController!.setLooping(true);
-              _videoPlayerController!.setPlaybackSpeed(0.8);
-            });
-          });
-
-          _videoPlayerController!.setLooping(true);
-          _videoPlayerController!.setPlaybackSpeed(0.8);
+          initPlayer(a);
           return WeatherData(
               weatherResponse: WeatherResponse.formatWithTimezone(
                   a.weatherResponse, differentTime),
@@ -253,28 +234,33 @@ class _WeatherScreenState extends State<WeatherScreen>
                           if (snapshot.hasData) {
                             return Stack(
                               children: [
-                                Column(
-                                  children: [
-                                    Container(
-                                        height:
-                                            MediaQuery.of(context).size.height -
-                                                230,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: VideoPlayer(
-                                            _videoPlayerController!)),
-                                    Expanded(
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        color: getBgColor(weatherData!
-                                            .weatherResponse!
-                                            .overallWeatherData![0]
-                                            .icon),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                isPlayerInit
+                                    ? Column(
+                                        children: [
+                                          Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height -
+                                                  230,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child: VideoPlayer(
+                                                  _videoPlayerController!)),
+                                          Expanded(
+                                            child: Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              color: getBgColor(weatherData!
+                                                  .weatherResponse!
+                                                  .overallWeatherData![0]
+                                                  .icon),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const SizedBox(),
                                 Container(
                                   color: Colors.black38.withOpacity(
                                       snapshot.data! * _ratioBlurBg),
@@ -800,6 +786,30 @@ class _WeatherScreenState extends State<WeatherScreen>
   Future<void> refresh() async {
     getData();
     appBloc.showInterstitialAd();
+  }
+
+  initPlayer(WeatherStateSuccess weatherStateSuccess) {
+    if (!isPlayerInit) {
+      _videoPlayerController = VideoPlayerController.asset(getBgVideoPath(
+          weatherStateSuccess.weatherResponse.overallWeatherData![0].icon));
+      _videoPlayerController!.initialize().then((value) {
+        isPlayerInit = true;
+        _videoPlayerController!.play().then((value) {});
+      }, onError: (error) {
+        isPlayerInit = false;
+        print('_videoPlayerController $error');
+        _videoPlayerController = VideoPlayerController.asset(getBgVideoPath(
+            weatherStateSuccess.weatherResponse.overallWeatherData![0].icon));
+        _videoPlayerController!.initialize().then((value) {
+          isPlayerInit = true;
+          _videoPlayerController!.play().then((value) {});
+          _videoPlayerController!.setLooping(true);
+          _videoPlayerController!.setPlaybackSpeed(0.8);
+        });
+      });
+      _videoPlayerController!.setLooping(true);
+      _videoPlayerController!.setPlaybackSpeed(0.8);
+    }
   }
 
   gotoDailyDetailScreen() => Navigator.push(

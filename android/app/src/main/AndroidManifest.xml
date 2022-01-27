@@ -15,7 +15,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Free Weather Forecast">
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCfgBY-lpUZF3kiVC6PIxwL4i0rAIJa5Lk"/>
+            android:value="AIzaSyA-Q35AMZZtIkFpsYJVBQdzbfVx4tsuUpU"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-7700641564040226~1896874443"/>
