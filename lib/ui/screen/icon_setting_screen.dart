@@ -1,14 +1,10 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:weather_app/bloc/app_bloc.dart';
 import 'package:weather_app/bloc/setting_bloc.dart';
-import 'package:weather_app/shared/constant.dart';
 import 'package:weather_app/shared/dimens.dart';
 import 'package:weather_app/shared/image.dart';
-import 'package:weather_app/utils/utils.dart';
 
 const double _itemHeight = 150;
 const double _iconSize = 20;
@@ -17,11 +13,13 @@ const int _itemCount = 9;
 class IconSettingScreen extends StatefulWidget {
   const IconSettingScreen({Key? key}) : super(key: key);
 
+
   @override
   _IconSettingScreenState createState() => _IconSettingScreenState();
 }
 
 class _IconSettingScreenState extends State<IconSettingScreen> {
+  double childAspectRatio = 1;
   @override
   void initState() {
     super.initState();
@@ -61,16 +59,30 @@ class _IconSettingScreenState extends State<IconSettingScreen> {
         title: Text('app_name'.tr),
       );
 
-  _body() => Column(
-        children: [
-          const SizedBox(
-            height: marginLarge,
+  _body() => OrientationBuilder(
+
+    builder: (context, orientation) {
+      print('OrientationBuilder $childAspectRatio $orientation');
+      childAspectRatio = orientation == Orientation.landscape ? 2 : 1;
+
+      return SingleChildScrollView(
+          child: OrientationBuilder(
+            builder:(context, orientation) {
+              return Column(
+              children: [
+                const SizedBox(
+                  height: marginLarge,
+                ),
+                _itemIcon(IconEnum.p1),
+                _itemIcon(IconEnum.p2),
+                _itemIcon(IconEnum.p3),
+              ],
+            );
+            },
           ),
-          _itemIcon(IconEnum.p1),
-          _itemIcon(IconEnum.p2),
-          _itemIcon(IconEnum.p3),
-        ],
-      );
+        );
+    },
+  );
 
   _itemIcon(IconEnum iconEnum) => GestureDetector(
         onTap: () =>
@@ -95,6 +107,7 @@ class _IconSettingScreenState extends State<IconSettingScreen> {
                     margin: EdgeInsets.only(right: margin),
                     child: Icon(
                       Icons.check_circle,
+                      size: 30,
                       color: iconEnum == settingBloc.iconEnum
                           ? Colors.green
                           : Colors.grey,
@@ -107,19 +120,20 @@ class _IconSettingScreenState extends State<IconSettingScreen> {
       );
 
   _gridIcon(IconEnum iconEnum) => GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 5,
-            mainAxisSpacing: _iconSize,
-            crossAxisSpacing: _iconSize),
-        itemBuilder: (context, index) {
-          return Image.asset(
-            iconPaths(iconEnum)[index],
-            width: _iconSize,
-            height: _iconSize,
-          );
-        },
-        itemCount: _itemCount,
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 5,
+        childAspectRatio: childAspectRatio,
+        mainAxisSpacing: _iconSize,
+        crossAxisSpacing: _iconSize),
+    itemBuilder: (context, index) {
+      return Image.asset(
+        iconPaths(iconEnum)[index],
+        width: _iconSize,
+        height: _iconSize,
       );
+    },
+    itemCount: _itemCount,
+  );
 }
 
 List<String> iconPaths(IconEnum iconEnum) => [

@@ -73,7 +73,7 @@ class _MapScreenState extends State<MapScreen> {
                             borderRadius: BorderRadius.circular(8)),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text('$name! - $country '),
+                          child: Text('$name - $country '),
                         ),
                       ),
                     )
@@ -93,6 +93,7 @@ class _MapScreenState extends State<MapScreen> {
               country: country,
               coordinates: Coordinates(currentCamPosition!.target.longitude,
                   currentCamPosition!.target.latitude)));
+          appBloc.showInterstitialAd();
           Navigator.pop(context);
           Navigator.pop(context);
         },
@@ -109,7 +110,6 @@ class _MapScreenState extends State<MapScreen> {
       );
 
   Future<bool> onWillPop() async {
-    appBloc.showInterstitialAd();
     return true;
   }
 
